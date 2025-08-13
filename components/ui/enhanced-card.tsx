@@ -88,7 +88,6 @@ export function EnhancedCard({
         perspective: "1000px",
         transformStyle: "preserve-3d",
       }}
-      {...props}
     >
       {/* Shimmer effect */}
       {shimmer && (
