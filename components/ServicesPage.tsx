@@ -473,7 +473,7 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
                   onClick={() => onPageChange('contact')}
                 >
                 <Users className="mr-2 h-5 w-5" />
-                Join Our Global Network
+                Get Started Today
               </motion.button>
               
               <motion.button 
