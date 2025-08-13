@@ -517,7 +517,7 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
             variants={containerVariants}
           >
             <motion.blockquote 
-              className="text-2xl font-medium text-white italic max-w-4xl mx-auto mb-8"
+              className="text-2xl font-medium text-white italic max-w-4xl mx-auto mb-8 drop-shadow-lg"
               variants={itemVariants}
             >
               "We are the bridge, the spark, the rhythm of change — Global minds and local hearts, building the future in shared language across all continents."
@@ -528,7 +528,7 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
               variants={itemVariants}
             >
               <motion.button
-                className="inline-flex items-center justify-center h-12 px-8 py-4 rounded-full text-lg font-medium bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors"
+                className="inline-flex items-center justify-center h-12 px-8 py-4 rounded-full text-lg font-medium bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors drop-shadow-md"
                 whileHover={safeAnimate({ scale: 1.05 })}
                 whileTap={safeAnimate({ scale: 0.95 })}
                 onClick={() => onPageChange('home')}
@@ -538,7 +538,7 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
               </motion.button>
               
               <motion.button
-                className="inline-flex items-center justify-center h-12 px-8 py-4 rounded-full text-lg font-medium border border-white/20 text-white hover:bg-white/10 transition-colors"
+                className="inline-flex items-center justify-center h-12 px-8 py-4 rounded-full text-lg font-medium border border-white/20 text-white hover:bg-white/10 transition-colors drop-shadow-md"
                 whileHover={safeAnimate({ scale: 1.05 })}
                 whileTap={safeAnimate({ scale: 0.95 })}
                 onClick={() => onPageChange('contact')}
