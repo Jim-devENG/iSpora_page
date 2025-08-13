@@ -252,26 +252,6 @@ Sent from iSpora website contact form
               <Card className="p-6">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center">
-                    <Users className="mr-2 h-5 w-5 text-primary" />
-                    Quick Actions
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <Button variant="outline" className="w-full justify-start" onClick={() => onPageChange('youth')}>
-                    Join as Youth (Free)
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start" onClick={() => onPageChange('diasporans')}>
-                    Start as Diaspora ($5/month)
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start" onClick={() => onPageChange('partners')}>
-                    Partnership Opportunities
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="p-6">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center">
                     <Headphones className="mr-2 h-5 w-5 text-secondary" />
                     Support Hours
                   </CardTitle>
