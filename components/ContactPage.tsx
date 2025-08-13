@@ -38,8 +38,34 @@ export function ContactPage({ onPageChange }: ContactPageProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', formData);
+    
+    // Create mailto link with form data
+    const subject = encodeURIComponent(`Contact from ${formData.name} - ${formData.role}`);
+    const body = encodeURIComponent(`
+Name: ${formData.name}
+Email: ${formData.email}
+Role: ${formData.role}
+
+Message:
+${formData.message}
+
+---
+Sent from iSpora website contact form
+    `);
+    
+    // Open default email client
+    window.open(`mailto:info@ispora.com?subject=${subject}&body=${body}`);
+    
+    // Reset form
+    setFormData({
+      name: '',
+      email: '',
+      role: '',
+      message: ''
+    });
+    
+    // Show success message (you could add a toast notification here)
+    alert('Thank you for your message! Your email client should open with a pre-filled message to info@ispora.com');
   };
 
   const contactMethods = [
@@ -47,7 +73,7 @@ export function ContactPage({ onPageChange }: ContactPageProps) {
       icon: <Mail className="h-6 w-6" />,
       title: 'Email Us',
       description: 'General inquiries and support',
-      value: 'hello@ispora.org',
+      value: 'info@ispora.com',
       badge: { text: '24h response', color: 'bg-green-100 text-green-800' }
     },
     {

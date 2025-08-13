@@ -249,7 +249,7 @@ export function Footer({ onPageChange }: FooterProps) {
               <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Mail className="h-4 w-4 text-primary" />
               </div>
-              <span className="text-muted-foreground">hello@ispora.com</span>
+              <span className="text-muted-foreground">info@ispora.com</span>
             </div>
             
             <div className="flex items-center justify-center md:justify-start space-x-3">
