@@ -110,7 +110,7 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
               </motion.div>
               <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
                 Building Bridges,
-                <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent"> Creating Global Futures</span>
+                <span className="text-primary"> Creating Global Futures</span>
               </h1>
               <p className="mt-6 text-lg leading-8 text-muted-foreground">
                 iSpora was born from a simple belief: that diaspora professionals worldwide, combined with the ambition of talent everywhere, can transform entire communities and create lasting global impact.
