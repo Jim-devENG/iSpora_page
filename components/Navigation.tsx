@@ -3,6 +3,7 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { motion } from 'motion/react';
 import { useTheme } from './ThemeProvider';
+import { Logo } from './Logo';
 import { 
   Menu, 
   X, 
@@ -52,56 +53,11 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <motion.div 
-            className="flex items-center cursor-pointer"
+          <Logo 
+            size="md" 
+            showText={false}
             onClick={() => onPageChange('home')}
-            whileHover={safeAnimate({ scale: 1.05 })}
-            whileTap={safeAnimate({ scale: 0.95 })}
-          >
-            <motion.div 
-              className="relative h-10 w-10 rounded-lg bg-gradient-to-r from-primary to-secondary flex items-center justify-center mr-3 overflow-hidden"
-              animate={safeAnimate({ 
-                rotate: [0, 5, 0],
-                boxShadow: [
-                  "0 0 20px rgba(59, 130, 246, 0.3)",
-                  "0 0 40px rgba(59, 130, 246, 0.5)",
-                  "0 0 20px rgba(59, 130, 246, 0.3)"
-                ]
-              })}
-              transition={safeTransition({ duration: 3, repeat: 999999, ease: "easeInOut" })}
-              whileHover={safeAnimate({ 
-                scale: 1.1,
-                rotate: 180,
-                transition: safeTransition({ duration: 0.5 })
-              })}
-            >
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-secondary/30 to-accent/30 opacity-0"
-                whileHover={safeAnimate({ opacity: 1 })}
-                transition={safeTransition({ duration: 0.3 })}
-              />
-              <Globe className="h-6 w-6 text-white relative z-10" />
-              <motion.div
-                className="absolute inset-0 rounded-lg"
-                animate={safeAnimate({
-                  background: [
-                    "linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent)",
-                    "linear-gradient(225deg, transparent, rgba(255,255,255,0.1), transparent)",
-                    "linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent)"
-                  ]
-                })}
-                transition={safeTransition({ duration: 2, repeat: 999999 })}
-              />
-            </motion.div>
-            <div>
-              <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                iSpora
-              </span>
-              <Badge variant="secondary" className="ml-2 text-xs">
-                The Impact Engine
-              </Badge>
-            </div>
-          </motion.div>
+          />
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
