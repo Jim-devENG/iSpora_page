@@ -66,7 +66,7 @@ export function ParticleSystem({
     };
 
     // Only animate when visible for better performance
-    let interval: NodeJS.Timeout;
+    let interval: number;
     if (isVisible) {
       interval = setInterval(animateParticles, 100);
     }

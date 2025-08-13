@@ -1,6 +1,7 @@
 import * as React from "react";
 import { motion } from "motion/react";
 import { cn } from "./utils";
+import { safeAnimate, safeTransition } from "../utils/animationUtils";
 
 interface EnhancedCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
