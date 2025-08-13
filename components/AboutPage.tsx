@@ -464,35 +464,13 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
             {timelineData.map((item, index) => (
               <motion.div 
                 key={index} 
-                className="flex items-center space-x-8"
+                className="flex items-center"
                 variants={itemVariants}
               >
-                <div className="flex-shrink-0">
-                  <motion.div 
-                    className="h-16 w-16 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg relative"
-                    whileHover={safeAnimate({ scale: 1.1 })}
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.1, type: "spring", stiffness: 200 }}
-                  >
-                    {item.year}
-                    <motion.div
-                      className="absolute inset-0 rounded-full border-2 border-primary"
-                      initial={{ scale: 1, opacity: 1 }}
-                      animate={safeAnimate({ scale: 1.5, opacity: 0 })}
-                      transition={safeTransition({ 
-                        duration: 2, 
-                        repeat: 999999,
-                        delay: index * 0.5
-                      })}
-                    />
-                  </motion.div>
-                </div>
                 <motion.div 
                   className="rounded-lg border bg-card text-card-foreground shadow-sm flex-1"
-                                  whileHover={safeAnimate({ x: 10, scale: 1.02 })}
-                transition={safeTransition({ type: "spring", stiffness: 300 })}
+                  whileHover={safeAnimate({ x: 10, scale: 1.02 })}
+                  transition={safeTransition({ type: "spring", stiffness: 300 })}
                 >
                   <div className="flex flex-col space-y-1.5 p-6">
                     <div className="flex items-center justify-between">
