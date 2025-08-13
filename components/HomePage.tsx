@@ -334,7 +334,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
       </section>
 
       {/* Impact Areas */}
-      <section className="py-20 bg-background">
+      <section className="py-20 bg-background/50 dark:bg-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div 
             className="text-center mb-16"
@@ -692,7 +692,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
       </section>
 
       {/* Join the Movement */}
-      <section className="py-24 sm:py-32 bg-gradient-to-r from-primary via-secondary to-accent dark:bg-gradient-to-r dark:from-primary dark:via-secondary dark:to-accent bg-white">
+      <section className="py-24 sm:py-32 bg-gradient-to-r from-primary via-secondary to-accent">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial="hidden"
@@ -708,14 +708,14 @@ export function HomePage({ onPageChange }: HomePageProps) {
             </motion.div>
             
             <motion.h2 
-              className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl"
+              className="text-4xl font-bold tracking-tight text-white sm:text-5xl"
               variants={itemVariants}
             >
               Be Part of Global Transformation
             </motion.h2>
             
             <motion.p 
-              className="mt-6 text-xl text-muted-foreground max-w-3xl mx-auto"
+              className="mt-6 text-xl text-white/90 max-w-3xl mx-auto"
               variants={itemVariants}
             >
               Whether you're a diaspora professional anywhere in the world looking to contribute or a local organization seeking global partnerships, join us in creating meaningful change across all continents.
@@ -736,7 +736,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
               </motion.button>
               
               <motion.button 
-                className="inline-flex items-center justify-center h-12 px-8 py-4 rounded-full text-lg font-medium border border-border text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                className="inline-flex items-center justify-center h-12 px-8 py-4 rounded-full text-lg font-medium border border-white/20 text-white hover:bg-white hover:text-primary transition-colors"
                 whileHover={safeAnimate({ scale: 1.05 })}
                 whileTap={safeAnimate({ scale: 0.95 })}
                 onClick={() => onPageChange('about')}
