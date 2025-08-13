@@ -132,10 +132,10 @@ Sent from iSpora website contact form
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg">
+              <div className="absolute -bottom-6 -left-6 bg-background border border-border p-4 rounded-xl shadow-lg">
                 <div className="flex items-center space-x-2">
                   <div className="h-3 w-3 bg-blue-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium">Always Here to Help</span>
+                  <span className="text-sm font-medium text-foreground">Always Here to Help</span>
                 </div>
               </div>
             </div>
@@ -144,7 +144,7 @@ Sent from iSpora website contact form
       </section>
 
       {/* Contact Methods */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {contactMethods.map((method, index) => (
@@ -154,9 +154,9 @@ Sent from iSpora website contact form
                     {method.icon}
                   </div>
                 </div>
-                <h3 className="font-semibold mb-2">{method.title}</h3>
+                <h3 className="font-semibold mb-2 text-foreground">{method.title}</h3>
                 <p className="text-sm text-muted-foreground mb-3">{method.description}</p>
-                <p className="font-medium text-sm mb-3">{method.value}</p>
+                <p className="font-medium text-sm mb-3 text-foreground">{method.value}</p>
                 <Badge className={method.badge.color}>{method.badge.text}</Badge>
               </Card>
             ))}
@@ -188,7 +188,7 @@ Sent from iSpora website contact form
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium mb-2">Name *</label>
+                        <label className="block text-sm font-medium mb-2 text-foreground">Name *</label>
                         <Input
                           value={formData.name}
                           onChange={(e) => handleInputChange('name', e.target.value)}
@@ -197,7 +197,7 @@ Sent from iSpora website contact form
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2">Email *</label>
+                        <label className="block text-sm font-medium mb-2 text-foreground">Email *</label>
                         <Input
                           type="email"
                           value={formData.email}
@@ -208,7 +208,7 @@ Sent from iSpora website contact form
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">I am a... *</label>
+                      <label className="block text-sm font-medium mb-2 text-foreground">I am a... *</label>
                       <Select value={formData.role} onValueChange={(value) => handleInputChange('role', value)}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select your role" />
@@ -225,7 +225,7 @@ Sent from iSpora website contact form
                       </Select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Message *</label>
+                      <label className="block text-sm font-medium mb-2 text-foreground">Message *</label>
                       <Textarea
                         value={formData.message}
                         onChange={(e) => handleInputChange('message', e.target.value)}
