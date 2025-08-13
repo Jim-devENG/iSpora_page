@@ -25,7 +25,7 @@ import {
   Earth
 } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { aboutValues, teamMembers, timelineData, statsData } from './data/aboutData';
+import { aboutValues, timelineData, statsData } from './data/aboutData';
 import { safeAnimate, safeTransition } from './utils/animationUtils';
 
 interface AboutPageProps {
@@ -428,80 +428,7 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
         </div>
       </section>
 
-      {/* Enhanced Team Section */}
-      <section className="py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            className="text-center mb-16"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-          >
-            <motion.h2 
-              className="text-3xl font-bold tracking-tight sm:text-4xl"
-              variants={itemVariants}
-            >
-              Meet Our Global Team
-            </motion.h2>
-            <motion.p 
-              className="mt-4 text-lg text-muted-foreground"
-              variants={itemVariants}
-            >
-              Passionate individuals dedicated to creating impact across borders and continents
-            </motion.p>
-          </motion.div>
-          
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-          >
-            {teamMembers.map((member, index) => (
-              <motion.div key={index} variants={itemVariants}>
-                <motion.div 
-                  className="rounded-lg border bg-card text-card-foreground shadow-sm text-center overflow-hidden"
-                  whileHover={safeAnimate({ y: -5, scale: 1.02 })}
-                  transition={safeTransition({ type: "spring", stiffness: 300 })}
-                >
-                  <div className="flex flex-col space-y-1.5 p-6">
-                    <motion.div
-                      whileHover={safeAnimate({ scale: 1.1, rotate: 5 })}
-                      transition={safeTransition({ type: "spring", stiffness: 300 })}
-                    >
-                      <Avatar className="h-20 w-20 mx-auto mb-4">
-                        <AvatarImage src={member.image} alt={member.name} />
-                        <AvatarFallback className="bg-gradient-to-r from-primary to-secondary text-white">
-                          {member.initials}
-                        </AvatarFallback>
-                      </Avatar>
-                    </motion.div>
-                    <h3 className="text-lg font-semibold leading-none tracking-tight">{member.name}</h3>
-                    <p className="text-sm text-muted-foreground">{member.role}</p>
-                  </div>
-                  <div className="p-6 pt-0">
-                    <p className="text-sm text-muted-foreground mb-4">{member.bio}</p>
-                    <div className="flex justify-center space-x-2">
-                      <motion.div whileHover={safeAnimate({ scale: 1.2 })} whileTap={safeAnimate({ scale: 0.9 })}>
-                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
-                          <Linkedin className="h-4 w-4" />
-                        </Button>
-                      </motion.div>
-                      <motion.div whileHover={safeAnimate({ scale: 1.2 })} whileTap={safeAnimate({ scale: 0.9 })}>
-                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
-                          <Mail className="h-4 w-4" />
-                        </Button>
-                      </motion.div>
-                    </div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+
 
       {/* Enhanced Timeline */}
       <section className="py-24 sm:py-32 bg-muted/50">
