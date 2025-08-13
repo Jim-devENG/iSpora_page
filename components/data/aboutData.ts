@@ -49,7 +49,7 @@ export const teamMembers = [
 
 export const timelineData = [
   {
-    year: "2024",
+    year: "2025",
     title: "Global Vision Born",
     milestone: "Foundation",
     description: "iSpora was founded with a vision to connect diaspora professionals worldwide with talent globally, creating a truly universal impact engine."

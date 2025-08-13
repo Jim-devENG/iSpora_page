@@ -280,7 +280,7 @@ export function Footer({ onPageChange }: FooterProps) {
             className="flex items-center space-x-2 mb-4 md:mb-0"
             variants={itemVariants}
           >
-            <span className="text-muted-foreground">© 2024 iSpora. Built with</span>
+                            <span className="text-muted-foreground">© 2025 iSpora. Built with</span>
             <motion.div
               animate={safeAnimate({ scale: [1, 1.2, 1] })}
               transition={safeTransition({ duration: 2, repeat: 999999, ease: "easeInOut" })}
