@@ -24,16 +24,7 @@ export function Logo({ size = 'md', showText = true, className = '', onClick }: 
       whileTap={safeAnimate({ scale: 0.95 })}
     >
       <motion.div 
-        className="relative overflow-hidden"
-        animate={safeAnimate({ 
-          rotate: [0, 2, 0],
-          boxShadow: [
-            "0 0 20px rgba(59, 130, 246, 0.3)",
-            "0 0 40px rgba(59, 130, 246, 0.5)",
-            "0 0 20px rgba(59, 130, 246, 0.3)"
-          ]
-        })}
-        transition={safeTransition({ duration: 3, repeat: 999999, ease: "easeInOut" })}
+        className="relative"
         whileHover={safeAnimate({ 
           scale: 1.1,
           transition: safeTransition({ duration: 0.3 })
@@ -43,17 +34,6 @@ export function Logo({ size = 'md', showText = true, className = '', onClick }: 
           src="/logo.svg" 
           alt="iSpora Logo" 
           className={sizeClasses[size]}
-        />
-        <motion.div
-          className="absolute inset-0 rounded-lg"
-          animate={safeAnimate({
-            background: [
-              "linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent)",
-              "linear-gradient(225deg, transparent, rgba(255,255,255,0.1), transparent)",
-              "linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent)"
-            ]
-          })}
-          transition={safeTransition({ duration: 2, repeat: 999999 })}
         />
       </motion.div>
       {showText && (
