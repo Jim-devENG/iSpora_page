@@ -67,10 +67,10 @@ export function Footer({ onPageChange }: FooterProps) {
   ];
 
   const socialLinks = [
-    { icon: <Twitter className="h-5 w-5" />, href: '#', label: 'Twitter' },
-    { icon: <Linkedin className="h-5 w-5" />, href: '#', label: 'LinkedIn' },
-    { icon: <Instagram className="h-5 w-5" />, href: '#', label: 'Instagram' },
-    { icon: <Facebook className="h-5 w-5" />, href: '#', label: 'Facebook' }
+    { icon: <Twitter className="h-5 w-5" />, href: 'https://x.com/ispora_', label: 'Twitter' },
+    { icon: <Linkedin className="h-5 w-5" />, href: 'https://www.linkedin.com/company/ispora/', label: 'LinkedIn' },
+    { icon: <Instagram className="h-5 w-5" />, href: 'https://www.instagram.com/ispora_official/', label: 'Instagram' },
+    { icon: <Facebook className="h-5 w-5" />, href: 'https://www.facebook.com/profile.php?id=61578588581183', label: 'Facebook' }
   ];
 
   const containerVariants = {

@@ -90,7 +90,7 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 py-24 sm:py-32">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(30,58,138,0.1),transparent)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent)] pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(14,165,233,0.1),transparent)] pointer-events-none" />
         
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -409,7 +409,7 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
                         whileHover={safeAnimate({ 
                           scale: 1.2, 
                           rotate: [0, 10, -10, 0],
-                          backgroundColor: ["#1e3a8a", "#0ea5e9", "#1e3a8a"]
+                          backgroundColor: ["#3b82f6", "#0ea5e9", "#3b82f6"]
                         })}
                         transition={safeTransition({ duration: 0.6 })}
                       >

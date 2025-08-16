@@ -226,7 +226,7 @@ export function GlitchText({ text, className = "", intensity = "medium" }: Glitc
       </motion.span>
       
       <motion.span
-        className="absolute inset-0 text-blue-500 opacity-70"
+                        className="absolute inset-0 text-primary opacity-70"
         animate={safeAnimate({
           x: [0, settings.amplitude, -settings.amplitude, 0],
           opacity: [0, 0.7, 0, 0]

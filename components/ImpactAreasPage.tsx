@@ -57,7 +57,7 @@ export function ImpactAreasPage({ onPageChange }: ImpactAreasPageProps) {
       title: 'Education & Career Development',
       description: 'Mentorship, skills development, and learning opportunities for global professionals.',
       icon: <GraduationCap className="h-8 w-8" />,
-      color: 'from-blue-500 to-cyan-500',
+      color: 'from-primary to-secondary',
       features: ['Professional Mentorship', 'Skills Training', 'Learning Resources', 'Career Guidance'],
       examples: ['Online courses', 'Mentorship programs', 'Skill workshops', 'Career counseling']
     },
@@ -111,7 +111,7 @@ export function ImpactAreasPage({ onPageChange }: ImpactAreasPageProps) {
       title: 'Faith & Values-Based Impact',
       description: 'Faith-inspired community development and values-based initiatives.',
       icon: <Church className="h-8 w-8" />,
-      color: 'from-indigo-500 to-blue-500',
+      color: 'from-primary to-secondary',
       features: ['Faith-Based Programs', 'Values Education', 'Community Building', 'Spiritual Development'],
       examples: ['Faith communities', 'Values workshops', 'Community building', 'Spiritual guidance']
     },
@@ -132,7 +132,7 @@ export function ImpactAreasPage({ onPageChange }: ImpactAreasPageProps) {
       description: 'Join our global Telegram community for real-time discussions and updates',
       icon: <MessageCircle className="h-6 w-6" />,
       link: '#',
-      color: 'from-blue-500 to-cyan-500'
+      color: 'from-primary to-secondary'
     },
     {
       name: 'WhatsApp Groups',
@@ -149,7 +149,7 @@ export function ImpactAreasPage({ onPageChange }: ImpactAreasPageProps) {
       <section className="relative overflow-hidden py-24 sm:py-32">
         {/* Background Elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(30,58,138,0.1),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(14,165,233,0.1),transparent)]" />
         
         {/* Floating Elements */}

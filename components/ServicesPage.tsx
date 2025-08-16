@@ -35,7 +35,7 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
       icon: <Heart className="h-8 w-8" />,
       title: 'Mentorship & Coaching',
       description: 'Connecting experienced diaspora professionals worldwide with ambitious talent globally for personalized guidance and career development.',
-      image: 'https://images.unsplash.com/photo-1573497491208-6b1acb260507?w=600&h=400&fit=crop',
+      image: '/Mentorship.jpg',
       features: [
         'One-on-one global mentorship sessions',
         'Cross-border career guidance and planning',
@@ -48,7 +48,7 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
       icon: <BookOpen className="h-8 w-8" />,
       title: 'Academic & Research Projects',
       description: 'Supporting educational initiatives and research collaborations that advance knowledge and create practical solutions across multiple continents.',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop',
+      image: '/academy.jpg',
       features: [
         'International research project collaboration',
         'Global academic exchange programs',
@@ -61,7 +61,7 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
       icon: <TrendingUp className="h-8 w-8" />,
       title: 'Career & Entrepreneurship',
       description: 'Fostering entrepreneurial spirit and providing resources for career advancement and business development across global markets.',
-      image: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&h=400&fit=crop',
+      image: '/Career.jpg',
       features: [
         'Global startup incubation support',
         'International business plan development',
@@ -74,7 +74,7 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
       icon: <Users className="h-8 w-8" />,
       title: 'Community Impact Projects',
       description: 'Implementing projects that create lasting positive change in communities worldwide through collaborative efforts spanning multiple countries.',
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&h=400&fit=crop',
+      image: '/communinty.jpg',
       features: [
         'Global community needs assessment',
         'International sustainable development projects',
@@ -87,7 +87,7 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
       icon: <Lightbulb className="h-8 w-8" />,
       title: 'Collaboration & Innovation',
       description: 'Facilitating innovative partnerships and cross-border collaborations to solve complex global challenges through diverse perspectives.',
-      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop',
+      image: '/Collaboration.jpg',
       features: [
         'Global innovation workshops',
         'International cross-border partnerships',
@@ -156,7 +156,7 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 py-24 sm:py-32">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(30,58,138,0.1),transparent)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent)] pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(14,165,233,0.1),transparent)] pointer-events-none" />
         
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

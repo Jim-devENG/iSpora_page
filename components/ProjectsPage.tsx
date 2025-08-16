@@ -199,7 +199,7 @@ export function ProjectsPage({ onPageChange }: ProjectsPageProps) {
       case 'Planning':
         return 'bg-yellow-100 text-yellow-800';
       case 'Recruiting':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-primary/10 text-primary';
       case 'Active':
         return 'bg-green-100 text-green-800';
       case 'Completed':
@@ -365,7 +365,7 @@ export function ProjectsPage({ onPageChange }: ProjectsPageProps) {
                         )}
                         {project.mentorsNeeded > 0 && (
                           <div className="text-sm">
-                            <span className="text-blue-600 font-medium">{project.mentorsNeeded} mentors</span> needed
+                            <span className="text-primary font-medium">{project.mentorsNeeded} mentors</span> needed
                           </div>
                         )}
                       </div>

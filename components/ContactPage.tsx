@@ -81,7 +81,7 @@ Sent from iSpora website contact form
       title: 'Live Chat',
       description: 'Real-time support during business hours',
       value: 'Start Chat',
-      badge: { text: 'Mon-Fri 9AM-6PM', color: 'bg-blue-100 text-blue-800' }
+      badge: { text: 'Mon-Fri 9AM-6PM', color: 'bg-primary/10 text-primary' }
     },
     {
       icon: <Globe className="h-6 w-6" />,
@@ -127,14 +127,14 @@ Sent from iSpora website contact form
             <div className="relative">
               <div className="aspect-square rounded-2xl overflow-hidden">
                 <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=500&h=500&fit=crop"
-                  alt="Team discussion and collaboration"
+                  src="/conference.jpg"
+                  alt="Conference and collaboration meeting"
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="absolute -bottom-6 -left-6 bg-background border border-border p-4 rounded-xl shadow-lg">
                 <div className="flex items-center space-x-2">
-                  <div className="h-3 w-3 bg-blue-500 rounded-full animate-pulse"></div>
+                  <div className="h-3 w-3 bg-primary rounded-full animate-pulse"></div>
                   <span className="text-sm font-medium text-foreground">Always Here to Help</span>
                 </div>
               </div>
@@ -269,11 +269,11 @@ Sent from iSpora website contact form
                     <span className="text-sm text-muted-foreground">Sunday</span>
                     <span className="text-sm font-medium">Closed</span>
                   </div>
-                  <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                    <p className="text-xs text-blue-800">
-                      <strong>Email support</strong> is available 24/7 with responses within 24 hours
-                    </p>
-                  </div>
+                                     <div className="mt-4 p-3 bg-primary/10 rounded-lg">
+                     <p className="text-xs text-primary">
+                       <strong>Email support</strong> is available 24/7 with responses within 24 hours
+                     </p>
+                   </div>
                 </CardContent>
               </Card>
 
@@ -353,27 +353,7 @@ Sent from iSpora website contact form
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24 sm:py-32 bg-gradient-to-r from-primary to-secondary">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Ready to Start Your Journey?
-          </h2>
-          <p className="mt-6 text-lg text-white/90 max-w-2xl mx-auto">
-            Join thousands of diaspora professionals and youth who are already creating positive change across Africa.
-          </p>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" variant="secondary" onClick={() => onPageChange('youth')}>
-              <Users className="mr-2 h-5 w-5" />
-              Join as Youth (Free)
-            </Button>
-            <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary" onClick={() => onPageChange('diasporans')}>
-              <Globe className="mr-2 h-5 w-5" />
-              Start as Diaspora
-            </Button>
-          </div>
-        </div>
-      </section>
+
     </div>
   );
 }

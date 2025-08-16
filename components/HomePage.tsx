@@ -166,7 +166,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
           <ParticleSystem particleCount={60} className="opacity-40" />
           <FloatingShapes />
         </AnimationErrorBoundary>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(30,58,138,0.1),transparent)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent)] pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(14,165,233,0.1),transparent)] pointer-events-none" />
         
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -367,48 +367,42 @@ export function HomePage({ onPageChange }: HomePageProps) {
             {impactAreas.map((area, index) => (
               <motion.div key={index} variants={itemVariants}>
                 <motion.div 
-                  className="relative rounded-lg border bg-card text-card-foreground shadow-sm text-center h-full overflow-hidden group cursor-pointer"
+                  className="relative rounded-lg border bg-card text-card-foreground shadow-sm text-center h-full overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow"
                   whileHover={safeAnimate({ 
-                    y: -10, 
-                    scale: 1.03,
-                    rotateY: 5,
-                    rotateX: 5,
-                    boxShadow: "0 25px 50px rgba(0,0,0,0.1)"
+                    y: -5, 
+                    scale: 1.02,
+                    boxShadow: "0 10px 25px rgba(0,0,0,0.1)"
                   })}
-                  transition={safeTransition({ type: "spring", stiffness: 400, damping: 25 })}
-                  style={{ 
-                    perspective: "1000px",
-                    transformStyle: "preserve-3d"
-                  }}
+                  transition={safeTransition({ type: "spring", stiffness: 300, damping: 20 })}
                 >
-                  {/* Shimmer effect overlay */}
+                  {/* Subtle shimmer effect overlay */}
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100"
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 group-hover:opacity-100"
                     initial={{ x: "-100%" }}
                     whileHover={safeAnimate({ x: "100%" as any })}
                     transition={safeTransition({ duration: 0.6 })}
                   />
                   
-                  {/* Gradient border glow */}
+                  {/* Subtle border glow */}
                   <motion.div
-                    className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary via-secondary to-accent opacity-0 group-hover:opacity-20 blur-xl"
-                    whileHover={safeAnimate({ scale: 1.1 })}
+                    className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 opacity-0 group-hover:opacity-100 blur-xl"
+                    whileHover={safeAnimate({ scale: 1.05 })}
                     transition={safeTransition({ duration: 0.3 })}
                   />
                   
                   <div className="relative flex flex-col space-y-1.5 p-6 z-10">
                     <motion.div 
-                      className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 text-primary relative overflow-hidden"
+                      className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary relative overflow-hidden border border-primary/20"
                       whileHover={safeAnimate({ 
-                        scale: 1.2, 
-                        rotate: 10,
-                        boxShadow: "0 10px 25px rgba(59, 130, 246, 0.3)"
+                        scale: 1.1, 
+                        rotate: 5,
+                        boxShadow: "0 8px 20px rgba(var(--primary), 0.2)"
                       })}
                       transition={safeTransition({ type: "spring", stiffness: 400 })}
                     >
                       <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-0"
-                        whileHover={safeAnimate({ opacity: 0.1 })}
+                        className="absolute inset-0 bg-primary/5 opacity-0"
+                        whileHover={safeAnimate({ opacity: 1 })}
                         transition={safeTransition({ duration: 0.3 })}
                       />
                       <motion.div className="relative z-10">

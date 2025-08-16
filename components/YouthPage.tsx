@@ -132,7 +132,7 @@ export function YouthPage({ onPageChange }: YouthPageProps) {
       points: 50,
       description: 'Master a new skill',
       badge: 'Learner',
-      color: 'bg-blue-100 text-blue-800'
+      color: 'bg-primary/10 text-primary'
     },
     {
       category: 'Community Contribution',
