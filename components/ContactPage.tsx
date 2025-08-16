@@ -36,36 +36,45 @@ export function ContactPage({ onPageChange }: ContactPageProps) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [submitStatus, setSubmitStatus] = React.useState<'idle' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Create mailto link with form data
-    const subject = encodeURIComponent(`Contact from ${formData.name} - ${formData.role}`);
-    const body = encodeURIComponent(`
-Name: ${formData.name}
-Email: ${formData.email}
-Role: ${formData.role}
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
 
-Message:
-${formData.message}
+    try {
+             const response = await fetch('https://formspree.io/f/meozdbrv', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          role: formData.role,
+          message: formData.message,
+          _subject: `Contact from ${formData.name} - ${formData.role}`,
+        }),
+      });
 
----
-Sent from iSpora website contact form
-    `);
-    
-    // Open default email client
-    window.open(`mailto:info@ispora.com?subject=${subject}&body=${body}`);
-    
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      role: '',
-      message: ''
-    });
-    
-    // Show success message (you could add a toast notification here)
-    alert('Thank you for your message! Your email client should open with a pre-filled message to info@ispora.com');
+      if (response.ok) {
+        setSubmitStatus('success');
+        setFormData({
+          name: '',
+          email: '',
+          role: '',
+          message: ''
+        });
+      } else {
+        setSubmitStatus('error');
+      }
+    } catch (error) {
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactMethods = [
@@ -234,14 +243,55 @@ Sent from iSpora website contact form
                         required
                       />
                     </div>
-                    <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                      <CheckCircle className="h-4 w-4" />
-                      <span>We respect your privacy and will never share your information</span>
-                    </div>
-                    <Button type="submit" className="w-full" size="lg">
-                      <Send className="mr-2 h-4 w-4" />
-                      Send Message
-                    </Button>
+                                         <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                       <CheckCircle className="h-4 w-4" />
+                       <span>We respect your privacy and will never share your information</span>
+                     </div>
+                     
+                     {/* Status Messages */}
+                     {submitStatus === 'success' && (
+                       <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                         <div className="flex items-center space-x-2">
+                           <CheckCircle className="h-5 w-5 text-green-600" />
+                           <span className="text-green-800 font-medium">Message sent successfully!</span>
+                         </div>
+                         <p className="text-green-700 text-sm mt-1">We'll get back to you within 24 hours.</p>
+                       </div>
+                     )}
+                     
+                     {submitStatus === 'error' && (
+                       <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                         <div className="flex items-center space-x-2">
+                           <svg className="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                           </svg>
+                           <span className="text-red-800 font-medium">Failed to send message</span>
+                         </div>
+                         <p className="text-red-700 text-sm mt-1">Please try again or contact us directly at info@ispora.com</p>
+                       </div>
+                     )}
+                     
+                     <Button 
+                       type="submit" 
+                       className="w-full" 
+                       size="lg"
+                       disabled={isSubmitting}
+                     >
+                       {isSubmitting ? (
+                         <>
+                           <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                           </svg>
+                           Sending...
+                         </>
+                       ) : (
+                         <>
+                           <Send className="mr-2 h-4 w-4" />
+                           Send Message
+                         </>
+                       )}
+                     </Button>
                   </form>
                 </CardContent>
               </Card>
