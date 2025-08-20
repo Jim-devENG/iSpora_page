@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { connectToDatabase } from '../api/_lib/mongodb';
-import { Registration } from '../api/models/Registration';
+import { connectToDatabase } from '../_lib/mongodb';
+import { Registration } from '../models/Registration';
 
 export default async function handler(_req: VercelRequest, res: VercelResponse) {
   try {
