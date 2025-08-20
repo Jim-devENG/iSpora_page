@@ -20,66 +20,40 @@ export interface RegistrationData {
   status: 'active' | 'pending' | 'verified';
 }
 
-// In-memory storage for demo purposes
-let registrations: RegistrationData[] = [
-  {
-    id: '1',
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    whatsapp: '+1234567890',
-    countryOfOrigin: 'Nigeria',
-    countryOfResidence: 'United States',
-    ipAddress: '192.168.1.1',
-    location: {
-      country: 'United States',
-      city: 'New York',
-      region: 'NY',
-      latitude: 40.7128,
-      longitude: -74.0060
-    },
-    timestamp: new Date().toISOString(),
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-    status: 'active'
-  },
-  {
-    id: '2',
-    name: 'Jane Smith',
-    email: 'jane.smith@example.com',
-    whatsapp: '+1987654321',
-    countryOfOrigin: 'Ghana',
-    countryOfResidence: 'United Kingdom',
-    ipAddress: '192.168.1.2',
-    location: {
-      country: 'United Kingdom',
-      city: 'London',
-      region: 'England',
-      latitude: 51.5074,
-      longitude: -0.1278
-    },
-    timestamp: new Date(Date.now() - 86400000).toISOString(),
-    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-    status: 'verified'
-  },
-  {
-    id: '3',
-    name: 'Mike Johnson',
-    email: 'mike.johnson@example.com',
-    whatsapp: '+1122334455',
-    countryOfOrigin: 'Kenya',
-    countryOfResidence: 'Canada',
-    ipAddress: '192.168.1.3',
-    location: {
-      country: 'Canada',
-      city: 'Toronto',
-      region: 'ON',
-      latitude: 43.6532,
-      longitude: -79.3832
-    },
-    timestamp: new Date(Date.now() - 172800000).toISOString(),
-    userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36',
-    status: 'pending'
-  }
-];
+// In-memory storage for demo purposes (start empty; load from localStorage if present)
+const stored = typeof window !== 'undefined' ? localStorage.getItem('registrations') : null;
+let registrations: RegistrationData[] = stored ? JSON.parse(stored) : [];
+
+// Simple pub/sub for real-time updates within the SPA
+const listeners: Array<() => void> = [];
+const notify = () => {
+  listeners.forEach((fn) => {
+    try { fn(); } catch {}
+  });
+  // Broadcast to other tabs/windows
+  try {
+    const channel = new BroadcastChannel('registrations');
+    channel.postMessage({ type: 'update' });
+    channel.close();
+  } catch {}
+};
+
+export const subscribeToRegistrations = (callback: () => void) => {
+  listeners.push(callback);
+  // Listen to cross-tab updates
+  let channel: BroadcastChannel | null = null;
+  try {
+    channel = new BroadcastChannel('registrations');
+    channel.onmessage = () => callback();
+  } catch {}
+  return () => {
+    const idx = listeners.indexOf(callback);
+    if (idx >= 0) listeners.splice(idx, 1);
+    if (channel) {
+      try { channel.close(); } catch {}
+    }
+  };
+};
 
 // Simulate API delay
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -103,6 +77,7 @@ export const registrationService = {
     
     // Store in localStorage for persistence across page reloads
     localStorage.setItem('registrations', JSON.stringify(registrations));
+    notify();
     
     return newRegistration;
   },
@@ -137,6 +112,7 @@ export const registrationService = {
     
     registration.status = status;
     localStorage.setItem('registrations', JSON.stringify(registrations));
+    notify();
     
     return registration;
   },
@@ -147,6 +123,7 @@ export const registrationService = {
     
     registrations = registrations.filter(r => r.id !== id);
     localStorage.setItem('registrations', JSON.stringify(registrations));
+    notify();
   },
 
   // Get dashboard statistics

@@ -72,21 +72,27 @@ export function AdminDashboard() {
   const [selectedRegistration, setSelectedRegistration] = useState<RegistrationData | null>(null);
   const [showDetails, setShowDetails] = useState(false);
 
-  // Fetch data from registration service
+  // Fetch data and subscribe to real-time updates
   useEffect(() => {
+    let unsubscribe: (() => void) | null = null;
     const fetchData = async () => {
       try {
-        const { registrationService } = await import('./services/registrationService');
+        const { registrationService, subscribeToRegistrations } = await import('./services/registrationService');
         
-        // Fetch registrations and stats
-        const [registrationsData, statsData] = await Promise.all([
-          registrationService.getRegistrations(),
-          registrationService.getDashboardStats()
-        ]);
-        
-        setRegistrations(registrationsData);
-        setStats(statsData);
+        const load = async () => {
+          const [registrationsData, statsData] = await Promise.all([
+            registrationService.getRegistrations(),
+            registrationService.getDashboardStats()
+          ]);
+          setRegistrations(registrationsData);
+          setStats(statsData);
+        };
 
+        await load();
+        // Subscribe to updates
+        unsubscribe = subscribeToRegistrations(async () => {
+          await load();
+        });
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -95,6 +101,9 @@ export function AdminDashboard() {
     };
 
     fetchData();
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   const filteredRegistrations = registrations.filter(registration => {
@@ -280,7 +289,10 @@ export function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {stats.topCountries.map((item, index) => (
+                {stats.topCountries.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No data yet</p>
+                ) : (
+                  stats.topCountries.map((item, index) => (
                   <div key={item.country} className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
@@ -290,7 +302,8 @@ export function AdminDashboard() {
                     </div>
                     <Badge variant="secondary">{item.count}</Badge>
                   </div>
-                ))}
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>
@@ -305,7 +318,10 @@ export function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {stats.recentActivity.map((activity) => (
+                {stats.recentActivity.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No activity yet</p>
+                ) : (
+                  stats.recentActivity.map((activity) => (
                   <div key={activity.id} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                     <div>
                       <p className="font-medium text-sm">{activity.name}</p>
@@ -320,7 +336,8 @@ export function AdminDashboard() {
                       {getStatusBadge(activity.status)}
                     </div>
                   </div>
-                ))}
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>
@@ -406,7 +423,14 @@ export function AdminDashboard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredRegistrations.map((registration) => (
+                    {filteredRegistrations.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center text-muted-foreground">
+                          No registrations yet
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      filteredRegistrations.map((registration) => (
                       <TableRow key={registration.id}>
                         <TableCell className="font-medium">{registration.name}</TableCell>
                         <TableCell>{registration.email}</TableCell>
@@ -441,7 +465,8 @@ export function AdminDashboard() {
                           </div>
                         </TableCell>
                       </TableRow>
-                    ))}
+                      ))
+                    )}
                   </TableBody>
                 </Table>
               </div>
