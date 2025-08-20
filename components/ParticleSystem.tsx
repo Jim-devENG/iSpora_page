@@ -23,7 +23,7 @@ interface ParticleSystemProps {
 export function ParticleSystem({ 
   particleCount = 50, 
   className = "",
-  colors = ['rgb(59, 130, 246)', 'rgb(14, 165, 233)', 'rgb(251, 191, 36)']
+      colors = ['rgb(0, 51, 204)', 'rgb(144, 164, 231)', 'rgb(251, 191, 36)']
 }: ParticleSystemProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [particles, setParticles] = React.useState<Particle[]>([]);
@@ -122,7 +122,7 @@ export function ParticleSystem({
                   y1={particle.y}
                   x2={otherParticle.x}
                   y2={otherParticle.y}
-                  stroke="rgb(59, 130, 246)"
+                  stroke="rgb(0, 51, 204)"
                   strokeWidth="1"
                   opacity={safeOpacity(0.1 * (1 - distance / 100))}
                   initial={safeAnimate({ pathLength: 0 })}
@@ -188,10 +188,10 @@ export function AnimatedBackground({ className = "" }: { className?: string }) {
       className={`absolute inset-0 ${className}`}
       animate={safeAnimate({
         background: [
-          'radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%)',
-          'radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.1) 0%, transparent 50%)',
+          'radial-gradient(circle at 20% 20%, rgba(0, 51, 204, 0.1) 0%, transparent 50%)',
+          'radial-gradient(circle at 80% 80%, rgba(144, 164, 231, 0.1) 0%, transparent 50%)',
           'radial-gradient(circle at 40% 60%, rgba(251, 191, 36, 0.05) 0%, transparent 50%)',
-          'radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%)',
+          'radial-gradient(circle at 20% 20%, rgba(0, 51, 204, 0.1) 0%, transparent 50%)',
         ],
       })}
       transition={safeTransition({

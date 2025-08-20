@@ -196,8 +196,8 @@ export function MentorshipPage({ onPageChange }: MentorshipPageProps) {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 py-24 sm:py-32">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent)] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(14,165,233,0.1),transparent)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,51,204,0.1),transparent)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(144,164,231,0.1),transparent)] pointer-events-none" />
         
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div 
@@ -308,7 +308,7 @@ export function MentorshipPage({ onPageChange }: MentorshipPageProps) {
                 <svg className="absolute inset-0 w-full h-full">
                   <defs>
                     <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                             <stop offset="0%" style={{ stopColor: 'rgb(59, 130, 246)', stopOpacity: 0.6 }} />
+                                             <stop offset="0%" style={{ stopColor: 'rgb(0, 51, 204)', stopOpacity: 0.6 }} />
                       <stop offset="100%" style={{ stopColor: 'rgb(14, 165, 233)', stopOpacity: 0.6 }} />
                     </linearGradient>
                   </defs>

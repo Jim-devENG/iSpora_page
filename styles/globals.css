@@ -12,13 +12,13 @@
   --card-foreground: 222.2 84% 4.9%;
   --popover: 0 0% 100%;
   --popover-foreground: 222.2 84% 4.9%;
-  --primary: 217.2 91.2% 59.8%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 199.2 89.1% 48.2%;
-  --secondary-foreground: 210 40% 98%;
+  --primary: 220 100% 40%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 67% 67%;
+  --secondary-foreground: 222.2 84% 4.9%;
   --muted: 210 40% 96.1%;
   --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 47.9 95.8% 53.1%;
+  --accent: 220 67% 67%;
   --accent-foreground: 222.2 84% 4.9%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 210 40% 98%;
@@ -28,21 +28,21 @@
   --switch-background: 220 13% 91%;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: 217.2 91.2% 59.8%;
-  --chart-1: 217.2 91.2% 59.8%;
-  --chart-2: 199.2 89.1% 48.2%;
+  --ring: 220 100% 40%;
+  --chart-1: 220 100% 40%;
+  --chart-2: 220 67% 67%;
   --chart-3: 47.9 95.8% 53.1%;
   --chart-4: 158.1 64.4% 52%;
   --chart-5: 262.1 83.3% 57.8%;
   --radius: 0.75rem;
   --sidebar: 210 40% 96.1%;
   --sidebar-foreground: 222.2 84% 4.9%;
-  --sidebar-primary: 217.2 91.2% 59.8%;
-  --sidebar-primary-foreground: 210 40% 98%;
+  --sidebar-primary: 220 100% 40%;
+  --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 210 40% 96.1%;
   --sidebar-accent-foreground: 215.4 16.3% 46.9%;
   --sidebar-border: 214.3 31.8% 91.4%;
-  --sidebar-ring: 217.2 91.2% 59.8%;
+  --sidebar-ring: 220 100% 40%;
 }
 
 .dark {
@@ -52,13 +52,13 @@
   --card-foreground: 210 40% 98%;
   --popover: 222.2 84% 4.9%;
   --popover-foreground: 210 40% 98%;
-  --primary: 217.2 91.2% 59.8%;
-  --primary-foreground: 222.2 84% 4.9%;
-  --secondary: 199.2 89.1% 48.2%;
+  --primary: 220 100% 40%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 67% 67%;
   --secondary-foreground: 222.2 84% 4.9%;
   --muted: 217.2 32.6% 17.5%;
   --muted-foreground: 215 20.2% 65.1%;
-  --accent: 47.9 95.8% 53.1%;
+  --accent: 220 67% 67%;
   --accent-foreground: 222.2 84% 4.9%;
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 210 40% 98%;
@@ -66,22 +66,22 @@
   --input: 217.2 32.6% 17.5%;
   --input-background: 217.2 32.6% 17.5%;
   --switch-background: 217.2 32.6% 17.5%;
-  --ring: 217.2 91.2% 59.8%;
+  --ring: 220 100% 40%;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --chart-1: 217.2 91.2% 59.8%;
-  --chart-2: 199.2 89.1% 48.2%;
+  --chart-1: 220 100% 40%;
+  --chart-2: 220 67% 67%;
   --chart-3: 47.9 95.8% 53.1%;
   --chart-4: 158.1 64.4% 52%;
   --chart-5: 262.1 83.3% 57.8%;
   --sidebar: 222.2 84% 4.9%;
   --sidebar-foreground: 210 40% 98%;
-  --sidebar-primary: 217.2 91.2% 59.8%;
-  --sidebar-primary-foreground: 222.2 84% 4.9%;
+  --sidebar-primary: 220 100% 40%;
+  --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 217.2 32.6% 17.5%;
   --sidebar-accent-foreground: 215 20.2% 65.1%;
   --sidebar-border: 217.2 32.6% 17.5%;
-  --sidebar-ring: 217.2 91.2% 59.8%;
+  --sidebar-ring: 220 100% 40%;
 }
 
 @theme inline {
@@ -331,7 +331,7 @@ html {
 }
 
 .animated-gradient-border {
-  background: linear-gradient(270deg, #3b82f6, #0ea5e9, #fbbf24, #3b82f6);
+  background: linear-gradient(270deg, #0033CC, #90A4E7, #fbbf24, #0033CC);
   background-size: 400% 400%;
   animation: gradient-border 3s ease infinite;
   padding: 2px;
@@ -364,10 +364,10 @@ html {
 /* Pulse glow effect */
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 20px rgba(0, 51, 204, 0.3);
   }
   50% {
-    box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
+    box-shadow: 0 0 40px rgba(0, 51, 204, 0.6);
   }
 }
 
@@ -391,7 +391,7 @@ html {
 
 /* Text gradient effects */
 .text-gradient-primary {
-  background: linear-gradient(135deg, #3b82f6, #0ea5e9, #fbbf24);
+  background: linear-gradient(135deg, #0033CC, #90A4E7, #fbbf24);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -441,27 +441,27 @@ html {
 /* Neon glow text */
 .neon-text {
   text-shadow: 
-    0 0 5px #3b82f6,
-    0 0 10px #3b82f6,
-    0 0 15px #3b82f6,
-    0 0 20px #3b82f6;
+    0 0 5px #0033CC,
+    0 0 10px #0033CC,
+    0 0 15px #0033CC,
+    0 0 20px #0033CC;
   animation: neon-flicker 1.5s infinite alternate;
 }
 
 @keyframes neon-flicker {
   0%, 100% {
     text-shadow: 
-      0 0 5px #3b82f6,
-      0 0 10px #3b82f6,
-      0 0 15px #3b82f6,
-      0 0 20px #3b82f6;
+      0 0 5px #0033CC,
+      0 0 10px #0033CC,
+      0 0 15px #0033CC,
+      0 0 20px #0033CC;
   }
   50% {
     text-shadow: 
-      0 0 2px #3b82f6,
-      0 0 5px #3b82f6,
-      0 0 8px #3b82f6,
-      0 0 12px #3b82f6;
+      0 0 2px #0033CC,
+      0 0 5px #0033CC,
+      0 0 8px #0033CC,
+      0 0 12px #0033CC;
   }
 }
 
@@ -559,12 +559,12 @@ html {
 
 @keyframes blink-caret {
   from, to { border-color: transparent; }
-  50% { border-color: #3b82f6; }
+  50% { border-color: #0033CC; }
 }
 
 .typewriter {
   overflow: hidden;
-  border-right: 2px solid #3b82f6;
+  border-right: 2px solid #0033CC;
   white-space: nowrap;
   animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
 }

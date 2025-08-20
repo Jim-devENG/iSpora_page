@@ -35,6 +35,7 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
     { id: 'about', label: 'About Us', icon: <BookOpen className="h-4 w-4" /> },
     { id: 'services', label: 'What We Do', icon: <Heart className="h-4 w-4" /> },
     { id: 'impact', label: 'Impact Areas', icon: <Target className="h-4 w-4" /> },
+    { id: 'register', label: 'Join Us', icon: <Users className="h-4 w-4" /> },
     { id: 'contact', label: 'Contact', icon: <Phone className="h-4 w-4" /> }
   ];
 
@@ -47,7 +48,7 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
       style={{
         background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
         backdropFilter: 'blur(20px)',
-        borderImage: 'linear-gradient(90deg, transparent, rgba(59,130,246,0.3), transparent) 1',
+        borderImage: 'linear-gradient(90deg, transparent, rgba(0,51,204,0.3), transparent) 1',
       }}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -189,21 +190,6 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
                   <span>{item.label}</span>
                 </motion.button>
               ))}
-              
-              <div className="pt-4 border-t border-border/50">
-                <motion.button
-                  className="inline-flex items-center justify-center rounded-full text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-3 w-full"
-                  whileHover={safeAnimate({ scale: 1.02 })}
-                  whileTap={safeAnimate({ scale: 0.98 })}
-                  onClick={() => {
-                    onPageChange('contact');
-                    setIsMenuOpen(false);
-                  }}
-                >
-                  <Mail className="h-4 w-4 mr-2" />
-                  Get in Touch
-                </motion.button>
-              </div>
             </div>
           </motion.div>
         )}

@@ -60,7 +60,7 @@ export function EnhancedCard({
     },
     glow: {
       y: -3,
-      boxShadow: "0 20px 40px rgba(59, 130, 246, 0.3)",
+              boxShadow: "0 20px 40px rgba(0, 51, 204, 0.3)",
     }
   };
 
@@ -110,11 +110,11 @@ export function EnhancedCard({
       <motion.div
         className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100"
         style={{
-          background: `linear-gradient(135deg, transparent, rgba(59, 130, 246, 0.1), transparent)`,
+          background: `linear-gradient(135deg, transparent, rgba(0, 51, 204, 0.1), transparent)`,
           padding: "1px",
         }}
         whileHover={safeAnimate({ 
-          background: `linear-gradient(135deg, transparent, rgba(59, 130, 246, 0.3), transparent)` 
+          background: `linear-gradient(135deg, transparent, rgba(0, 51, 204, 0.3), transparent)` 
         })}
       />
       

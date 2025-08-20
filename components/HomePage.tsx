@@ -166,8 +166,8 @@ export function HomePage({ onPageChange }: HomePageProps) {
           <ParticleSystem particleCount={60} className="opacity-40" />
           <FloatingShapes />
         </AnimationErrorBoundary>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent)] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(14,165,233,0.1),transparent)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,51,204,0.1),transparent)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(144,164,231,0.1),transparent)] pointer-events-none" />
         
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div 
@@ -246,7 +246,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
                 className="relative inline-flex items-center justify-center h-12 px-8 py-4 rounded-full text-lg font-medium bg-gradient-to-r from-primary to-secondary text-primary-foreground overflow-hidden group"
                 whileHover={safeAnimate({ 
                   scale: 1.05,
-                  boxShadow: "0 20px 40px rgba(59, 130, 246, 0.3)"
+                  boxShadow: "0 20px 40px rgba(0, 51, 204, 0.3)"
                 })}
                 whileTap={safeAnimate({ scale: 0.95 })}
                 onClick={() => onPageChange('contact')}
@@ -286,8 +286,8 @@ export function HomePage({ onPageChange }: HomePageProps) {
                 className="relative inline-flex items-center justify-center h-12 px-8 py-4 rounded-full text-lg font-medium border-2 border-primary/20 bg-background/50 backdrop-blur-sm overflow-hidden group"
                 whileHover={safeAnimate({ 
                   scale: 1.05,
-                  borderColor: "rgba(59, 130, 246, 0.5)",
-                  backgroundColor: "rgba(59, 130, 246, 0.05)"
+                                  borderColor: "rgba(0, 51, 204, 0.5)",
+                backgroundColor: "rgba(0, 51, 204, 0.05)"
                 })}
                 whileTap={safeAnimate({ scale: 0.95 })}
                 onClick={() => onPageChange('about')}

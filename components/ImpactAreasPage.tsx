@@ -149,8 +149,8 @@ export function ImpactAreasPage({ onPageChange }: ImpactAreasPageProps) {
       <section className="relative overflow-hidden py-24 sm:py-32">
         {/* Background Elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(14,165,233,0.1),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,51,204,0.1),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(144,164,231,0.1),transparent)]" />
         
         {/* Floating Elements */}
         <motion.div

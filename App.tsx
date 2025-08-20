@@ -6,15 +6,45 @@ import { AboutPage } from './components/AboutPage';
 import { ServicesPage } from './components/ServicesPage';
 import { ImpactAreasPage } from './components/ImpactAreasPage';
 import { ContactPage } from './components/ContactPage';
+import { RegistrationPage } from './components/RegistrationPage';
+import { AdminDashboard } from './components/AdminDashboard';
+import { AdminAccess } from './components/AdminAccess';
 import { Footer } from './components/Footer';
 
 function AppContent() {
   const [currentPage, setCurrentPage] = React.useState('home');
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = React.useState(false);
+
+  // Check for admin authentication on mount
+  React.useEffect(() => {
+    const adminAuth = localStorage.getItem('adminAuthenticated');
+    const loginTime = localStorage.getItem('adminLoginTime');
+    
+    if (adminAuth === 'true' && loginTime) {
+      // Check if login is still valid (24 hours)
+      const loginDate = new Date(loginTime);
+      const now = new Date();
+      const hoursDiff = (now.getTime() - loginDate.getTime()) / (1000 * 60 * 60);
+      
+      if (hoursDiff < 24) {
+        setIsAdminAuthenticated(true);
+      } else {
+        // Clear expired session
+        localStorage.removeItem('adminAuthenticated');
+        localStorage.removeItem('adminLoginTime');
+      }
+    }
+  }, []);
 
   const handlePageChange = (page: string) => {
     setCurrentPage(page);
     // Scroll to top when changing pages
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleAdminAccess = () => {
+    setIsAdminAuthenticated(true);
+    setCurrentPage('admin');
   };
 
   const renderPage = () => {
@@ -29,6 +59,10 @@ function AppContent() {
         return <ImpactAreasPage onPageChange={handlePageChange} />;
       case 'contact':
         return <ContactPage onPageChange={handlePageChange} />;
+      case 'register':
+        return <RegistrationPage onPageChange={handlePageChange} />;
+      case 'admin':
+        return isAdminAuthenticated ? <AdminDashboard /> : <AdminAccess onAccessGranted={handleAdminAccess} />;
       default:
         return <HomePage onPageChange={handlePageChange} />;
     }
