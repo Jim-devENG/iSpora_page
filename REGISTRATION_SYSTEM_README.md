@@ -146,7 +146,7 @@ To enable production storage and dashboard using serverless API routes:
 4. Deploy this repository to Vercel
 5. Set `VITE_API_BASE_URL` env var for the frontend:
    - Locally (with `vercel dev`): add `.env` with `VITE_API_BASE_URL=http://localhost:3000/api`
-   - On Vercel: set `VITE_API_BASE_URL=https://<your-vercel-domain>/api`
+   - On Vercel: set `VITE_API_BASE_URL=https://ispora.com/api`
 
 The frontend will automatically use the API if `VITE_API_BASE_URL` is defined; otherwise it falls back to the mock service.
 
