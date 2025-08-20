@@ -1,160 +1,134 @@
-// Mock registration service - replace with actual API calls in production
+// Mock database service for registration data
+// In production, this would connect to a real database (MongoDB, PostgreSQL, etc.)
 
-export interface RegistrationData {
+interface RegistrationData {
   id: string;
   name: string;
   email: string;
   whatsapp: string;
   countryOfOrigin: string;
   countryOfResidence: string;
-  ipAddress?: string;
-  location?: {
-    country?: string;
-    city?: string;
-    region?: string;
-    latitude?: number;
-    longitude?: number;
+  ipAddress: string;
+  location: {
+    city: string;
+    country: string;
+    timezone: string;
+    coordinates?: { lat: number; lng: number };
   };
-  timestamp: string;
-  userAgent: string;
-  status: 'active' | 'pending' | 'verified';
+  status: 'pending' | 'active' | 'verified';
+  createdAt: string;
+  updatedAt: string;
 }
 
-// In-memory storage for demo purposes (start empty; load from localStorage if present)
-const stored = typeof window !== 'undefined' ? localStorage.getItem('registrations') : null;
-let registrations: RegistrationData[] = stored ? JSON.parse(stored) : [];
+interface DashboardStats {
+  total: number;
+  daily: number;
+  weekly: number;
+  monthly: number;
+  topCountries: { country: string; count: number }[];
+  recentActivity: RegistrationData[];
+}
 
-// Simple pub/sub for real-time updates within the SPA
-const listeners: Array<() => void> = [];
-const notify = () => {
-  listeners.forEach((fn) => {
-    try { fn(); } catch {}
-  });
-  // Broadcast to other tabs/windows
-  try {
-    const channel = new BroadcastChannel('registrations');
-    channel.postMessage({ type: 'update' });
-    channel.close();
-  } catch {}
-};
+// Simulate database storage
+class MockDatabase {
+  private registrations: RegistrationData[] = [];
+  private listeners: (() => void)[] = [];
 
-export const subscribeToRegistrations = (callback: () => void) => {
-  listeners.push(callback);
-  // Listen to cross-tab updates
-  let channel: BroadcastChannel | null = null;
-  let storageHandler: ((e: StorageEvent) => void) | null = null;
-  try {
-    channel = new BroadcastChannel('registrations');
-    channel.onmessage = () => callback();
-  } catch {}
-  // Fallback for browsers without BroadcastChannel support
-  try {
-    storageHandler = (e: StorageEvent) => {
-      if (e.key === 'registrations') {
-        callback();
-      }
-    };
-    window.addEventListener('storage', storageHandler);
-  } catch {}
-  return () => {
-    const idx = listeners.indexOf(callback);
-    if (idx >= 0) listeners.splice(idx, 1);
-    if (channel) {
-      try { channel.close(); } catch {}
-    }
-    if (storageHandler) {
-      try { window.removeEventListener('storage', storageHandler); } catch {}
-    }
-  };
-};
-
-// Simulate API delay
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-export const registrationService = {
-  // Submit new registration
-  async submitRegistration(data: Omit<RegistrationData, 'id' | 'status'>): Promise<RegistrationData> {
-    await delay(1000); // Simulate network delay
-    
-    // Add some variety to the status - randomly assign different statuses
-    const statuses: ('active' | 'pending' | 'verified')[] = ['active', 'pending', 'verified'];
-    const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-    
-    const newRegistration: RegistrationData = {
-      ...data,
-      id: Date.now().toString(),
-      status: randomStatus
-    };
-    
-    registrations.push(newRegistration);
-    
-    // Store in localStorage for persistence across page reloads
-    localStorage.setItem('registrations', JSON.stringify(registrations));
-    notify();
-    
-    return newRegistration;
-  },
-
-  // Get all registrations
-  async getRegistrations(): Promise<RegistrationData[]> {
-    await delay(500);
-    
-    // Try to load from localStorage first
+  constructor() {
+    // Load existing data from localStorage (for demo persistence)
     const stored = localStorage.getItem('registrations');
     if (stored) {
-      registrations = JSON.parse(stored);
+      try {
+        this.registrations = JSON.parse(stored);
+      } catch (error) {
+        console.error('Error loading stored registrations:', error);
+        this.registrations = [];
+      }
     }
-    
-    return registrations.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-  },
+  }
 
-  // Get registration by ID
-  async getRegistrationById(id: string): Promise<RegistrationData | null> {
-    await delay(300);
-    return registrations.find(r => r.id === id) || null;
-  },
-
-  // Update registration status
-  async updateRegistrationStatus(id: string, status: 'active' | 'pending' | 'verified'): Promise<RegistrationData> {
-    await delay(500);
-    
-    const registration = registrations.find(r => r.id === id);
-    if (!registration) {
-      throw new Error('Registration not found');
+  private saveToStorage() {
+    try {
+      localStorage.setItem('registrations', JSON.stringify(this.registrations));
+      this.notifyListeners();
+    } catch (error) {
+      console.error('Error saving to storage:', error);
     }
+  }
+
+  private notifyListeners() {
+    this.listeners.forEach(callback => callback());
+  }
+
+  // Database operations
+  async create(data: Omit<RegistrationData, 'id' | 'createdAt' | 'updatedAt'>): Promise<RegistrationData> {
+    const newRegistration: RegistrationData = {
+      ...data,
+      id: this.generateId(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    this.registrations.push(newRegistration);
+    this.saveToStorage();
     
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    return newRegistration;
+  }
+
+  async findAll(): Promise<RegistrationData[]> {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 50));
+    return [...this.registrations].sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }
+
+  async findById(id: string): Promise<RegistrationData | null> {
+    await new Promise(resolve => setTimeout(resolve, 50));
+    return this.registrations.find(r => r.id === id) || null;
+  }
+
+  async updateStatus(id: string, status: RegistrationData['status']): Promise<RegistrationData | null> {
+    const registration = this.registrations.find(r => r.id === id);
+    if (!registration) return null;
+
     registration.status = status;
-    localStorage.setItem('registrations', JSON.stringify(registrations));
-    notify();
+    registration.updatedAt = new Date().toISOString();
+    this.saveToStorage();
     
+    await new Promise(resolve => setTimeout(resolve, 100));
     return registration;
-  },
+  }
 
-  // Delete registration
-  async deleteRegistration(id: string): Promise<void> {
-    await delay(300);
+  async delete(id: string): Promise<boolean> {
+    const index = this.registrations.findIndex(r => r.id === id);
+    if (index === -1) return false;
+
+    this.registrations.splice(index, 1);
+    this.saveToStorage();
     
-    registrations = registrations.filter(r => r.id !== id);
-    localStorage.setItem('registrations', JSON.stringify(registrations));
-    notify();
-  },
+    await new Promise(resolve => setTimeout(resolve, 100));
+    return true;
+  }
 
-  // Get dashboard statistics
-  async getDashboardStats() {
-    await delay(500);
+  async getStats(): Promise<DashboardStats> {
+    await new Promise(resolve => setTimeout(resolve, 100));
     
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const monthAgo = new Date(today.getFullYear(), now.getMonth() - 1, now.getDate());
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-    const todayRegistrations = registrations.filter(r => new Date(r.timestamp) >= today).length;
-    const thisWeekRegistrations = registrations.filter(r => new Date(r.timestamp) >= weekAgo).length;
-    const thisMonthRegistrations = registrations.filter(r => new Date(r.timestamp) >= monthAgo).length;
+    const daily = this.registrations.filter(r => new Date(r.createdAt) >= oneDayAgo).length;
+    const weekly = this.registrations.filter(r => new Date(r.createdAt) >= oneWeekAgo).length;
+    const monthly = this.registrations.filter(r => new Date(r.createdAt) >= oneMonthAgo).length;
 
     // Calculate top countries
     const countryCounts: { [key: string]: number } = {};
-    registrations.forEach(r => {
+    this.registrations.forEach(r => {
       const country = r.countryOfResidence;
       countryCounts[country] = (countryCounts[country] || 0) + 1;
     });
@@ -164,13 +138,125 @@ export const registrationService = {
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
+    const recentActivity = this.registrations
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 10);
+
     return {
-      totalRegistrations: registrations.length,
-      todayRegistrations,
-      thisWeekRegistrations,
-      thisMonthRegistrations,
+      total: this.registrations.length,
+      daily,
+      weekly,
+      monthly,
       topCountries,
-      recentActivity: registrations.slice(0, 5)
+      recentActivity
     };
   }
+
+  private generateId(): string {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  }
+
+  // Real-time updates
+  subscribe(callback: () => void) {
+    this.listeners.push(callback);
+    
+    // Set up cross-tab communication
+    let channel: BroadcastChannel | null = null;
+    let storageHandler: ((e: StorageEvent) => void) | null = null;
+    
+    try {
+      channel = new BroadcastChannel('registrations');
+      channel.onmessage = () => callback();
+    } catch (error) {
+      console.warn('BroadcastChannel not supported, using storage events');
+    }
+
+    // Fallback for browsers without BroadcastChannel
+    try {
+      storageHandler = (e: StorageEvent) => {
+        if (e.key === 'registrations') {
+          callback();
+        }
+      };
+      window.addEventListener('storage', storageHandler);
+    } catch (error) {
+      console.warn('Storage events not supported');
+    }
+
+    return () => {
+      const index = this.listeners.indexOf(callback);
+      if (index > -1) {
+        this.listeners.splice(index, 1);
+      }
+      
+      if (channel) {
+        try { channel.close(); } catch {}
+      }
+      
+      if (storageHandler) {
+        try { window.removeEventListener('storage', storageHandler); } catch {}
+      }
+    };
+  }
+}
+
+// Create singleton database instance
+const db = new MockDatabase();
+
+// Public API (simulates REST API endpoints)
+export const registrationService = {
+  // Submit new registration
+  async submitRegistration(data: {
+    name: string;
+    email: string;
+    whatsapp: string;
+    countryOfOrigin: string;
+    countryOfResidence: string;
+    ipAddress: string;
+    location: {
+      city: string;
+      country: string;
+      timezone: string;
+      coordinates?: { lat: number; lng: number };
+    };
+  }): Promise<RegistrationData> {
+    const status = Math.random() > 0.7 ? 'active' : Math.random() > 0.5 ? 'verified' : 'pending';
+    
+    return await db.create({
+      ...data,
+      status
+    });
+  },
+
+  // Get all registrations (for admin dashboard)
+  async getRegistrations(): Promise<RegistrationData[]> {
+    return await db.findAll();
+  },
+
+  // Get registration by ID
+  async getRegistration(id: string): Promise<RegistrationData | null> {
+    return await db.findById(id);
+  },
+
+  // Update registration status
+  async updateRegistrationStatus(id: string, status: RegistrationData['status']): Promise<RegistrationData | null> {
+    return await db.updateStatus(id, status);
+  },
+
+  // Delete registration
+  async deleteRegistration(id: string): Promise<boolean> {
+    return await db.delete(id);
+  },
+
+  // Get dashboard statistics
+  async getDashboardStats(): Promise<DashboardStats> {
+    return await db.getStats();
+  },
+
+  // Subscribe to real-time updates
+  subscribe(callback: () => void) {
+    return db.subscribe(callback);
+  }
 };
+
+export type { RegistrationData, DashboardStats };
