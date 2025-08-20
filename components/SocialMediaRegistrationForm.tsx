@@ -7,7 +7,7 @@ import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Alert, AlertDescription } from './ui/alert';
-import { CheckCircle, AlertCircle, Loader2, Globe, MapPin, Users, Share2 } from 'lucide-react';
+import { CheckCircle, AlertCircle, Loader2, Globe, Users, Share2 } from 'lucide-react';
 
 interface RegistrationData {
   name: string;
@@ -251,7 +251,7 @@ export function SocialMediaRegistrationForm({ showHeader = true }: SocialMediaRe
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const [locationData, setLocationData] = useState<any>(null);
+  // Location is collected silently for admin; not shown on the user form
 
   // Get IP and location data on component mount
   useEffect(() => {
@@ -263,18 +263,16 @@ export function SocialMediaRegistrationForm({ showHeader = true }: SocialMediaRe
         
         // Get location data from IP
         const locationResponse = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
-        const locationData = await locationResponse.json();
-        
-        setLocationData(locationData);
+        const locationJson = await locationResponse.json();
         setFormData(prev => ({
           ...prev,
           ipAddress: ipData.ip,
           location: {
-            country: locationData.country_name,
-            city: locationData.city,
-            region: locationData.region,
-            latitude: locationData.latitude,
-            longitude: locationData.longitude
+            country: locationJson.country_name,
+            city: locationJson.city,
+            region: locationJson.region,
+            latitude: locationJson.latitude,
+            longitude: locationJson.longitude
           }
         }));
       } catch (error) {
@@ -469,20 +467,7 @@ export function SocialMediaRegistrationForm({ showHeader = true }: SocialMediaRe
                   </Select>
                 </div>
 
-                {/* Location Info Display */}
-                {locationData && (
-                  <div className="p-4 bg-muted/30 rounded-lg border border-border/50">
-                    <div className="flex items-center mb-2">
-                      <MapPin className="h-4 w-4 text-primary mr-2" />
-                      <span className="text-sm font-medium text-foreground">Detected Location</span>
-                    </div>
-                    <div className="text-sm text-muted-foreground space-y-1">
-                      <p>📍 {locationData.city}, {locationData.country_name}</p>
-                      <p>🌐 IP: {locationData.ip}</p>
-                      <p>🕐 Timezone: {locationData.timezone}</p>
-                    </div>
-                  </div>
-                )}
+                {/* Location is collected silently and surfaced in the admin dashboard only */}
 
                 {/* Submit Button */}
                                   <Button
