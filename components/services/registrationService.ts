@@ -42,15 +42,28 @@ export const subscribeToRegistrations = (callback: () => void) => {
   listeners.push(callback);
   // Listen to cross-tab updates
   let channel: BroadcastChannel | null = null;
+  let storageHandler: ((e: StorageEvent) => void) | null = null;
   try {
     channel = new BroadcastChannel('registrations');
     channel.onmessage = () => callback();
+  } catch {}
+  // Fallback for browsers without BroadcastChannel support
+  try {
+    storageHandler = (e: StorageEvent) => {
+      if (e.key === 'registrations') {
+        callback();
+      }
+    };
+    window.addEventListener('storage', storageHandler);
   } catch {}
   return () => {
     const idx = listeners.indexOf(callback);
     if (idx >= 0) listeners.splice(idx, 1);
     if (channel) {
       try { channel.close(); } catch {}
+    }
+    if (storageHandler) {
+      try { window.removeEventListener('storage', storageHandler); } catch {}
     }
   };
 };
