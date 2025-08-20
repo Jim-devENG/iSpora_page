@@ -50,7 +50,7 @@ This system provides a comprehensive registration form for users to join iSpora'
 
 1. **Access Admin Dashboard**
    - Navigate to: `http://localhost:5174/#admin`
-   - Enter admin password: `ispora2024`
+   - Enter admin password: `ispora2025`
 
 2. **View Dashboard Statistics**
    - Total registrations

@@ -19,7 +19,7 @@ export function AdminAccess({ onAccessGranted }: AdminAccessProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   // Simple password check - in production, this should be server-side
-  const ADMIN_PASSWORD = 'ispora2024';
+  const ADMIN_PASSWORD = 'ispora2025';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
