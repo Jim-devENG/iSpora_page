@@ -136,6 +136,20 @@ export const registrationService = {
 };
 ```
 
+## Using a Real Database on Vercel (MongoDB Atlas)
+
+To enable production storage and dashboard using serverless API routes:
+
+1. Create a MongoDB Atlas cluster and user
+2. Copy the connection string and set it in Vercel as `MONGODB_URI`
+3. Optionally set `MONGODB_DB` (defaults to `ispora`)
+4. Deploy this repository to Vercel
+5. Set `VITE_API_BASE_URL` env var for the frontend:
+   - Locally (with `vercel dev`): add `.env` with `VITE_API_BASE_URL=http://localhost:3000/api`
+   - On Vercel: set `VITE_API_BASE_URL=https://<your-vercel-domain>/api`
+
+The frontend will automatically use the API if `VITE_API_BASE_URL` is defined; otherwise it falls back to the mock service.
+
 ## IP Tracking & Geolocation
 
 The system automatically tracks:

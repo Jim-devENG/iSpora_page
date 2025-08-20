@@ -203,6 +203,9 @@ class MockDatabase {
 // Create singleton database instance
 const db = new MockDatabase();
 
+const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || '';
+const USE_API = !!API_BASE_URL;
+
 // Public API (simulates REST API endpoints)
 export const registrationService = {
   // Submit new registration
@@ -220,16 +223,27 @@ export const registrationService = {
       coordinates?: { lat: number; lng: number };
     };
   }): Promise<RegistrationData> {
+    // If API_BASE_URL is configured, use serverless API; else use mock DB
+    if (USE_API) {
+      const response = await fetch(`${API_BASE_URL}/registrations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error('Failed to submit registration');
+      return await response.json();
+    }
     const status = Math.random() > 0.7 ? 'active' : Math.random() > 0.5 ? 'verified' : 'pending';
-    
-    return await db.create({
-      ...data,
-      status
-    });
+    return await db.create({ ...data, status });
   },
 
   // Get all registrations (for admin dashboard)
   async getRegistrations(): Promise<RegistrationData[]> {
+    if (USE_API) {
+      const response = await fetch(`${API_BASE_URL}/registrations`);
+      if (!response.ok) throw new Error('Failed to fetch registrations');
+      return await response.json();
+    }
     return await db.findAll();
   },
 
@@ -250,6 +264,11 @@ export const registrationService = {
 
   // Get dashboard statistics
   async getDashboardStats(): Promise<DashboardStats> {
+    if (USE_API) {
+      const response = await fetch(`${API_BASE_URL}/dashboard/stats`);
+      if (!response.ok) throw new Error('Failed to fetch dashboard stats');
+      return await response.json();
+    }
     return await db.getStats();
   },
 
