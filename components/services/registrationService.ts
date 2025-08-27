@@ -204,7 +204,23 @@ class MockDatabase {
 // Create singleton database instance
 const db = new MockDatabase();
 
-const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || (typeof window !== 'undefined' ? `${window.location.origin}/api` : '');
+function resolveApiBaseUrl(): string {
+  const envBase = (import.meta as any).env?.VITE_API_BASE_URL as string | undefined;
+  if (typeof window === 'undefined') return envBase || '';
+  const origin = window.location.origin;
+  // Force same-origin when on production domain to avoid CORS
+  if (origin.includes('ispora.com')) return `${origin}/api`;
+  // If env var exists but points to a different origin, prefer same-origin
+  try {
+    if (envBase) {
+      const envOrigin = new URL(envBase).origin;
+      if (envOrigin !== origin) return `${origin}/api`;
+    }
+  } catch {}
+  return envBase || `${origin}/api`;
+}
+
+const API_BASE_URL = resolveApiBaseUrl();
 const USE_API = !!API_BASE_URL;
 
 // Public API (simulates REST API endpoints)
