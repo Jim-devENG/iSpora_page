@@ -29,6 +29,12 @@ interface RegistrationData {
 
 interface SocialMediaRegistrationFormProps {
   showHeader?: boolean;
+  formTitle?: string;
+  description?: string;
+  successCtaUrl?: string; // When provided, show a success CTA button to join WhatsApp
+  successCtaLabel?: string;
+  group?: 'local' | 'diaspora';
+  countriesOverride?: { code: string; name: string }[];
 }
 
 const countries = [
@@ -237,7 +243,7 @@ const countries = [
   { code: 'KP', name: 'North Korea' }
 ].sort((a, b) => a.name.localeCompare(b.name));
 
-export function SocialMediaRegistrationForm({ showHeader = true }: SocialMediaRegistrationFormProps) {
+export function SocialMediaRegistrationForm({ showHeader = true, formTitle, description, successCtaUrl, successCtaLabel, group, countriesOverride }: SocialMediaRegistrationFormProps) {
   const [formData, setFormData] = useState<RegistrationData>({
     name: '',
     email: '',
@@ -306,8 +312,27 @@ export function SocialMediaRegistrationForm({ showHeader = true }: SocialMediaRe
       // Import the registration service
       const { registrationService } = await import('./services/registrationService');
       
+      // Build payload to match service contract
+      const payload = {
+        name: updatedData.name,
+        email: updatedData.email,
+        whatsapp: updatedData.whatsapp,
+        countryOfOrigin: updatedData.countryOfOrigin,
+        countryOfResidence: updatedData.countryOfResidence,
+        ipAddress: updatedData.ipAddress || '',
+        location: {
+          city: updatedData.location?.city || '',
+          country: updatedData.location?.country || '',
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+          coordinates: (updatedData.location?.latitude != null && updatedData.location?.longitude != null)
+            ? { lat: updatedData.location.latitude, lng: updatedData.location.longitude }
+            : undefined,
+        },
+        group: group || 'diaspora' as const,
+      };
+
       // Submit registration using the service
-      await registrationService.submitRegistration(updatedData);
+      await registrationService.submitRegistration(payload);
       
       setSubmitStatus('success');
       setFormData({
@@ -365,10 +390,10 @@ export function SocialMediaRegistrationForm({ showHeader = true }: SocialMediaRe
           <Card className="shadow-xl border-0 bg-card/50 backdrop-blur-sm">
             <CardHeader className="text-center pb-6">
               <CardTitle className="text-2xl font-semibold text-foreground">
-                Social Media Registration
+                {formTitle || 'Social Media Registration'}
               </CardTitle>
               <CardDescription className="text-muted-foreground">
-                Fill out the form below to join our social media platforms and stay connected
+                {description || 'Fill out the form below to join our social media platforms and stay connected'}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -435,7 +460,7 @@ export function SocialMediaRegistrationForm({ showHeader = true }: SocialMediaRe
                       <SelectValue placeholder="Select your country of origin" />
                     </SelectTrigger>
                     <SelectContent>
-                      {countries.map((country) => (
+                      {(countriesOverride || countries).map((country) => (
                         <SelectItem key={country.code} value={country.name}>
                           {country.name}
                         </SelectItem>
@@ -458,7 +483,7 @@ export function SocialMediaRegistrationForm({ showHeader = true }: SocialMediaRe
                       <SelectValue placeholder="Select your current country of residence" />
                     </SelectTrigger>
                     <SelectContent>
-                      {countries.map((country) => (
+                      {(countriesOverride || countries).map((country) => (
                         <SelectItem key={country.code} value={country.name}>
                           {country.name}
                         </SelectItem>
@@ -507,26 +532,31 @@ export function SocialMediaRegistrationForm({ showHeader = true }: SocialMediaRe
                   </Button>
 
                 {/* Status Messages */}
-                                  {submitStatus === 'success' && (
+                {submitStatus === 'success' && (
+                  <div className="space-y-4">
                     <Alert className="border-green-200 bg-green-50 text-green-800">
                       <CheckCircle className="h-4 w-4" />
                       <AlertDescription>
                         {(() => {
                           const messages = [
-                            "🎉 Welcome to our community! You'll receive updates on our social media platforms.",
-                            "✅ Registration successful! We're excited to have you join our global network.",
-                            "🌟 You're now part of our diaspora community! Stay tuned for exciting updates.",
-                            "🎯 Perfect! You've been added to our social media groups and mailing list.",
-                            "🚀 Registration complete! Welcome to the iSpora family.",
-                            "💫 Successfully registered! You'll be connected with fellow diaspora members.",
-                            "🎊 Welcome aboard! Your journey with iSpora begins now.",
-                            "✨ Registration confirmed! You're now part of our growing global network."
+                            "🎉 Registration successful!",
+                            "✅ You're all set!",
+                            "🌟 Welcome aboard!",
+                            "🚀 Success!",
                           ];
                           return messages[Math.floor(Math.random() * messages.length)];
                         })()}
                       </AlertDescription>
                     </Alert>
-                  )}
+                    {successCtaUrl && (
+                      <a href={successCtaUrl} target="_blank" rel="noopener noreferrer" className="block">
+                        <Button className="w-full h-12 bg-green-600 hover:bg-green-700 text-white">
+                          {successCtaLabel || 'Join WhatsApp Group'}
+                        </Button>
+                      </a>
+                    )}
+                  </div>
+                )}
 
                                   {submitStatus === 'error' && (
                     <Alert className="border-red-200 bg-red-50 text-red-800">

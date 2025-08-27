@@ -7,6 +7,7 @@ const RegistrationSchema = new mongoose.Schema(
     whatsapp: { type: String, required: true },
     countryOfOrigin: { type: String, required: true },
     countryOfResidence: { type: String, required: true },
+    group: { type: String, enum: ['local', 'diaspora'], default: 'diaspora' },
     ipAddress: { type: String },
     location: {
       city: String,

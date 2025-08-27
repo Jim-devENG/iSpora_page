@@ -45,6 +45,7 @@ interface RegistrationData {
   timestamp: string;
   userAgent: string;
   status: 'active' | 'pending' | 'verified';
+  group?: 'local' | 'diaspora';
 }
 
 interface DashboardStats {
@@ -416,6 +417,7 @@ export function AdminDashboard() {
                       <TableHead>Name</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>WhatsApp</TableHead>
+                      <TableHead>Group</TableHead>
                       <TableHead>Location</TableHead>
                       <TableHead>IP Address</TableHead>
                       <TableHead>Status</TableHead>
@@ -425,7 +427,7 @@ export function AdminDashboard() {
                   <TableBody>
                     {filteredRegistrations.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={7} className="text-center text-muted-foreground">
+                        <TableCell colSpan={8} className="text-center text-muted-foreground">
                           No registrations yet
                         </TableCell>
                       </TableRow>
@@ -435,6 +437,9 @@ export function AdminDashboard() {
                         <TableCell className="font-medium">{registration.name}</TableCell>
                         <TableCell>{registration.email}</TableCell>
                         <TableCell>{registration.whatsapp}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">{registration.group || 'diaspora'}</Badge>
+                        </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1">
                             <MapPin className="h-3 w-3 text-muted-foreground" />

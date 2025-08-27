@@ -21,6 +21,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     if (req.method === 'POST') {
       const body = req.body || {};
+      // Normalize group value
+      if (body.group !== 'local' && body.group !== 'diaspora') {
+        body.group = 'diaspora';
+      }
       const doc = await Registration.create(body);
       return res.status(201).json(doc.toObject());
     }

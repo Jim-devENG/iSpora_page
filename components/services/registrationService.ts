@@ -18,6 +18,7 @@ interface RegistrationData {
   status: 'pending' | 'active' | 'verified';
   createdAt: string;
   updatedAt: string;
+  group?: 'local' | 'diaspora';
 }
 
 interface DashboardStats {
@@ -222,6 +223,7 @@ export const registrationService = {
       timezone: string;
       coordinates?: { lat: number; lng: number };
     };
+    group?: 'local' | 'diaspora';
   }): Promise<RegistrationData> {
     // If API_BASE_URL is configured, use serverless API; else use mock DB
     if (USE_API) {
