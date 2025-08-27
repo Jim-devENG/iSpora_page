@@ -204,7 +204,7 @@ class MockDatabase {
 // Create singleton database instance
 const db = new MockDatabase();
 
-const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || '';
+const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || (typeof window !== 'undefined' ? `${window.location.origin}/api` : '');
 const USE_API = !!API_BASE_URL;
 
 // Public API (simulates REST API endpoints)
