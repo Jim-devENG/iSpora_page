@@ -22,7 +22,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method === 'POST') {
       const body = req.body || {};
       const doc = await Registration.create(body);
-      return res.status(201).json(doc);
+      return res.status(201).json(doc.toObject());
     }
 
     if (req.method === 'GET') {
