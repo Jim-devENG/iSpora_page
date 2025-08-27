@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Alert, AlertDescription } from './ui/alert';
 import { CheckCircle, AlertCircle, Loader2, Globe, Users, Share2 } from 'lucide-react';
+import { registrationService } from './services/registrationService';
 
 interface RegistrationData {
   name: string;
@@ -309,9 +310,6 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
         timestamp: new Date().toISOString()
       };
 
-      // Import the registration service
-      const { registrationService } = await import('./services/registrationService');
-      
       // Build payload to match service contract
       const payload = {
         name: updatedData.name,
