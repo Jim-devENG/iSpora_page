@@ -26,6 +26,7 @@ import {
   CheckCircle,
   Loader2
 } from 'lucide-react';
+import { registrationService } from './services/registrationService';
 
 interface RegistrationData {
   id: string;
@@ -78,8 +79,6 @@ export function AdminDashboard() {
     let unsubscribe: (() => void) | null = null;
     const fetchData = async () => {
       try {
-        const { registrationService, subscribeToRegistrations } = await import('./services/registrationService');
-        
         const load = async () => {
           const [registrationsData, statsData] = await Promise.all([
             registrationService.getRegistrations(),
@@ -91,7 +90,7 @@ export function AdminDashboard() {
 
         await load();
         // Subscribe to updates
-        unsubscribe = subscribeToRegistrations(async () => {
+        unsubscribe = registrationService.subscribe(async () => {
           await load();
         });
       } catch (error) {
@@ -118,8 +117,6 @@ export function AdminDashboard() {
   const handleRefresh = async () => {
     setLoading(true);
     try {
-      const { registrationService } = await import('./services/registrationService');
-      
       // Fetch fresh data
       const [registrationsData, statsData] = await Promise.all([
         registrationService.getRegistrations(),
