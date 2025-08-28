@@ -75,7 +75,9 @@ export function AdminDashboard() {
   const [selectedRegistration, setSelectedRegistration] = useState<RegistrationData | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [recentActivityPage, setRecentActivityPage] = useState(1);
   const registrationsPerPage = 10;
+  const recentActivityPerPage = 5;
 
   // Fetch data and subscribe to real-time updates
   useEffect(() => {
@@ -147,6 +149,12 @@ export function AdminDashboard() {
   const startIndex = (currentPage - 1) * registrationsPerPage;
   const endIndex = startIndex + registrationsPerPage;
   const currentRegistrations = filteredRegistrations.slice(startIndex, endIndex);
+
+  // Recent Activity pagination
+  const totalRecentActivityPages = Math.ceil(stats.recentActivity.length / recentActivityPerPage);
+  const recentActivityStartIndex = (recentActivityPage - 1) * recentActivityPerPage;
+  const recentActivityEndIndex = recentActivityStartIndex + recentActivityPerPage;
+  const currentRecentActivity = stats.recentActivity.slice(recentActivityStartIndex, recentActivityEndIndex);
 
   const handleRefresh = async () => {
     setLoading(true);
@@ -392,10 +400,10 @@ export function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {stats.recentActivity.length === 0 ? (
+                {currentRecentActivity.length === 0 ? (
                   <p className="text-sm text-muted-foreground">No activity yet</p>
                 ) : (
-                  stats.recentActivity.map((activity) => (
+                  currentRecentActivity.map((activity) => (
                   <div key={activity.id} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                     <div>
                       <p className="font-medium text-sm">{activity.name}</p>
@@ -413,6 +421,38 @@ export function AdminDashboard() {
                   ))
                 )}
               </div>
+              
+              {/* Recent Activity Pagination */}
+              {totalRecentActivityPages > 1 && (
+                <div className="flex items-center justify-between mt-4 pt-4 border-t">
+                  <div className="text-sm text-muted-foreground">
+                    Showing {recentActivityStartIndex + 1}-{Math.min(recentActivityEndIndex, stats.recentActivity.length)} of {stats.recentActivity.length} activities
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setRecentActivityPage(recentActivityPage - 1)}
+                      disabled={recentActivityPage === 1}
+                      className="w-8 h-8 p-0"
+                    >
+                      ←
+                    </Button>
+                    <span className="text-sm text-muted-foreground px-2">
+                      {recentActivityPage} / {totalRecentActivityPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setRecentActivityPage(recentActivityPage + 1)}
+                      disabled={recentActivityPage === totalRecentActivityPages}
+                      className="w-8 h-8 p-0"
+                    >
+                      →
+                    </Button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </motion.div>
