@@ -73,6 +73,8 @@ export function AdminDashboard() {
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'pending' | 'verified'>('all');
   const [selectedRegistration, setSelectedRegistration] = useState<RegistrationData | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const registrationsPerPage = 10;
 
   // Fetch data and subscribe to real-time updates
   useEffect(() => {
@@ -122,6 +124,15 @@ export function AdminDashboard() {
     };
   }, []);
 
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterStatus]);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(registrations.length / registrationsPerPage);
+
+  // Apply filters to all registrations first
   const filteredRegistrations = registrations.filter(registration => {
     const matchesSearch = registration.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          registration.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -129,6 +140,12 @@ export function AdminDashboard() {
     const matchesStatus = filterStatus === 'all' || registration.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
+
+  // Then apply pagination to filtered results
+  const totalFilteredPages = Math.ceil(filteredRegistrations.length / registrationsPerPage);
+  const startIndex = (currentPage - 1) * registrationsPerPage;
+  const endIndex = startIndex + registrationsPerPage;
+  const currentRegistrations = filteredRegistrations.slice(startIndex, endIndex);
 
   const handleRefresh = async () => {
     setLoading(true);
@@ -418,9 +435,9 @@ export function AdminDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Registrations</CardTitle>
-              <CardDescription>
-                Showing {filteredRegistrations.length} of {registrations.length} registrations
-              </CardDescription>
+                              <CardDescription>
+                  Showing {startIndex + 1}-{Math.min(endIndex, filteredRegistrations.length)} of {filteredRegistrations.length} registrations
+                </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="rounded-md border">
@@ -488,6 +505,46 @@ export function AdminDashboard() {
                   </TableBody>
                 </Table>
               </div>
+
+              {/* Pagination Controls */}
+              {totalFilteredPages > 1 && (
+                <div className="flex items-center justify-between mt-4">
+                  <div className="text-sm text-muted-foreground">
+                    Page {currentPage} of {totalFilteredPages}
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      Previous
+                    </Button>
+                    <div className="flex items-center space-x-1">
+                      {Array.from({ length: totalFilteredPages }, (_, i) => i + 1).map((page) => (
+                        <Button
+                          key={page}
+                          variant={currentPage === page ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setCurrentPage(page)}
+                          className="w-8 h-8 p-0"
+                        >
+                          {page}
+                        </Button>
+                      ))}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                      disabled={currentPage === totalFilteredPages}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </motion.div>
