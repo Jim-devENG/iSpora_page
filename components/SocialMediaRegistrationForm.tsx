@@ -215,32 +215,6 @@ const countries = [
   { code: 'HK', name: 'Hong Kong' },
   { code: 'MO', name: 'Macau' },
   { code: 'MN', name: 'Mongolia' },
-  { code: 'KP', name: 'North Korea' },
-  { code: 'KZ', name: 'Kazakhstan' },
-  { code: 'UZ', name: 'Uzbekistan' },
-  { code: 'KG', name: 'Kyrgyzstan' },
-  { code: 'TJ', name: 'Tajikistan' },
-  { code: 'TM', name: 'Turkmenistan' },
-  { code: 'AZ', name: 'Azerbaijan' },
-  { code: 'GE', name: 'Georgia' },
-  { code: 'AM', name: 'Armenia' },
-  { code: 'TR', name: 'Turkey' },
-  { code: 'IL', name: 'Israel' },
-  { code: 'PS', name: 'Palestine' },
-  { code: 'SA', name: 'Saudi Arabia' },
-  { code: 'AE', name: 'United Arab Emirates' },
-  { code: 'QA', name: 'Qatar' },
-  { code: 'KW', name: 'Kuwait' },
-  { code: 'BH', name: 'Bahrain' },
-  { code: 'OM', name: 'Oman' },
-  { code: 'YE', name: 'Yemen' },
-  { code: 'CN', name: 'China' },
-  { code: 'JP', name: 'Japan' },
-  { code: 'KR', name: 'South Korea' },
-  { code: 'TW', name: 'Taiwan' },
-  { code: 'HK', name: 'Hong Kong' },
-  { code: 'MO', name: 'Macau' },
-  { code: 'MN', name: 'Mongolia' },
   { code: 'KP', name: 'North Korea' }
 ].sort((a, b) => a.name.localeCompare(b.name));
 
@@ -553,6 +527,25 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                         </Button>
                       </a>
                     )}
+                    <Button 
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setFormData({
+                          name: '',
+                          email: '',
+                          whatsapp: '',
+                          countryOfOrigin: '',
+                          countryOfResidence: '',
+                          timestamp: new Date().toISOString(),
+                          userAgent: navigator.userAgent
+                        });
+                        setSubmitStatus('idle');
+                      }}
+                      className="w-full h-12"
+                    >
+                      Submit Another Registration
+                    </Button>
                   </div>
                 )}
 
