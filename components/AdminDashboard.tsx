@@ -86,22 +86,21 @@ export function AdminDashboard() {
             console.log('Registrations loaded:', registrationsData);
             setRegistrations(registrationsData);
             
-            // Temporarily disable stats to debug
-            // const statsData = await registrationService.getDashboardStats();
-            // console.log('Stats loaded:', statsData);
-            // setStats(statsData);
-            
-            // Set default stats for now
+            // Re-enable stats API now that we know database works
+            const statsData = await registrationService.getDashboardStats();
+            console.log('Stats loaded:', statsData);
+            setStats(statsData);
+          } catch (error) {
+            console.error('Error loading data:', error);
+            // Fallback to basic stats if stats API fails
             setStats({
-              totalRegistrations: registrationsData.length,
+              totalRegistrations: registrationsData?.length || 0,
               todayRegistrations: 0,
               thisWeekRegistrations: 0,
               thisMonthRegistrations: 0,
               topCountries: [],
-              recentActivity: registrationsData.slice(0, 10)
+              recentActivity: registrationsData?.slice(0, 10) || []
             });
-          } catch (error) {
-            console.error('Error loading data:', error);
           }
         };
 
