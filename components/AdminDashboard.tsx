@@ -81,14 +81,28 @@ export function AdminDashboard() {
       try {
         const load = async () => {
           console.log('Loading admin dashboard data...');
-          const [registrationsData, statsData] = await Promise.all([
-            registrationService.getRegistrations(),
-            registrationService.getDashboardStats()
-          ]);
-          console.log('Registrations loaded:', registrationsData);
-          console.log('Stats loaded:', statsData);
-          setRegistrations(registrationsData);
-          setStats(statsData);
+          try {
+            const registrationsData = await registrationService.getRegistrations();
+            console.log('Registrations loaded:', registrationsData);
+            setRegistrations(registrationsData);
+            
+            // Temporarily disable stats to debug
+            // const statsData = await registrationService.getDashboardStats();
+            // console.log('Stats loaded:', statsData);
+            // setStats(statsData);
+            
+            // Set default stats for now
+            setStats({
+              totalRegistrations: registrationsData.length,
+              todayRegistrations: 0,
+              thisWeekRegistrations: 0,
+              thisMonthRegistrations: 0,
+              topCountries: [],
+              recentActivity: registrationsData.slice(0, 10)
+            });
+          } catch (error) {
+            console.error('Error loading data:', error);
+          }
         };
 
         await load();
