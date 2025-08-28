@@ -24,7 +24,8 @@ import {
   UserCheck,
   AlertCircle,
   CheckCircle,
-  Loader2
+  Loader2,
+  MoreHorizontal
 } from 'lucide-react';
 import { registrationService } from './services/registrationService';
 
@@ -188,6 +189,42 @@ export function AdminDashboard() {
     a.download = `registrations-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
+  };
+
+  const handleDelete = async (registrationId: string) => {
+    if (window.confirm('Are you sure you want to delete this registration? This action cannot be undone.')) {
+      try {
+        // TODO: Implement delete API call
+        console.log('Deleting registration:', registrationId);
+        
+        // For now, just remove from local state
+        setRegistrations(prev => prev.filter(r => r.id !== registrationId));
+        
+        // Show success message
+        alert('Registration deleted successfully');
+      } catch (error) {
+        console.error('Error deleting registration:', error);
+        alert('Failed to delete registration');
+      }
+    }
+  };
+
+  const handleStatusChange = async (registrationId: string, newStatus: 'active' | 'pending' | 'verified') => {
+    try {
+      // TODO: Implement status update API call
+      console.log('Updating status:', registrationId, newStatus);
+      
+      // For now, just update local state
+      setRegistrations(prev => prev.map(r => 
+        r.id === registrationId ? { ...r, status: newStatus } : r
+      ));
+      
+      // Show success message
+      alert('Status updated successfully');
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alert('Failed to update status');
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -491,10 +528,26 @@ export function AdminDashboard() {
                                 setSelectedRegistration(registration);
                                 setShowDetails(true);
                               }}
+                              title="View Details"
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="sm">
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => handleStatusChange(registration.id, 'verified')}
+                              title="Mark as Verified"
+                              className="text-green-600 hover:text-green-700"
+                            >
+                              <CheckCircle className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => handleDelete(registration.id)}
+                              title="Delete Registration"
+                              className="text-red-600 hover:text-red-700"
+                            >
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>

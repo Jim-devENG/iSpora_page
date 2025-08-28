@@ -260,7 +260,24 @@ export const registrationService = {
     if (USE_API) {
       const response = await fetch(`${API_BASE_URL}/registrations`);
       if (!response.ok) throw new Error('Failed to fetch registrations');
-      return await response.json();
+      const data = await response.json();
+      // Map API data to expected format
+      return data.map((item: any) => ({
+        id: item._id,
+        name: item.name,
+        email: item.email,
+        whatsapp: item.whatsapp,
+        countryOfOrigin: item.countryOfOrigin,
+        countryOfResidence: item.countryOfResidence,
+        ipAddress: item.ipAddress,
+        location: item.location,
+        status: item.status,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+        group: item.group,
+        timestamp: item.createdAt, // For compatibility
+        userAgent: 'N/A' // API doesn't provide this yet
+      }));
     }
     return await db.findAll();
   },
