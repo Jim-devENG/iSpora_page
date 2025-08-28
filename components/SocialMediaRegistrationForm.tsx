@@ -527,7 +527,18 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                       </AlertDescription>
                     </Alert>
                     {successCtaUrl && (
-                      <a href={successCtaUrl} target="_blank" rel="noopener noreferrer" className="block">
+                      <a 
+                        href={successCtaUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="block"
+                        onClick={(e) => {
+                          console.log('WhatsApp link clicked:', successCtaUrl);
+                          // Ensure the link opens in a new tab
+                          window.open(successCtaUrl, '_blank', 'noopener,noreferrer');
+                          e.preventDefault();
+                        }}
+                      >
                         <Button className="w-full h-12 bg-green-600 hover:bg-green-700 text-white">
                           {successCtaLabel || 'Join WhatsApp Group'}
                         </Button>
