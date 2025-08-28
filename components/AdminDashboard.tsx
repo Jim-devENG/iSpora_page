@@ -80,10 +80,13 @@ export function AdminDashboard() {
     const fetchData = async () => {
       try {
         const load = async () => {
+          console.log('Loading admin dashboard data...');
           const [registrationsData, statsData] = await Promise.all([
             registrationService.getRegistrations(),
             registrationService.getDashboardStats()
           ]);
+          console.log('Registrations loaded:', registrationsData);
+          console.log('Stats loaded:', statsData);
           setRegistrations(registrationsData);
           setStats(statsData);
         };

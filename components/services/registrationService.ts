@@ -283,9 +283,13 @@ export const registrationService = {
   // Get dashboard statistics
   async getDashboardStats(): Promise<DashboardStats> {
     if (USE_API) {
+      console.log('Fetching dashboard stats from API:', `${API_BASE_URL}/dashboard/stats`);
       const response = await fetch(`${API_BASE_URL}/dashboard/stats`);
+      console.log('Stats API response:', response.status, response.statusText);
       if (!response.ok) throw new Error('Failed to fetch dashboard stats');
-      return await response.json();
+      const data = await response.json();
+      console.log('Stats data received:', data);
+      return data;
     }
     return await db.getStats();
   },
