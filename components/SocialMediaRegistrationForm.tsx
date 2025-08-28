@@ -307,15 +307,16 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
       await registrationService.submitRegistration(payload);
       
       setSubmitStatus('success');
-      setFormData({
-        name: '',
-        email: '',
-        whatsapp: '',
-        countryOfOrigin: '',
-        countryOfResidence: '',
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent
-      });
+      // Don't reset form data immediately - let user see success and click WhatsApp link
+      // setFormData({
+      //   name: '',
+      //   email: '',
+      //   whatsapp: '',
+      //   countryOfOrigin: '',
+      //   countryOfResidence: '',
+      //   timestamp: new Date().toISOString(),
+      //   userAgent: navigator.userAgent
+      // });
     } catch (error) {
       setSubmitStatus('error');
       setErrorMessage(error instanceof Error ? error.message : 'An unexpected error occurred');
@@ -383,6 +384,7 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                     placeholder="Enter your full name"
                     required
                     className="h-12 border-border/50 focus:border-primary focus:ring-primary/20"
+                    disabled={submitStatus === 'success'}
                   />
                 </div>
 
@@ -399,6 +401,7 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                     placeholder="Enter your email address"
                     required
                     className="h-12 border-border/50 focus:border-primary focus:ring-primary/20"
+                    disabled={submitStatus === 'success'}
                   />
                 </div>
 
@@ -415,6 +418,7 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                     placeholder="Enter your WhatsApp number (with country code)"
                     required
                     className="h-12 border-border/50 focus:border-primary focus:ring-primary/20"
+                    disabled={submitStatus === 'success'}
                   />
                 </div>
 
@@ -427,6 +431,7 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                     value={formData.countryOfOrigin}
                     onValueChange={(value) => handleInputChange('countryOfOrigin', value)}
                     required
+                    disabled={submitStatus === 'success'}
                   >
                     <SelectTrigger className="h-12 border-border/50 focus:border-primary focus:ring-primary/20">
                       <SelectValue placeholder="Select your country of origin" />
@@ -450,6 +455,7 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                     value={formData.countryOfResidence}
                     onValueChange={(value) => handleInputChange('countryOfResidence', value)}
                     required
+                    disabled={submitStatus === 'success'}
                   >
                     <SelectTrigger className="h-12 border-border/50 focus:border-primary focus:ring-primary/20">
                       <SelectValue placeholder="Select your current country of residence" />
@@ -469,7 +475,7 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                 {/* Submit Button */}
                                   <Button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || submitStatus === 'success'}
                     className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-all duration-200"
                   >
                     {isSubmitting ? (
