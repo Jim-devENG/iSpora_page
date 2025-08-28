@@ -194,10 +194,12 @@ export function AdminDashboard() {
   const handleDelete = async (registrationId: string) => {
     if (window.confirm('Are you sure you want to delete this registration? This action cannot be undone.')) {
       try {
-        // TODO: Implement delete API call
         console.log('Deleting registration:', registrationId);
         
-        // For now, just remove from local state
+        // Call the API to delete the registration
+        await registrationService.deleteRegistration(registrationId);
+        
+        // Remove from local state
         setRegistrations(prev => prev.filter(r => r.id !== registrationId));
         
         // Show success message
@@ -211,16 +213,20 @@ export function AdminDashboard() {
 
   const handleStatusChange = async (registrationId: string, newStatus: 'active' | 'pending' | 'verified') => {
     try {
-      // TODO: Implement status update API call
       console.log('Updating status:', registrationId, newStatus);
       
-      // For now, just update local state
-      setRegistrations(prev => prev.map(r => 
-        r.id === registrationId ? { ...r, status: newStatus } : r
-      ));
+      // Call the API to update the status
+      const updatedRegistration = await registrationService.updateRegistrationStatus(registrationId, newStatus);
       
-      // Show success message
-      alert('Status updated successfully');
+      if (updatedRegistration) {
+        // Update local state with the response from API
+        setRegistrations(prev => prev.map(r => 
+          r.id === registrationId ? updatedRegistration : r
+        ));
+        
+        // Show success message
+        alert('Status updated successfully');
+      }
     } catch (error) {
       console.error('Error updating status:', error);
       alert('Failed to update status');

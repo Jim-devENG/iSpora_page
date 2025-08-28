@@ -19,6 +19,8 @@ interface RegistrationData {
   createdAt: string;
   updatedAt: string;
   group?: 'local' | 'diaspora';
+  timestamp?: string; // For compatibility with existing code
+  userAgent?: string; // For compatibility with existing code
 }
 
 interface DashboardStats {
@@ -289,11 +291,43 @@ export const registrationService = {
 
   // Update registration status
   async updateRegistrationStatus(id: string, status: RegistrationData['status']): Promise<RegistrationData | null> {
+    if (USE_API) {
+      const response = await fetch(`${API_BASE_URL}/registrations/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+      if (!response.ok) throw new Error('Failed to update registration status');
+      const data = await response.json();
+      return {
+        id: data.registration.id,
+        name: data.registration.name,
+        email: data.registration.email,
+        whatsapp: data.registration.whatsapp,
+        countryOfOrigin: data.registration.countryOfOrigin,
+        countryOfResidence: data.registration.countryOfResidence,
+        ipAddress: 'N/A',
+        location: { city: 'N/A', country: 'N/A', timezone: 'N/A' },
+        status: data.registration.status,
+        createdAt: data.registration.createdAt,
+        updatedAt: data.registration.updatedAt,
+        group: data.registration.group,
+        timestamp: data.registration.createdAt,
+        userAgent: 'N/A'
+      };
+    }
     return await db.updateStatus(id, status);
   },
 
   // Delete registration
   async deleteRegistration(id: string): Promise<boolean> {
+    if (USE_API) {
+      const response = await fetch(`${API_BASE_URL}/registrations/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete registration');
+      return true;
+    }
     return await db.delete(id);
   },
 
