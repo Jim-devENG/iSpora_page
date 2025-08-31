@@ -187,7 +187,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
             </motion.div>
             
             <motion.h1 
-              className="text-5xl font-bold tracking-tight sm:text-7xl relative"
+              className="text-5xl font-bold tracking-tight sm:text-7xl relative font-mona"
               variants={itemVariants}
             >
               <motion.span
@@ -210,32 +210,17 @@ export function HomePage({ onPageChange }: HomePageProps) {
             </motion.h1>
             
             <motion.div
-              className="mt-4 text-2xl font-medium"
+              className="mt-4 text-2xl font-medium font-mona"
               variants={itemVariants}
             >
-              <AnimationErrorBoundary fallback={
-                <span className="text-foreground">Connecting Global Minds</span>
-              }>
-                <TypewriterEffect
-                  texts={[
-                    "Connecting Global Minds",
-                    "Building Worldwide Impact", 
-                    "Empowering Diaspora Communities",
-                    "Creating Sustainable Change",
-                    "Bridging Continents Through Innovation"
-                  ]}
-                  className="text-foreground"
-                  speed={80}
-                  delay={3000}
-                />
-              </AnimationErrorBoundary>
+              <span className="text-foreground">Where dreams cross borders, impact has no limits</span>
             </motion.div>
             
             <motion.p 
-              className="mt-8 text-xl leading-8 text-foreground max-w-4xl mx-auto"
+              className="mt-8 text-xl leading-8 text-foreground max-w-4xl mx-auto font-mona"
               variants={itemVariants}
             >
-              We connect diaspora professionals worldwide with talent and opportunities globally, creating meaningful projects that drive sustainable development and positive change across all continents.
+              iSpora is the Impact Engine: connecting global diasporans with local changemakers to turn dreams into action and action into transformation.
             </motion.p>
             
             <motion.div 
