@@ -180,7 +180,7 @@ export function Footer({ onPageChange }: FooterProps) {
                 <Globe className="h-6 w-6 text-white" />
               </motion.div>
               <div>
-                <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-mona">
                   iSpora
                 </span>
                 <Badge variant="secondary" className="ml-2 text-xs">

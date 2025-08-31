@@ -38,7 +38,7 @@ export function Logo({ size = 'md', showText = true, className = '', onClick }: 
       </motion.div>
       {showText && (
         <div className="hidden sm:block ml-3">
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-muted-foreground font-mona">
             The Impact Engine
           </span>
         </div>
