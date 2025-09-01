@@ -70,7 +70,7 @@ export function RegistrationPage({ onPageChange }: RegistrationPageProps) {
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-1">
-        <div className="max-w-6xl mx-auto py-8 px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="max-w-5xl mx-auto py-6 px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
           <SocialMediaRegistrationForm
             showHeader={false}
             formTitle="iSpora Local"

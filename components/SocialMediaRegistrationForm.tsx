@@ -326,8 +326,8 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
   };
 
   return (
-    <div className={`${showHeader ? 'min-h-screen bg-gradient-to-br from-background via-background to-muted/20 py-12 px-4 sm:px-6 lg:px-8' : 'py-8 px-4 sm:px-6 lg:px-8'}`}>
-      <div className="max-w-2xl mx-auto">
+    <div className={`${showHeader ? 'min-h-screen bg-gradient-to-br from-background via-background to-muted/20 py-8 px-4 sm:px-6 lg:px-8' : 'py-6 px-4 sm:px-6 lg:px-8'}`}>
+      <div className="max-w-md mx-auto">
         {showHeader && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -346,10 +346,10 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                 <Globe className="h-7 w-7 text-accent" />
               </div>
             </div>
-            <h1 className="text-4xl font-bold text-foreground mb-4">
+            <h1 className="text-3xl font-bold text-foreground mb-4">
               Join Our Global Community
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base text-muted-foreground max-w-2xl mx-auto">
               Connect with fellow diaspora members, stay updated on our initiatives, and be part of our growing network across social media platforms.
             </p>
           </motion.div>
@@ -361,16 +361,16 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
           transition={safeTransition({ duration: 0.6, delay: 0.2 })}
         >
           <Card className="shadow-xl border-0 bg-card/50 backdrop-blur-sm">
-            <CardHeader className="text-center pb-6">
-              <CardTitle className="text-2xl font-semibold text-foreground">
+            <CardHeader className="text-center pb-4">
+              <CardTitle className="text-xl font-semibold text-foreground">
                 {formTitle || 'Social Media Registration'}
               </CardTitle>
-              <CardDescription className="text-muted-foreground">
+              <CardDescription className="text-sm text-muted-foreground">
                 {description || 'Fill out the form below to join our social media platforms and stay connected'}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Name Field */}
                 <div className="space-y-2">
                   <Label htmlFor="name" className="text-sm font-medium text-foreground">
@@ -383,7 +383,7 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                     onChange={(e) => handleInputChange('name', e.target.value)}
                     placeholder="Enter your full name"
                     required
-                    className="h-12 border-border/50 focus:border-primary focus:ring-primary/20"
+                    className="h-10 text-sm border-border/50 focus:border-primary focus:ring-primary/20"
                     disabled={submitStatus === 'success'}
                   />
                 </div>
@@ -400,7 +400,7 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                     onChange={(e) => handleInputChange('email', e.target.value)}
                     placeholder="Enter your email address"
                     required
-                    className="h-12 border-border/50 focus:border-primary focus:ring-primary/20"
+                    className="h-10 text-sm border-border/50 focus:border-primary focus:ring-primary/20"
                     disabled={submitStatus === 'success'}
                   />
                 </div>
@@ -417,7 +417,7 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                     onChange={(e) => handleInputChange('whatsapp', e.target.value)}
                     placeholder="Enter your WhatsApp number (with country code)"
                     required
-                    className="h-12 border-border/50 focus:border-primary focus:ring-primary/20"
+                    className="h-10 text-sm border-border/50 focus:border-primary focus:ring-primary/20"
                     disabled={submitStatus === 'success'}
                   />
                 </div>
@@ -433,7 +433,7 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                     required
                     disabled={submitStatus === 'success'}
                   >
-                    <SelectTrigger className="h-12 border-border/50 focus:border-primary focus:ring-primary/20">
+                    <SelectTrigger className="h-10 text-sm border-border/50 focus:border-primary focus:ring-primary/20">
                       <SelectValue placeholder="Select your country of origin" />
                     </SelectTrigger>
                     <SelectContent>
@@ -457,7 +457,7 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                     required
                     disabled={submitStatus === 'success'}
                   >
-                    <SelectTrigger className="h-12 border-border/50 focus:border-primary focus:ring-primary/20">
+                    <SelectTrigger className="h-10 text-sm border-border/50 focus:border-primary focus:ring-primary/20">
                       <SelectValue placeholder="Select your current country of residence" />
                     </SelectTrigger>
                     <SelectContent>
@@ -476,7 +476,7 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                                   <Button
                     type="submit"
                     disabled={isSubmitting || submitStatus === 'success'}
-                    className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-all duration-200"
+                    className="w-full h-10 text-sm bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-all duration-200"
                   >
                     {isSubmitting ? (
                       <>
@@ -528,7 +528,7 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                     </Alert>
                     {successCtaUrl && (
                       <Button 
-                        className="w-full h-12 bg-green-600 hover:bg-green-700 text-white"
+                        className="w-full h-10 text-sm bg-green-600 hover:bg-green-700 text-white"
                         onClick={() => {
                           console.log('WhatsApp button clicked, URL:', successCtaUrl);
                           try {
@@ -563,7 +563,7 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                         });
                         setSubmitStatus('idle');
                       }}
-                      className="w-full h-12"
+                      className="w-full h-10 text-sm"
                     >
                       Submit Another Registration
                     </Button>
