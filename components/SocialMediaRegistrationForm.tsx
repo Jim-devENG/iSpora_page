@@ -436,7 +436,7 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                     <SelectTrigger className="h-10 text-sm border-border/50 focus:border-primary focus:ring-primary/20">
                       <SelectValue placeholder="Select your country of origin" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="max-h-60 overflow-y-auto">
                       {(countriesOverride || countries).map((country) => (
                         <SelectItem key={country.code} value={country.name}>
                           {country.name}
@@ -460,7 +460,7 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                     <SelectTrigger className="h-10 text-sm border-border/50 focus:border-primary focus:ring-primary/20">
                       <SelectValue placeholder="Select your current country of residence" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="max-h-60 overflow-y-auto">
                       {(countriesOverride || countries).map((country) => (
                         <SelectItem key={country.code} value={country.name}>
                           {country.name}

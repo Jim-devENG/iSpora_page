@@ -78,7 +78,6 @@ export function RegistrationPage({ onPageChange }: RegistrationPageProps) {
             successCtaUrl="https://chat.whatsapp.com/I9utNeip977H5k8oGW5KCy?mode=ems_copy_c"
             successCtaLabel="Join iSpora Local WhatsApp Group"
             group="local"
-            countriesOverride={africanCountries}
           />
           <SocialMediaRegistrationForm
             showHeader={false}
@@ -87,7 +86,6 @@ export function RegistrationPage({ onPageChange }: RegistrationPageProps) {
             successCtaUrl="https://chat.whatsapp.com/CVWXWSeSfuKFj5UFmj6ESL?mode=ems_copy_c"
             successCtaLabel="Join iSpora Diaspora WhatsApp Group"
             group="diaspora"
-            countriesOverride={diasporaCountries}
           />
         </div>
       </main>
