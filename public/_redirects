@@ -1,3 +1,0 @@
-# Basic redirects only
-/api/* /api/:splat 200
-/admin /admin 200

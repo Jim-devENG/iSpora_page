@@ -18,38 +18,9 @@ export default defineConfig({
     strictPort: true,
   },
   build: {
-    // Security optimizations
+    // Standard build configuration
     minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: false, // Keep console.log to avoid security warnings
-        drop_debugger: true, // Remove debugger statements
-        pure_funcs: [], // Don't remove console functions
-      },
-      mangle: {
-        // Obfuscate variable names
-        toplevel: true,
-        properties: {
-          regex: /^_/ // Mangle properties starting with underscore
-        }
-      }
-    },
-    rollupOptions: {
-      output: {
-        // Obfuscate chunk names
-        chunkFileNames: 'assets/[hash].js',
-        entryFileNames: 'assets/[hash].js',
-        assetFileNames: 'assets/[hash].[ext]',
-        // Split chunks for better obfuscation
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          ui: ['lucide-react', 'motion/react']
-        }
-      }
-    },
-    // Source map configuration for production
-    sourcemap: false, // Disable source maps in production
-    // Increase chunk size warning limit
+    sourcemap: false,
     chunkSizeWarningLimit: 1000,
   },
   define: {
