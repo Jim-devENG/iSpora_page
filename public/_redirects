@@ -1,20 +1,3 @@
-# Security redirects
+# Basic redirects only
 /api/* /api/:splat 200
 /admin /admin 200
-
-# Block common attack patterns
-/*.env* /404 404
-/*.git* /404 404
-/*.htaccess /404 404
-/*.htpasswd /404 404
-/*.ini /404 404
-/*.log /404 404
-/*.sql /404 404
-/*.bak /404 404
-/*.backup /404 404
-/*.old /404 404
-/*.tmp /404 404
-/*.temp /404 404
-
-# Block suspicious user agents
-/robots.txt /robots-secure.txt 200

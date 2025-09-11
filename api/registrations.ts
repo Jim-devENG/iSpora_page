@@ -4,13 +4,7 @@ import { Registration } from './models/Registration.js';
 import { rateLimit, validateInput, addSecurityHeaders, isSuspiciousRequest, getClientIP } from './_lib/security.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Security checks
-  if (isSuspiciousRequest(req)) {
-    console.log('Suspicious request blocked:', getClientIP(req));
-    return res.status(403).json({ error: 'Access denied' });
-  }
-
-  // Rate limiting
+  // Basic rate limiting only
   const rateLimitResult = rateLimit(req);
   if (!rateLimitResult.allowed) {
     console.log('Rate limit exceeded for IP:', getClientIP(req));
@@ -19,10 +13,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       retryAfter: Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000)
     });
   }
-
-  // Add security headers
-  res.setHeader('X-RateLimit-Remaining', rateLimitResult.remaining.toString());
-  res.setHeader('X-RateLimit-Reset', rateLimitResult.resetTime.toString());
 
   try {
     await connectToDatabase();
