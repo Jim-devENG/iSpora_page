@@ -34,35 +34,20 @@ export class SecurityManager {
   private blockConsole() {
     if (this.consoleBlocked) return;
     
-    // Override console methods
-    const noop = () => {};
+    // Only disable console in production, but don't completely block it
+    // This prevents browser security warnings
+    const originalConsole = { ...console };
+    
+    // Override console methods with warnings instead of complete blocking
     const methods = ['log', 'debug', 'info', 'warn', 'error', 'trace', 'dir', 'dirxml', 'group', 'groupEnd', 'time', 'timeEnd', 'count', 'clear', 'table', 'assert'];
     
     methods.forEach(method => {
-      (console as any)[method] = noop;
-    });
-
-    // Block console object access
-    Object.defineProperty(window, 'console', {
-      get: () => ({
-        log: noop,
-        debug: noop,
-        info: noop,
-        warn: noop,
-        error: noop,
-        trace: noop,
-        dir: noop,
-        dirxml: noop,
-        group: noop,
-        groupEnd: noop,
-        time: noop,
-        timeEnd: noop,
-        count: noop,
-        clear: noop,
-        table: noop,
-        assert: noop
-      }),
-      set: () => {}
+      (console as any)[method] = (...args: any[]) => {
+        // Only show warning for first few calls
+        if (Math.random() < 0.1) { // 10% chance to show warning
+          originalConsole.warn('Console access is restricted on this site');
+        }
+      };
     });
 
     this.consoleBlocked = true;
@@ -119,65 +104,62 @@ export class SecurityManager {
     
     this.devToolsOpen = true;
     
-    // Clear the page content
-    document.body.innerHTML = `
-      <div style="
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background: #000;
-        color: #fff;
-        font-family: Arial, sans-serif;
-        text-align: center;
-      ">
-        <div>
-          <h1>Access Denied</h1>
-          <p>Developer tools are not allowed on this website.</p>
-          <p>Please close the developer tools and refresh the page.</p>
-        </div>
-      </div>
+    // Just show a subtle warning instead of clearing the page
+    const warning = document.createElement('div');
+    warning.style.cssText = `
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 0, 0, 0.9);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      z-index: 10000;
+      max-width: 200px;
     `;
+    warning.textContent = 'Developer tools detected. Please close them for the best experience.';
+    document.body.appendChild(warning);
     
-    // Disable all scripts
-    const scripts = document.querySelectorAll('script');
-    scripts.forEach(script => script.remove());
+    // Remove warning after 5 seconds
+    setTimeout(() => {
+      if (warning.parentNode) {
+        warning.parentNode.removeChild(warning);
+      }
+    }, 5000);
   }
 
   private blockRightClick() {
+    // Only block right-click on images and specific elements, not globally
     document.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      return false;
-    });
-  }
-
-  private blockKeyboardShortcuts() {
-    document.addEventListener('keydown', (e) => {
-      // Block Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+Shift+J, Ctrl+U, F12
-      if ((e.ctrlKey && e.shiftKey && ['I', 'C', 'J'].includes(e.key)) ||
-          (e.ctrlKey && e.key === 'U') ||
-          e.key === 'F12') {
+      const target = e.target as HTMLElement;
+      // Only block on images and elements with data-protect attribute
+      if (target.tagName === 'IMG' || target.hasAttribute('data-protect')) {
         e.preventDefault();
         return false;
       }
     });
   }
 
+  private blockKeyboardShortcuts() {
+    // Remove aggressive keyboard blocking that triggers security warnings
+    // Only show subtle warnings instead
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'F12') {
+        // Just show a subtle warning, don't block
+        console.warn('Developer tools shortcut detected');
+      }
+    });
+  }
+
   private blockTextSelection() {
-    document.addEventListener('selectstart', (e) => {
-      e.preventDefault();
-      return false;
-    });
-
-    document.addEventListener('dragstart', (e) => {
-      e.preventDefault();
-      return false;
-    });
-
-    // CSS to prevent text selection
+    // Only prevent text selection on specific elements, not globally
+    // This prevents browser security warnings
     const style = document.createElement('style');
     style.textContent = `
-      * {
+      /* Only block selection on specific elements */
+      .no-select, [data-no-select] {
         -webkit-user-select: none !important;
         -moz-user-select: none !important;
         -ms-user-select: none !important;
@@ -186,7 +168,8 @@ export class SecurityManager {
         -webkit-tap-highlight-color: transparent !important;
       }
       
-      input, textarea {
+      /* Ensure form inputs are always selectable */
+      input, textarea, [contenteditable] {
         -webkit-user-select: text !important;
         -moz-user-select: text !important;
         -ms-user-select: text !important;

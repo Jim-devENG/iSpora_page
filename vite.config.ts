@@ -22,9 +22,9 @@ export default defineConfig({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true, // Remove console.log in production
+        drop_console: false, // Keep console.log to avoid security warnings
         drop_debugger: true, // Remove debugger statements
-        pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'], // Remove specific functions
+        pure_funcs: [], // Don't remove console functions
       },
       mangle: {
         // Obfuscate variable names
