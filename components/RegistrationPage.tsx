@@ -74,7 +74,7 @@ export function RegistrationPage({ onPageChange }: RegistrationPageProps) {
           <SocialMediaRegistrationForm
             showHeader={false}
             formTitle="iSpora Local"
-            description="Join our local community chapter. Fill the form and then join the WhatsApp group to connect with people near you."
+            description="Join a local community chapter, fill the form and then join the WhatsApp group to connect with the Diasporas"
             successCtaUrl="https://chat.whatsapp.com/I9utNeip977H5k8oGW5KCy?mode=ems_copy_c"
             successCtaLabel="Join iSpora Local WhatsApp Group"
             group="local"
@@ -82,7 +82,7 @@ export function RegistrationPage({ onPageChange }: RegistrationPageProps) {
           <SocialMediaRegistrationForm
             showHeader={false}
             formTitle="iSpora Diaspora"
-            description="Join our global diaspora network. Fill the form and then join the WhatsApp group to connect globally."
+            description="Join our global diaspora network. Fill the form and join the WhatsApp group to connect with youths locally."
             successCtaUrl="https://chat.whatsapp.com/CVWXWSeSfuKFj5UFmj6ESL?mode=ems_copy_c"
             successCtaLabel="Join iSpora Diaspora WhatsApp Group"
             group="diaspora"
