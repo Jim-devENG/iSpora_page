@@ -307,16 +307,24 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
       await registrationService.submitRegistration(payload);
       
       setSubmitStatus('success');
-      // Don't reset form data immediately - let user see success and click WhatsApp link
-      // setFormData({
-      //   name: '',
-      //   email: '',
-      //   whatsapp: '',
-      //   countryOfOrigin: '',
-      //   countryOfResidence: '',
-      //   timestamp: new Date().toISOString(),
-      //   userAgent: navigator.userAgent
-      // });
+      
+      // Redirect directly to WhatsApp after successful submission
+      if (successCtaUrl) {
+        // Small delay to show success message briefly
+        setTimeout(() => {
+          try {
+            const newWindow = window.open(successCtaUrl, '_blank');
+            if (!newWindow) {
+              // If popup blocked, try direct navigation
+              window.location.href = successCtaUrl;
+            }
+          } catch (error) {
+            console.error('Error opening WhatsApp link:', error);
+            // Fallback: try direct navigation
+            window.location.href = successCtaUrl;
+          }
+        }, 1500); // 1.5 second delay to show success message
+      }
     } catch (error) {
       setSubmitStatus('error');
       setErrorMessage(error instanceof Error ? error.message : 'An unexpected error occurred');
@@ -515,39 +523,23 @@ export function SocialMediaRegistrationForm({ showHeader = true, formTitle, desc
                     <Alert className="border-green-200 bg-green-50 text-green-800">
                       <CheckCircle className="h-4 w-4" />
                       <AlertDescription>
-                        {(() => {
-                          const messages = [
-                            "🎉 Registration successful!",
-                            "✅ You're all set!",
-                            "🌟 Welcome aboard!",
-                            "🚀 Success!",
-                          ];
-                          return messages[Math.floor(Math.random() * messages.length)];
-                        })()}
+                        {successCtaUrl ? (
+                          <>
+                            🎉 Registration successful! Redirecting to WhatsApp...
+                          </>
+                        ) : (
+                          (() => {
+                            const messages = [
+                              "🎉 Registration successful!",
+                              "✅ You're all set!",
+                              "🌟 Welcome aboard!",
+                              "🚀 Success!",
+                            ];
+                            return messages[Math.floor(Math.random() * messages.length)];
+                          })()
+                        )}
                       </AlertDescription>
                     </Alert>
-                    {successCtaUrl && (
-                      <Button 
-                        className="w-full h-10 text-sm bg-green-600 hover:bg-green-700 text-white"
-                        onClick={() => {
-                          console.log('WhatsApp button clicked, URL:', successCtaUrl);
-                          try {
-                            // Try multiple methods to open the link
-                            const newWindow = window.open(successCtaUrl, '_blank');
-                            if (!newWindow) {
-                              // If popup blocked, try direct navigation
-                              window.location.href = successCtaUrl;
-                            }
-                          } catch (error) {
-                            console.error('Error opening WhatsApp link:', error);
-                            // Fallback: try direct navigation
-                            window.location.href = successCtaUrl;
-                          }
-                        }}
-                      >
-                        {successCtaLabel || 'Join WhatsApp Group'}
-                      </Button>
-                    )}
                     <Button 
                       type="button"
                       variant="outline"
