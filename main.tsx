@@ -2,8 +2,6 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles/globals.css'
 import App from './App.tsx'
-// Security measures temporarily disabled to prevent browser warnings
-// import './src/utils/security'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
