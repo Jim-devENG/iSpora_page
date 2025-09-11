@@ -28,6 +28,7 @@ import {
   MoreHorizontal
 } from 'lucide-react';
 import { registrationService } from './services/registrationService';
+import { NotificationModal } from './ui/notification-modal';
 
 interface RegistrationData {
   id: string;
@@ -78,6 +79,22 @@ export function AdminDashboard() {
   const [recentActivityPage, setRecentActivityPage] = useState(1);
   const registrationsPerPage = 10;
   const recentActivityPerPage = 5;
+  
+  // Notification modal state
+  const [notification, setNotification] = useState<{
+    isOpen: boolean;
+    type: 'success' | 'error';
+    title: string;
+    message: string;
+    confirmText?: string;
+    onConfirm?: () => void;
+  }>({
+    isOpen: false,
+    type: 'success',
+    title: '',
+    message: '',
+    confirmText: 'OK'
+  });
 
   // Fetch data and subscribe to real-time updates
   useEffect(() => {
@@ -200,23 +217,42 @@ export function AdminDashboard() {
   };
 
   const handleDelete = async (registrationId: string) => {
-    if (window.confirm('Are you sure you want to delete this registration? This action cannot be undone.')) {
-      try {
-        console.log('Deleting registration:', registrationId);
-        
-        // Call the API to delete the registration
-        await registrationService.deleteRegistration(registrationId);
-        
-        // Remove from local state
-        setRegistrations(prev => prev.filter(r => r.id !== registrationId));
-        
-        // Show success message
-        alert('Registration deleted successfully');
-      } catch (error) {
-        console.error('Error deleting registration:', error);
-        alert('Failed to delete registration');
+    setNotification({
+      isOpen: true,
+      type: 'error',
+      title: 'Delete Registration',
+      message: 'Are you sure you want to delete this registration? This action cannot be undone.',
+      confirmText: 'Delete',
+      onConfirm: async () => {
+        try {
+          console.log('Deleting registration:', registrationId);
+          
+          // Call the API to delete the registration
+          await registrationService.deleteRegistration(registrationId);
+          
+          // Remove from local state
+          setRegistrations(prev => prev.filter(r => r.id !== registrationId));
+          
+          // Show success message
+          setNotification({
+            isOpen: true,
+            type: 'success',
+            title: 'Success',
+            message: 'Registration deleted successfully',
+            confirmText: 'OK'
+          });
+        } catch (error) {
+          console.error('Error deleting registration:', error);
+          setNotification({
+            isOpen: true,
+            type: 'error',
+            title: 'Error',
+            message: 'Failed to delete registration',
+            confirmText: 'OK'
+          });
+        }
       }
-    }
+    });
   };
 
   const handleStatusChange = async (registrationId: string, newStatus: 'active' | 'pending' | 'verified') => {
@@ -233,11 +269,23 @@ export function AdminDashboard() {
         ));
         
         // Show success message
-        alert('Status updated successfully');
+        setNotification({
+          isOpen: true,
+          type: 'success',
+          title: 'Success',
+          message: 'Status updated successfully',
+          confirmText: 'OK'
+        });
       }
     } catch (error) {
       console.error('Error updating status:', error);
-      alert('Failed to update status');
+      setNotification({
+        isOpen: true,
+        type: 'error',
+        title: 'Error',
+        message: 'Failed to update status',
+        confirmText: 'OK'
+      });
     }
   };
 
@@ -732,6 +780,17 @@ export function AdminDashboard() {
             </motion.div>
           </motion.div>
         )}
+
+        {/* Notification Modal */}
+        <NotificationModal
+          isOpen={notification.isOpen}
+          onClose={() => setNotification(prev => ({ ...prev, isOpen: false }))}
+          type={notification.type}
+          title={notification.title}
+          message={notification.message}
+          confirmText={notification.confirmText}
+          onConfirm={notification.onConfirm}
+        />
       </div>
     </div>
   );
