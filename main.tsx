@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './styles/globals.css'
 import App from './App.tsx'
 // Initialize security measures in production
-import './utils/security.ts'
+import './src/utils/security'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
