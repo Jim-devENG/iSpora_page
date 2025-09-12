@@ -36,29 +36,32 @@ function AppContent() {
     }
   }, []);
 
-  // Sync current page with URL hash (e.g., #admin, #register)
+  // Sync current page with URL path (e.g., /admin, /register)
   React.useEffect(() => {
     const validPages = ['home', 'about', 'services', 'impact', 'contact', 'register', 'admin'];
 
-    const applyHash = () => {
-      const hash = window.location.hash.replace('#', '') || 'home';
-      if (validPages.includes(hash)) {
-        setCurrentPage(hash);
+    const applyPath = () => {
+      const path = window.location.pathname.replace('/', '') || 'home';
+      if (validPages.includes(path)) {
+        setCurrentPage(path);
+      } else {
+        setCurrentPage('home');
       }
     };
 
     // Apply on initial load
-    applyHash();
+    applyPath();
 
-    // Listen for hash changes
-    window.addEventListener('hashchange', applyHash);
-    return () => window.removeEventListener('hashchange', applyHash);
+    // Listen for path changes
+    window.addEventListener('popstate', applyPath);
+    return () => window.removeEventListener('popstate', applyPath);
   }, []);
 
   const handlePageChange = (page: string) => {
-    // Update URL hash for direct navigation/bookmarks
+    // Update URL path for direct navigation/bookmarks
     if (typeof window !== 'undefined') {
-      window.location.hash = page;
+      const newPath = page === 'home' ? '/' : `/${page}`;
+      window.history.pushState({}, '', newPath);
     }
     setCurrentPage(page);
     // Scroll to top when changing pages

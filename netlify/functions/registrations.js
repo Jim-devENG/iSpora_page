@@ -1,5 +1,6 @@
 const { connectToDatabase } = require('./_lib/mongodb');
 const { Registration } = require('./models/Registration');
+const { validateRegistrationData, checkRateLimit } = require('./_lib/security');
 
 exports.handler = async (event, context) => {
   // Handle CORS
@@ -33,25 +34,34 @@ exports.handler = async (event, context) => {
 
   try {
     if (event.httpMethod === 'POST') {
+      // Rate limiting
+      const clientIP = event.headers['x-forwarded-for'] || event.headers['x-real-ip'] || 'unknown';
+      if (!checkRateLimit(clientIP, 5, 15 * 60 * 1000)) { // 5 requests per 15 minutes
+        return {
+          statusCode: 429,
+          headers,
+          body: JSON.stringify({ error: 'Too many requests. Please try again later.' }),
+        };
+      }
+
       const body = JSON.parse(event.body || '{}');
       console.log('Received registration data:', JSON.stringify(body, null, 2));
       
-      // Basic validation
-      if (!body.name || !body.email || !body.whatsapp || !body.countryOfOrigin || !body.countryOfResidence) {
+      // Validate and sanitize input data
+      const validation = validateRegistrationData(body);
+      if (!validation.isValid) {
         return {
           statusCode: 400,
           headers,
-          body: JSON.stringify({ error: 'Missing required fields' }),
+          body: JSON.stringify({ 
+            error: 'Invalid data provided',
+            details: validation.errors 
+          }),
         };
       }
       
-      // Normalize group value
-      if (body.group !== 'local' && body.group !== 'diaspora') {
-        body.group = 'diaspora';
-      }
-      
-      console.log('Normalized registration data:', JSON.stringify(body, null, 2));
-      const doc = await Registration.create(body);
+      console.log('Validated registration data:', JSON.stringify(validation.data, null, 2));
+      const doc = await Registration.create(validation.data);
       console.log('Registration created successfully:', doc._id);
       
       return {
