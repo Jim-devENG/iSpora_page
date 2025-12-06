@@ -3,27 +3,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { motion } from 'motion/react';
+import { Section } from './layout/Section';
+import { PageHeader } from './layout/PageHeader';
+import { safeAnimate, safeTransition } from './utils/animationUtils';
+import { cn } from './ui/utils';
+import { FloatingShapes, AnimatedBlob } from './animations/FloatingElements';
+import { AnimatedDots, AnimatedGrid } from './animations/AnimatedBackground';
 import { 
-  Heart, 
-  BookOpen, 
-  TrendingUp, 
-  Users, 
-  Lightbulb,
-  Award,
-  Target,
-  Globe,
-  ArrowRight,
-  CheckCircle,
-  Sparkles,
-  Network,
-  Building,
-  Rocket,
   GraduationCap,
-  Briefcase,
-  Earth
+  Building,
+  Network,
+  Users,
+  Target,
+  ArrowRight,
+  CheckCircle
 } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { safeAnimate, safeTransition } from './utils/animationUtils';
 
 interface ServicesPageProps {
   onPageChange: (page: string) => void;
@@ -32,463 +27,263 @@ interface ServicesPageProps {
 export function ServicesPage({ onPageChange }: ServicesPageProps) {
   const services = [
     {
-      icon: <Heart className="h-8 w-8" />,
-      title: 'Mentorship & Coaching',
-      description: 'Connecting experienced diaspora professionals worldwide with ambitious talent globally for personalized guidance and career development.',
-      image: '/Mentorship.jpg',
-      features: [
-        'One-on-one global mentorship sessions',
-        'Cross-border career guidance and planning',
-        'International skill development workshops',
-        'Worldwide professional network building'
-      ],
-      impact: 'Empowering the next generation of global leaders'
+      icon: <GraduationCap className="h-8 w-8" />,
+      title: 'Seminars, Training & Development',
+      description: 'Capacity-building programmes for youths, organizations and communities',
+      image: '/conference.jpg',
+      outcomes: [
+        'Enhanced skills and competencies for youth and professionals',
+        'Strengthened organizational capacity and effectiveness',
+        'Improved community development capabilities',
+        'Sustainable knowledge transfer and learning ecosystems'
+      ]
     },
     {
-      icon: <BookOpen className="h-8 w-8" />,
-      title: 'Academic & Research Projects',
-      description: 'Supporting educational initiatives and research collaborations that advance knowledge and create practical solutions across multiple continents.',
+      icon: <Building className="h-8 w-8" />,
+      title: 'Government & Policy Stakeholders Advisory',
+      description: 'Strategic Advisory for Institutions working on development-focused initiatives',
       image: '/academy.jpg',
-      features: [
-        'International research project collaboration',
-        'Global academic exchange programs',
-        'Cross-cultural educational resource development',
-        'Worldwide knowledge transfer initiatives'
-      ],
-      impact: 'Advancing education and research globally'
+      outcomes: [
+        'Evidence-based policy recommendations',
+        'Strategic planning and program design support',
+        'Institutional capacity strengthening',
+        'Effective implementation frameworks'
+      ]
     },
     {
-      icon: <TrendingUp className="h-8 w-8" />,
-      title: 'Career & Entrepreneurship',
-      description: 'Fostering entrepreneurial spirit and providing resources for career advancement and business development across global markets.',
-      image: '/Career.jpg',
-      features: [
-        'Global startup incubation support',
-        'International business plan development',
-        'Cross-border investment readiness training',
-        'Worldwide market access facilitation'
-      ],
-      impact: 'Building sustainable businesses across continents'
+      icon: <Network className="h-8 w-8" />,
+      title: 'National Growth and Development Partnership',
+      description: 'Collaboration with national and regional bodies to accelerate transformation',
+      image: '/Collaboration.jpg',
+      outcomes: [
+        'Coordinated development initiatives across sectors',
+        'Leveraged diaspora expertise for national priorities',
+        'Scalable impact through strategic partnerships',
+        'Sustainable transformation pathways'
+      ]
     },
     {
       icon: <Users className="h-8 w-8" />,
-      title: 'Community Impact Projects',
-      description: 'Implementing projects that create lasting positive change in communities worldwide through collaborative efforts spanning multiple countries.',
+      title: 'Leadership & Collaboration for Diaspora-led Initiatives',
+      description: 'Connecting diaspora-led movements with local organizations for shared impact',
       image: '/communinty.jpg',
-      features: [
-        'Global community needs assessment',
-        'International sustainable development projects',
-        'Cross-border capacity building',
-        'Worldwide impact measurement and reporting'
-      ],
-      impact: 'Creating sustainable change in communities globally'
+      outcomes: [
+        'Bridged diaspora-local collaboration gaps',
+        'Amplified impact through coordinated efforts',
+        'Strengthened community-led development',
+        'Sustainable cross-border partnerships'
+      ]
     },
     {
-      icon: <Lightbulb className="h-8 w-8" />,
-      title: 'Collaboration & Innovation',
-      description: 'Facilitating innovative partnerships and cross-border collaborations to solve complex global challenges through diverse perspectives.',
-      image: '/Collaboration.jpg',
-      features: [
-        'Global innovation workshops',
-        'International cross-border partnerships',
-        'Worldwide technology transfer programs',
-        'Multi-cultural creative problem-solving sessions'
-      ],
-      impact: 'Driving innovation through global collaboration'
+      icon: <Target className="h-8 w-8" />,
+      title: 'Impact Partnership Support',
+      description: 'We help impact initiatives amplify reach, visibility and measurable impact',
+      image: '/Career.jpg',
+      outcomes: [
+        'Increased visibility and recognition for initiatives',
+        'Expanded reach to target communities',
+        'Measurable impact tracking and reporting',
+        'Enhanced sustainability and growth potential'
+      ]
     }
   ];
-
-  const approach = [
-    {
-      step: '01',
-      title: 'Global Connect',
-      description: 'We bring together diaspora professionals worldwide and local talent based on shared interests and complementary skills across all continents.',
-      icon: <Network className="h-6 w-6" />
-    },
-    {
-      step: '02',
-      title: 'Cross-Border Collaborate',
-      description: 'Our structured approach ensures meaningful collaboration that maximizes impact and creates lasting relationships spanning multiple countries.',
-      icon: <Users className="h-6 w-6" />
-    },
-    {
-      step: '03',
-      title: 'Create Global Impact',
-      description: 'Together, we implement projects that create measurable change and sustainable development in communities worldwide.',
-      icon: <Rocket className="h-6 w-6" />
-    }
-  ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: safeTransition({
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      })
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: safeTransition({
-        type: "spring",
-        stiffness: 100,
-        damping: 10
-      })
-    }
-  };
-
-  const floatingAnimation = safeAnimate({
-    y: [0, -10, 0],
-    transition: safeTransition({
-      duration: 4,
-      repeat: 999999,
-      ease: "easeInOut"
-    })
-  });
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 py-24 sm:py-32">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,51,204,0.1),transparent)] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(144,164,231,0.1),transparent)] pointer-events-none" />
+      {/* Page Header */}
+      <Section 
+        className="relative overflow-hidden pt-24 pb-12 sm:pt-32"
+        style={{
+          background: 'linear-gradient(135deg, hsl(220 100% 95%) 0%, hsl(220 100% 92%) 50%, hsl(220 67% 94%) 100%)'
+        }}
+      >
+        <AnimatedBlob className="top-0 right-0 bg-primary/15" delay={0} size="w-96 h-96" />
+        <AnimatedDots />
         
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            className="text-center"
-            initial="hidden"
-            animate="visible"
-            variants={containerVariants}
-          >
-            <motion.div variants={itemVariants}>
-              <motion.div 
-                className="inline-flex items-center rounded-full border border-primary/20 px-4 py-2 text-sm font-medium text-primary mb-6"
-                animate={floatingAnimation}
-              >
-                <Sparkles className="h-4 w-4 mr-2" />
-                Global Services
-              </motion.div>
-            </motion.div>
-            
-            <motion.h1 
-              className="text-4xl font-bold tracking-tight sm:text-6xl"
-              variants={itemVariants}
-            >
-              Transforming the World Through
-              <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent"> Global Collaborative Impact</span>
-            </motion.h1>
-            
-            <motion.p 
-              className="mt-6 text-xl leading-8 text-muted-foreground max-w-4xl mx-auto"
-              variants={itemVariants}
-            >
-              We connect diaspora professionals worldwide with local talent globally to create meaningful projects that drive sustainable development and positive change across all continents.
-            </motion.p>
-            
-            <motion.div 
-              className="mt-10"
-              variants={itemVariants}
-            >
-              <motion.button 
-                className="inline-flex items-center justify-center h-12 px-8 py-4 rounded-full text-lg font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-                whileHover={safeAnimate({ scale: 1.05 })}
-                whileTap={safeAnimate({ scale: 0.95 })}
-                onClick={() => onPageChange('contact')}
-              >
-                <Earth className="mr-2 h-5 w-5" />
-                Partner With Us Globally
-              </motion.button>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Services Grid */}
-      <section className="py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            className="text-center mb-16"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-          >
-            <motion.h2 
-              className="text-3xl font-bold tracking-tight sm:text-4xl"
-              variants={itemVariants}
-            >
-              Our Global Core Services
-            </motion.h2>
-            <motion.p 
-              className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto"
-              variants={itemVariants}
-            >
-              Five key areas where we create lasting impact through worldwide diaspora collaboration
-            </motion.p>
-          </motion.div>
-          
-          <motion.div 
-            className="space-y-20"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-          >
-            {services.map((service, index) => (
-              <motion.div 
-                key={index}
-                className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}
-                variants={itemVariants}
-              >
-                <div className={`space-y-6 ${index % 2 === 1 ? 'lg:order-2' : ''}`}>
-                  <div className="flex items-center space-x-4">
-                    <motion.div 
-                      className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-r from-primary to-secondary text-white"
-                      whileHover={safeAnimate({ scale: 1.1, rotate: 5 })}
-                    >
-                      {service.icon}
-                    </motion.div>
-                    <div>
-                      <h3 className="text-2xl font-bold">{service.title}</h3>
-                      <Badge variant="outline" className="mt-2 text-primary border-primary/20">
-                        {service.impact}
-                      </Badge>
-                    </div>
-                  </div>
-                  
-                  <p className="text-lg text-muted-foreground leading-relaxed">{service.description}</p>
-                  
-                  <div className="space-y-3">
-                    <h4 className="font-semibold text-foreground">Key Features:</h4>
-                    <ul className="space-y-2">
-                      {service.features.map((feature, featureIndex) => (
-                        <motion.li 
-                          key={featureIndex} 
-                          className="flex items-center space-x-3"
-                          whileHover={safeAnimate({ x: 5 })}
-                        >
-                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                          <span className="text-muted-foreground">{feature}</span>
-                        </motion.li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  <motion.button 
-                    className="inline-flex items-center justify-center h-11 px-6 rounded-lg border border-input bg-background hover:bg-accent hover:text-accent-foreground font-medium transition-colors"
-                    whileHover={safeAnimate({ scale: 1.05 })}
-                    whileTap={safeAnimate({ scale: 0.95 })}
-                    onClick={() => onPageChange('contact')}
-                  >
-                    Learn More
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </motion.button>
-                </div>
-                
-                <div className={`${index % 2 === 1 ? 'lg:order-1' : ''}`}>
-                  <motion.div 
-                    className="relative group"
-                    whileHover={safeAnimate({ scale: 1.02 })}
-                    transition={safeTransition({ type: "spring", stiffness: 300, damping: 20 })}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-3xl blur-xl transform scale-105" />
-                    <div className="relative overflow-hidden rounded-3xl border border-border/50 shadow-xl">
-                      <div className="aspect-video relative">
-                        <ImageWithFallback
-                          src={service.image}
-                          alt={`${service.title} service illustration`}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20" />
-                        
-                        {/* Service badge */}
-                        <div className="absolute top-4 left-4">
-                          <div className="bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-lg">
-                            <div className="flex items-center space-x-2">
-                              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-secondary text-white">
-                                {service.icon}
-                              </div>
-                              <span className="text-sm font-medium text-gray-900">{service.title}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Global impact indicator */}
-                        <div className="absolute bottom-4 right-4">
-                          <div className="bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg">
-                            <div className="flex items-center space-x-2">
-                              <Earth className="h-4 w-4 text-green-500" />
-                              <span className="text-sm font-medium text-gray-900">Global Impact</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Our Approach */}
-      <section className="py-24 sm:py-32 bg-muted/50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            className="text-center mb-16"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-          >
-            <motion.h2 
-              className="text-3xl font-bold tracking-tight sm:text-4xl"
-              variants={itemVariants}
-            >
-              Our Global Approach
-            </motion.h2>
-            <motion.p 
-              className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto"
-              variants={itemVariants}
-            >
-              A simple yet effective methodology that ensures meaningful collaboration and sustainable impact across all borders
-            </motion.p>
-          </motion.div>
-          
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-          >
-            {approach.map((step, index) => (
-              <motion.div 
-                key={index}
-                className="relative"
-                variants={itemVariants}
-              >
-                <motion.div 
-                  className="rounded-lg border bg-card text-card-foreground shadow-sm text-center h-full p-8"
-                  whileHover={safeAnimate({ y: -5, scale: 1.02 })}
-                  transition={safeTransition({ type: "spring", stiffness: 300 })}
-                >
-                  <div className="relative">
-                    <motion.div 
-                      className="absolute -top-6 -left-6 h-12 w-12 rounded-full bg-accent flex items-center justify-center text-accent-foreground font-bold text-lg"
-                      initial={{ scale: 0, rotate: -180 }}
-                      whileInView={{ scale: 1, rotate: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.1, type: "spring", stiffness: 200 }}
-                    >
-                      {step.step}
-                    </motion.div>
-                    
-                    <motion.div 
-                      className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white mb-6"
-                      whileHover={safeAnimate({ scale: 1.1, rotate: 10 })}
-                    >
-                      {step.icon}
-                    </motion.div>
-                    
-                    <h3 className="text-xl font-bold mb-4">{step.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{step.description}</p>
-                  </div>
-                </motion.div>
-                
-                {index < approach.length - 1 && (
-                  <motion.div 
-                    className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2"
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.2 + 0.5 }}
-                  >
-                    <ArrowRight className="h-6 w-6 text-muted-foreground" />
-                  </motion.div>
-                )}
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-24 sm:py-32 bg-gradient-to-r from-primary to-secondary relative overflow-hidden">
-        <div className="absolute inset-0">
-          <motion.div
-            className="absolute inset-0 opacity-20"
-            animate={safeAnimate({
-              backgroundPosition: ["0% 0%", "100% 100%"],
-            })}
-            transition={safeTransition({
-              duration: 20,
-              repeat: 999999,
-              repeatType: "reverse",
-              ease: "linear"
-            })}
-            style={{
-              backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
-              backgroundSize: "50px 50px"
-            }}
+        <div className="relative z-10">
+          <PageHeader
+            title="Our Services"
+            description="iSpora offers strategic services designed to accelerate development impact across the Global South through diaspora collaboration, capacity building, and institutional partnerships."
           />
         </div>
-        
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center relative">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-          >
-            <motion.h2 
-              className="text-3xl font-bold tracking-tight text-white sm:text-4xl"
-              variants={itemVariants}
+      </Section>
+
+      {/* Services Grid */}
+      <Section 
+        className="relative overflow-hidden"
+        style={{
+          background: 'linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 100% 94%) 50%, hsl(220 100% 96%) 100%)'
+        }}
+      >
+        <AnimatedGrid />
+        <div className="relative z-10 space-y-12">
+          {services.map((service, index) => (
+            <motion.div
+              key={service.title}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-100px' }}
+              variants={{
+                hidden: { opacity: 0, y: 30 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: safeTransition({ delay: index * 0.1, duration: 0.6 })
+                }
+              }}
             >
-              Ready to Create Global Impact Together?
-            </motion.h2>
-            
-            <motion.p 
-              className="mt-6 text-xl text-white/90 max-w-3xl mx-auto"
-              variants={itemVariants}
-            >
-              Whether you're a diaspora professional anywhere in the world looking to give back or a local organization seeking global partnerships, we're here to help you create meaningful change across all continents.
-            </motion.p>
-            
-            <motion.div 
-              className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
-              variants={itemVariants}
-            >
-                              <motion.button 
-                  className="inline-flex items-center justify-center h-12 px-8 py-4 rounded-full text-lg font-medium bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors"
-                  whileHover={safeAnimate({ scale: 1.05 })}
-                  whileTap={safeAnimate({ scale: 0.95 })}
-                  onClick={() => onPageChange('contact')}
-                >
-                <Users className="mr-2 h-5 w-5" />
-                Get Started Today
-              </motion.button>
-              
-              <motion.button 
-                className="inline-flex items-center justify-center h-12 px-8 py-4 rounded-full text-lg font-medium border border-white/20 text-white hover:bg-white/10 transition-colors"
-                whileHover={safeAnimate({ scale: 1.05 })}
-                whileTap={safeAnimate({ scale: 0.95 })}
-                onClick={() => onPageChange('about')}
+              <motion.div
+                whileHover={safeAnimate({ y: -5, scale: 1.01 })}
+                transition={safeTransition({ type: 'spring', stiffness: 300 })}
               >
-                Learn Our Story
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </motion.button>
+                <Card className={cn(
+                  "overflow-hidden hover:shadow-xl transition-all duration-300 border-2 relative",
+                  index % 2 === 1
+                    ? "bg-primary text-primary-foreground border-primary shadow-lg"
+                    : "border-primary/20 hover:border-primary/40 bg-card"
+                )}>
+                  {index % 2 === 1 && (
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-bl-full -mr-20 -mt-20 z-0" />
+                  )}
+                  <div className="grid md:grid-cols-2 gap-0 relative z-10">
+                    {/* Image Side */}
+                    <motion.div 
+                      className="relative h-64 md:h-full min-h-[300px] overflow-hidden"
+                      whileHover={safeAnimate({ scale: 1.05 })}
+                      transition={safeTransition({ duration: 0.3 })}
+                    >
+                      <ImageWithFallback
+                        src={service.image}
+                        alt={service.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className={cn(
+                        "absolute inset-0",
+                        index % 2 === 1
+                          ? "bg-gradient-to-br from-primary/40 via-primary/20 to-primary/30"
+                          : "bg-gradient-to-br from-primary/20 via-transparent to-secondary/20"
+                      )} />
+                    </motion.div>
+
+                  {/* Content Side */}
+                  <div className={cn(
+                    "p-8 flex flex-col justify-center",
+                    index % 2 === 1 && "text-white"
+                  )}>
+                    <div className="flex items-center space-x-3 mb-4">
+                      <motion.div 
+                        className={cn(
+                          "flex h-14 w-14 items-center justify-center rounded-xl",
+                          index % 2 === 1
+                            ? "bg-white/20 text-white backdrop-blur-sm"
+                            : "bg-primary/10 text-primary"
+                        )}
+                        whileHover={safeAnimate({ scale: 1.1, rotate: 5 })}
+                        transition={safeTransition({ type: "spring", stiffness: 400 })}
+                      >
+                        {service.icon}
+                      </motion.div>
+                      <CardTitle className={cn(
+                        "text-2xl font-bold",
+                        index % 2 === 1 && "text-white"
+                      )}>
+                        {service.title}
+                      </CardTitle>
+                    </div>
+                    
+                    <CardDescription className={cn(
+                      "text-base mb-6 leading-relaxed",
+                      index % 2 === 1 && "text-white/90"
+                    )}>
+                      {service.description}
+                    </CardDescription>
+
+                    <div className="space-y-3 mb-6">
+                      <h4 className={cn(
+                        "font-semibold text-sm uppercase tracking-wide",
+                        index % 2 === 1 ? "text-white/80" : "text-muted-foreground"
+                      )}>
+                        Outcomes
+                      </h4>
+                      <ul className="space-y-2">
+                        {service.outcomes.map((outcome, idx) => (
+                          <li key={idx} className="flex items-start space-x-2">
+                            <CheckCircle className={cn(
+                              "h-5 w-5 flex-shrink-0 mt-0.5",
+                              index % 2 === 1 ? "text-white/80" : "text-primary"
+                            )} />
+                            <span className={cn(
+                              "text-sm leading-relaxed",
+                              index % 2 === 1 ? "text-white/90" : "text-muted-foreground"
+                            )}>
+                              {outcome}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <Button
+                      variant={index % 2 === 1 ? "secondary" : "outline"}
+                      onClick={() => onPageChange('partners')}
+                      className={cn(
+                        "w-full sm:w-auto",
+                        index % 2 === 1 && "bg-white text-primary hover:bg-white/90"
+                      )}
+                    >
+                      Talk to the Team
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+              </motion.div>
             </motion.div>
-          </motion.div>
+          ))}
         </div>
-      </section>
+      </Section>
+
+      {/* CTA Section */}
+      <Section 
+        className="relative overflow-hidden"
+        style={{
+          background: 'linear-gradient(90deg, hsl(220 67% 91%) 0%, hsl(220 100% 90%) 50%, hsl(220 67% 92%) 100%)'
+        }}
+      >
+        <FloatingShapes />
+        <AnimatedDots />
+        
+        <motion.div
+          className="relative z-10 max-w-3xl mx-auto text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-50px' }}
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: safeTransition({ duration: 0.6 })
+            }
+          }}
+        >
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+            Ready to Partner with iSpora?
+          </h2>
+          <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+            Whether you're a government agency, NGO, academic institution, or impact organization, 
+            we're here to help you achieve your development goals through strategic collaboration.
+          </p>
+          <Button
+            size="lg"
+            onClick={() => onPageChange('partners')}
+            className="h-12 px-8"
+          >
+            Submit Partnership Interest
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </motion.div>
+      </Section>
     </div>
   );
 }

@@ -401,14 +401,14 @@ export function FeaturesPage({ onPageChange }: FeaturesPageProps) {
             Ready to Experience These Features?
           </h2>
           <p className="mt-6 text-lg text-white/90 max-w-2xl mx-auto">
-            Join our platform today and start leveraging powerful tools designed specifically for diaspora-youth collaboration.
+            Join our community and be part of building the future of diaspora-youth collaboration.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" variant="secondary" onClick={() => onPageChange('diasporans')}>
+            <Button size="lg" variant="secondary" onClick={() => onPageChange('join')}>
               <Globe className="mr-2 h-5 w-5" />
-              Start as Diaspora
+              Join as Diaspora
             </Button>
-            <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary" onClick={() => onPageChange('youth')}>
+            <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary" onClick={() => onPageChange('join')}>
               <Target className="mr-2 h-5 w-5" />
               Join as Youth
             </Button>

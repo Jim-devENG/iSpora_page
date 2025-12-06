@@ -23,7 +23,7 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>('dark');
+  const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
     // Check localStorage for saved theme preference
@@ -31,8 +31,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     if (savedTheme) {
       setTheme(savedTheme);
     } else {
-      // Default to dark theme
-      setTheme('dark');
+      // Default to light theme
+      setTheme('light');
     }
   }, []);
 

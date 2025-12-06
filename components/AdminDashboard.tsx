@@ -25,7 +25,13 @@ import {
   AlertCircle,
   CheckCircle,
   Loader2,
-  MoreHorizontal
+  MoreHorizontal,
+  FileText,
+  Calendar,
+  Plus,
+  Edit,
+  Save,
+  Building
 } from 'lucide-react';
 import { registrationService } from './services/registrationService';
 import { NotificationModal } from './ui/notification-modal';
@@ -61,6 +67,7 @@ interface DashboardStats {
 }
 
 export function AdminDashboard() {
+  const [activeTab, setActiveTab] = useState<'registrations' | 'blog' | 'events' | 'partners'>('registrations');
   const [registrations, setRegistrations] = useState<RegistrationData[]>([]);
   const [stats, setStats] = useState<DashboardStats>({
     totalRegistrations: 0,
@@ -325,17 +332,21 @@ export function AdminDashboard() {
         >
           <div>
             <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Manage social media registrations and track user activity</p>
+            <p className="text-muted-foreground">Manage registrations, blog posts, and events</p>
           </div>
           <div className="flex gap-2">
-            <Button onClick={handleRefresh} variant="outline" size="sm">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh
-            </Button>
-            <Button onClick={handleExport} size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              Export CSV
-            </Button>
+            {activeTab === 'registrations' && (
+              <>
+                <Button onClick={handleRefresh} variant="outline" size="sm">
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Refresh
+                </Button>
+                <Button onClick={handleExport} size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  Export CSV
+                </Button>
+              </>
+            )}
             <Button 
               onClick={() => {
                 localStorage.removeItem('adminAuthenticated');
@@ -350,7 +361,43 @@ export function AdminDashboard() {
           </div>
         </motion.div>
 
-        {/* Stats Cards */}
+        {/* Tabs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={safeAnimate({ opacity: 1, y: 0 })}
+          transition={safeTransition({ duration: 0.6, delay: 0.05 })}
+          className="flex gap-2 border-b"
+        >
+          <Button
+            variant={activeTab === 'registrations' ? 'default' : 'ghost'}
+            onClick={() => setActiveTab('registrations')}
+            className="rounded-b-none"
+          >
+            <Users className="h-4 w-4 mr-2" />
+            Registrations
+          </Button>
+          <Button
+            variant={activeTab === 'blog' ? 'default' : 'ghost'}
+            onClick={() => setActiveTab('blog')}
+            className="rounded-b-none"
+          >
+            <FileText className="h-4 w-4 mr-2" />
+            Blog Posts
+          </Button>
+          <Button
+            variant={activeTab === 'events' ? 'default' : 'ghost'}
+            onClick={() => setActiveTab('events')}
+            className="rounded-b-none"
+          >
+            <Calendar className="h-4 w-4 mr-2" />
+            Events
+          </Button>
+        </motion.div>
+
+        {/* Tab Content */}
+        {activeTab === 'registrations' && (
+          <>
+            {/* Stats Cards */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={safeAnimate({ opacity: 1, y: 0 })}
@@ -781,7 +828,10 @@ export function AdminDashboard() {
           </motion.div>
         )}
 
-        {/* Notification Modal */}
+          </>
+        )}
+        
+        {/* Notification Modal - Always available */}
         <NotificationModal
           isOpen={notification.isOpen}
           onClose={() => setNotification(prev => ({ ...prev, isOpen: false }))}
@@ -791,6 +841,122 @@ export function AdminDashboard() {
           confirmText={notification.confirmText}
           onConfirm={notification.onConfirm}
         />
+
+        {activeTab === 'blog' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={safeAnimate({ opacity: 1, y: 0 })}
+            transition={safeTransition({ duration: 0.6 })}
+            className="space-y-6"
+          >
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Blog Posts Management</CardTitle>
+                    <CardDescription>Create, edit, and manage blog posts</CardDescription>
+                  </div>
+                  <Button onClick={() => window.open('/api/blog-posts', '_blank')}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    New Post
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-sm text-muted-foreground mb-4">
+                  <p>API Endpoint: <code className="bg-muted px-2 py-1 rounded">/api/blog-posts</code></p>
+                  <p className="mt-2">Use the API to create, update, and manage blog posts. Full admin interface coming soon.</p>
+                </div>
+                <div className="border-t pt-4">
+                  <h4 className="font-semibold mb-2">API Methods:</h4>
+                  <ul className="space-y-1 text-sm text-muted-foreground">
+                    <li>• <code>GET /api/blog-posts</code> - List all posts</li>
+                    <li>• <code>GET /api/blog-posts?featured=true</code> - Get featured posts</li>
+                    <li>• <code>GET /api/blog-posts?category=Updates</code> - Filter by category</li>
+                    <li>• <code>POST /api/blog-posts</code> - Create new post</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        {activeTab === 'events' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={safeAnimate({ opacity: 1, y: 0 })}
+            transition={safeTransition({ duration: 0.6 })}
+            className="space-y-6"
+          >
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Events Management</CardTitle>
+                    <CardDescription>Create, edit, and manage webinars and programs</CardDescription>
+                  </div>
+                  <Button onClick={() => window.open('/api/events', '_blank')}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    New Event
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-sm text-muted-foreground mb-4">
+                  <p>API Endpoint: <code className="bg-muted px-2 py-1 rounded">/api/events</code></p>
+                  <p className="mt-2">Use the API to create, update, and manage events. Full admin interface coming soon.</p>
+                </div>
+                <div className="border-t pt-4">
+                  <h4 className="font-semibold mb-2">API Methods:</h4>
+                  <ul className="space-y-1 text-sm text-muted-foreground">
+                    <li>• <code>GET /api/events</code> - List all events</li>
+                    <li>• <code>GET /api/events?status=upcoming</code> - Get upcoming events</li>
+                    <li>• <code>GET /api/events?status=past</code> - Get past events</li>
+                    <li>• <code>POST /api/events</code> - Create new event</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        {activeTab === 'partners' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={safeAnimate({ opacity: 1, y: 0 })}
+            transition={safeTransition({ duration: 0.6 })}
+            className="space-y-6"
+          >
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Partner Submissions</CardTitle>
+                    <CardDescription>View and manage partnership interest submissions</CardDescription>
+                  </div>
+                  <Button onClick={handleRefresh} variant="outline" size="sm">
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Refresh
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-sm text-muted-foreground mb-4">
+                  <p>API Endpoint: <code className="bg-muted px-2 py-1 rounded">/api/partners</code></p>
+                  <p className="mt-2">View all partnership interest submissions from the Partners page.</p>
+                </div>
+                <div className="border-t pt-4">
+                  <h4 className="font-semibold mb-2">API Methods:</h4>
+                  <ul className="space-y-1 text-sm text-muted-foreground">
+                    <li>• <code>GET /api/partners</code> - List all partner submissions</li>
+                    <li>• <code>GET /api/partners?status=pending</code> - Filter by status</li>
+                    <li>• <code>POST /api/partners</code> - Create new submission (from form)</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
       </div>
     </div>
   );

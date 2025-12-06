@@ -7,6 +7,23 @@ import { ServicesPage } from './components/ServicesPage';
 import { ImpactAreasPage } from './components/ImpactAreasPage';
 import { ContactPage } from './components/ContactPage';
 import { RegistrationPage } from './components/RegistrationPage';
+import { PartnersPage } from './components/PartnersPage';
+import { CommunityPage } from './components/CommunityPage';
+import { AppPage } from './components/AppPage';
+import { JoinPage } from './components/JoinPage';
+import { BlogPage } from './components/BlogPage';
+import { WebinarsPage } from './components/WebinarsPage';
+import { FeaturesPage } from './components/FeaturesPage';
+import { ProjectsPage } from './components/ProjectsPage';
+import { DiasporansPage } from './components/DiasporansPage';
+import { YouthPage } from './components/YouthPage';
+import { MentorshipPage } from './components/MentorshipPage';
+import { HelpCenterPage } from './components/HelpCenterPage';
+import { CommunityGuidelinesPage } from './components/CommunityGuidelinesPage';
+import { PrivacyPolicyPage } from './components/PrivacyPolicyPage';
+import { TermsOfServicePage } from './components/TermsOfServicePage';
+import { PressKitPage } from './components/PressKitPage';
+import { CareersPage } from './components/CareersPage';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AdminAccess } from './components/AdminAccess';
 import { Footer } from './components/Footer';
@@ -38,7 +55,13 @@ function AppContent() {
 
   // Sync current page with URL path (e.g., /admin, /register)
   React.useEffect(() => {
-    const validPages = ['home', 'about', 'services', 'impact', 'contact', 'register', 'admin'];
+    // Support both old and new page routes for backward compatibility
+    const validPages = [
+      'home', 'about', 'services', 'impact', 'contact', 'register', 'admin',
+      'community', 'partners', 'app', 'join', 'blog', 'webinars',
+      'features', 'projects', 'diasporans', 'youth', 'mentorship',
+      'help', 'guidelines', 'privacy', 'terms', 'presskit', 'careers'
+    ];
 
     const applyPath = () => {
       const path = window.location.pathname.replace('/', '') || 'home';
@@ -86,7 +109,42 @@ function AppContent() {
       case 'contact':
         return <ContactPage onPageChange={handlePageChange} />;
       case 'register':
+        // Legacy route - redirect to join
         return <RegistrationPage onPageChange={handlePageChange} />;
+      case 'community':
+        return <CommunityPage onPageChange={handlePageChange} />;
+      case 'partners':
+        return <PartnersPage onPageChange={handlePageChange} />;
+      case 'app':
+        return <AppPage onPageChange={handlePageChange} />;
+      case 'join':
+        return <JoinPage onPageChange={handlePageChange} />;
+      case 'blog':
+        return <BlogPage onPageChange={handlePageChange} />;
+      case 'webinars':
+        return <WebinarsPage onPageChange={handlePageChange} />;
+      case 'features':
+        return <FeaturesPage onPageChange={handlePageChange} />;
+      case 'projects':
+        return <ProjectsPage onPageChange={handlePageChange} />;
+      case 'diasporans':
+        return <DiasporansPage onPageChange={handlePageChange} />;
+      case 'youth':
+        return <YouthPage onPageChange={handlePageChange} />;
+      case 'mentorship':
+        return <MentorshipPage onPageChange={handlePageChange} />;
+      case 'help':
+        return <HelpCenterPage onPageChange={handlePageChange} />;
+      case 'guidelines':
+        return <CommunityGuidelinesPage onPageChange={handlePageChange} />;
+      case 'privacy':
+        return <PrivacyPolicyPage onPageChange={handlePageChange} />;
+      case 'terms':
+        return <TermsOfServicePage onPageChange={handlePageChange} />;
+      case 'presskit':
+        return <PressKitPage onPageChange={handlePageChange} />;
+      case 'careers':
+        return <CareersPage onPageChange={handlePageChange} />;
       case 'admin':
         return isAdminAuthenticated ? <AdminDashboard /> : <AdminAccess onAccessGranted={handleAdminAccess} />;
       default:

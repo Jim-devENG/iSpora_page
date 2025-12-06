@@ -34,34 +34,25 @@ export function Footer({ onPageChange }: FooterProps) {
         { label: 'Our Story', onClick: () => onPageChange('about') },
         { label: 'Platform Preview', onClick: () => onPageChange('features') },
         { label: 'Success Stories', onClick: () => onPageChange('projects') },
-        { label: 'Blog & News', onClick: () => onPageChange('blog') }
-      ]
-    },
-    {
-      title: 'Community',
-      items: [
-        { label: 'For Diasporans', onClick: () => onPageChange('diasporans') },
-        { label: 'For Youth', onClick: () => onPageChange('youth') },
-        { label: 'Mentorship Hub', onClick: () => onPageChange('mentorship') },
-        { label: 'Partners', onClick: () => onPageChange('partners') }
+        { label: 'Blog & News', onClick: () => onPageChange('blog') },
+        { label: 'Webinars & Programs', onClick: () => onPageChange('webinars') }
       ]
     },
     {
       title: 'Resources',
       items: [
-        { label: 'Help Center', onClick: () => {} },
-        { label: 'Community Guidelines', onClick: () => {} },
-        { label: 'Privacy Policy', onClick: () => {} },
-        { label: 'Terms of Service', onClick: () => {} }
+        { label: 'Help Center', onClick: () => onPageChange('help') },
+        { label: 'Community Guidelines', onClick: () => onPageChange('guidelines') },
+        { label: 'Privacy Policy', onClick: () => onPageChange('privacy') },
+        { label: 'Terms of Service', onClick: () => onPageChange('terms') }
       ]
     },
     {
       title: 'Connect',
       items: [
         { label: 'Contact Us', onClick: () => onPageChange('contact') },
-        { label: 'Press Kit', onClick: () => {} },
-        { label: 'Careers', onClick: () => {} },
-        { label: 'Partnerships', onClick: () => {} }
+        { label: 'Press Kit', onClick: () => onPageChange('presskit') },
+        { label: 'Careers', onClick: () => onPageChange('careers') }
       ]
     }
   ];
@@ -98,7 +89,7 @@ export function Footer({ onPageChange }: FooterProps) {
   };
 
   return (
-    <footer className="bg-muted/30 border-t border-border/50">
+    <footer className="bg-gradient-to-br from-primary/5 via-muted/30 to-primary/3 border-t border-primary/10">
       {/* Newsletter Section */}
       <div className="border-b border-border/50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
@@ -183,9 +174,6 @@ export function Footer({ onPageChange }: FooterProps) {
                 <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-mona">
                   iSpora
                 </span>
-                <Badge variant="secondary" className="ml-2 text-xs">
-                  Coming Soon
-                </Badge>
               </div>
             </motion.div>
             

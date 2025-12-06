@@ -1,50 +1,67 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Section } from './layout/Section';
+import { PageHeader } from './layout/PageHeader';
+import { safeAnimate, safeTransition } from './utils/animationUtils';
+import { FloatingShapes, AnimatedBlob } from './animations/FloatingElements';
+import { AnimatedDots } from './animations/AnimatedBackground';
 import { 
   Calendar, 
-  Clock, 
   User, 
+  Clock, 
+  ArrowRight,
   Search,
-  Filter,
-  Heart,
-  MessageCircle,
-  Share2,
+  Tag,
   BookOpen,
-  TrendingUp
+  TrendingUp,
+  Heart,
+  MessageCircle
 } from 'lucide-react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import { cn } from './ui/utils';
 
 interface BlogPageProps {
   onPageChange: (page: string) => void;
 }
 
 export function BlogPage({ onPageChange }: BlogPageProps) {
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const [selectedCategory, setSelectedCategory] = React.useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [posts, setPosts] = useState<any[]>([]);
+  const [featuredPost, setFeaturedPost] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  const categories = ['all', 'Impact Stories', 'Mentorship', 'Diaspora Voices', 'Youth Success', 'Platform Updates'];
+  const categories = ['All', 'Updates', 'Success Stories', 'Diaspora Voices', 'Youth Impact', 'Partnerships'];
 
-  const featuredPost = {
-    id: 1,
-    title: 'How Sarah Chen Transformed 50 Lives Through Code',
-    excerpt: 'A deep dive into the Lagos Tech Bootcamp that changed everything for young developers in Nigeria.',
-    author: 'Editorial Team',
-    authorAvatar: 'ET',
-    date: '2024-01-15',
-    readTime: '8 min read',
-    category: 'Impact Stories',
-    likes: 124,
-    comments: 32,
-    image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=400&fit=crop',
-    featured: true
-  };
+  // Fetch blog posts from API
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch('/api/blog-posts?published=true');
+        if (response.ok) {
+          const data = await response.json();
+          setPosts(data);
+          // Find featured post
+          const featured = data.find((p: any) => p.featured);
+          setFeaturedPost(featured || data[0] || null);
+        }
+      } catch (error) {
+        console.error('Error fetching blog posts:', error);
+        // Fallback to empty array
+        setPosts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const posts = [
+    fetchPosts();
+  }, []);
+
+  // Fallback data if API fails
+  const fallbackPosts = [
     {
       id: 2,
       title: 'The Power of One-on-One Mentorship: A Mentor\'s Perspective',
@@ -56,7 +73,7 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
       category: 'Mentorship',
       likes: 89,
       comments: 18,
-      image: 'https://images.unsplash.com/photo-1574263867128-a3d5c1b1dedc?w=400&h=250&fit=crop'
+      image: '/Mentorship.jpg'
     },
     {
       id: 3,
@@ -66,10 +83,10 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
       authorAvatar: 'FM',
       date: '2024-01-10',
       readTime: '5 min read',
-      category: 'Youth Success',
+      category: 'Youth Impact',
       likes: 156,
       comments: 42,
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b612b192?w=400&h=250&fit=crop'
+      image: '/Career.jpg'
     },
     {
       id: 4,
@@ -82,7 +99,7 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
       category: 'Diaspora Voices',
       likes: 201,
       comments: 67,
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=250&fit=crop'
+      image: '/Collaboration.jpg'
     },
     {
       id: 5,
@@ -92,287 +109,235 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
       authorAvatar: 'PT',
       date: '2024-01-05',
       readTime: '4 min read',
-      category: 'Platform Updates',
+      category: 'Updates',
       likes: 92,
       comments: 15,
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop'
+      image: '/academy.jpg'
     },
     {
       id: 6,
-      title: 'Scaling Agriculture: Modern Farming Meets Traditional Knowledge',
-      excerpt: 'How diaspora agricultural experts are helping local farmers embrace sustainable practices.',
-      author: 'Dr. Amina Hassan',
-      authorAvatar: 'AH',
+      title: 'Success Story: Clean Water Initiative in Rural Kenya',
+      excerpt: 'How a diaspora engineer partnered with local youth to bring clean water to 5,000 people.',
+      author: 'Sarah Kariuki',
+      authorAvatar: 'SK',
       date: '2024-01-03',
-      readTime: '6 min read',
-      category: 'Impact Stories',
-      likes: 134,
-      comments: 28,
-      image: 'https://images.unsplash.com/photo-1574263867128-a3d5c1b1dedc?w=400&h=250&fit=crop'
-    },
-    {
-      id: 7,
-      title: 'The Art of Remote Mentorship',
-      excerpt: 'Best practices for effective mentorship across time zones and cultural boundaries.',
-      author: 'Lisa Wanjiku',
-      authorAvatar: 'LW',
-      date: '2024-01-01',
-      readTime: '5 min read',
-      category: 'Mentorship',
-      likes: 78,
-      comments: 22,
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=250&fit=crop'
-    },
-    {
-      id: 8,
-      title: 'Youth Entrepreneurship: Starting Strong',
-      excerpt: 'Success stories from young entrepreneurs who transformed their ideas into thriving businesses.',
-      author: 'Michael Okafor',
-      authorAvatar: 'MO',
-      date: '2023-12-28',
-      readTime: '7 min read',
-      category: 'Youth Success',
-      likes: 167,
-      comments: 45,
-      image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400&h=250&fit=crop'
-    },
-    {
-      id: 9,
-      title: 'Diaspora Insights: Tech Trends Shaping Africa',
-      excerpt: 'Technology leaders share their perspectives on emerging trends and opportunities.',
-      author: 'Tech Leaders Panel',
-      authorAvatar: 'TL',
-      date: '2023-12-25',
-      readTime: '9 min read',
-      category: 'Diaspora Voices',
-      likes: 245,
-      comments: 58,
-      image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=250&fit=crop'
+      readTime: '8 min read',
+      category: 'Success Stories',
+      likes: 234,
+      comments: 89,
+      image: '/communinty.jpg'
     }
   ];
 
-  const filteredPosts = posts.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
+  const displayPosts = posts.length > 0 ? posts : fallbackPosts;
+  const displayFeatured = featuredPost || (fallbackPosts.find(p => p.featured) || fallbackPosts[0]);
+
+  const filteredPosts = displayPosts.filter((post: any) => {
+    const matchesSearch = post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         post.excerpt?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = !selectedCategory || selectedCategory === 'All' || post.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-              Stories of
-              <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent"> Impact</span>
-            </h1>
-            <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-3xl mx-auto">
-              Discover inspiring stories, insights, and updates from our community of mentors, mentees, and partners creating change across Africa.
-            </p>
-          </div>
+      {/* Page Header */}
+      <Section 
+        className="relative overflow-hidden pt-24 pb-12 sm:pt-32"
+        style={{
+          background: 'linear-gradient(135deg, hsl(220 100% 96%) 0%, hsl(220 100% 92%) 50%, hsl(220 100% 95%) 100%)'
+        }}
+      >
+        <AnimatedBlob className="top-0 right-0 bg-primary/15" delay={0} size="w-96 h-96" />
+        <AnimatedDots />
+        
+        <div className="relative z-10">
+          <PageHeader
+            title="Blog & News"
+            description="Stay updated with the latest stories, insights, and updates from the iSpora community"
+          />
         </div>
-      </section>
+      </Section>
+
+      {/* Featured Post */}
+      <Section 
+        className="relative overflow-hidden"
+        style={{
+          background: 'linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 100% 96%) 50%, hsl(220 100% 98%) 100%)'
+        }}
+      >
+        <motion.div
+          className="max-w-4xl mx-auto"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={{
+            hidden: { opacity: 0, y: 30 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: safeTransition({ duration: 0.6 })
+            }
+          }}
+        >
+          <Card className="overflow-hidden border-2 border-primary/20 hover:shadow-xl transition-all duration-300">
+              {displayFeatured && (
+                <div className="grid md:grid-cols-2 gap-0">
+                  <div className="relative h-64 md:h-full min-h-[300px]">
+                    <img 
+                      src={displayFeatured.image_url || displayFeatured.image || '/conference.jpg'} 
+                      alt={displayFeatured.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20" />
+                  </div>
+                  <div className="p-8 flex flex-col justify-center">
+                    <Badge className="mb-4 w-fit bg-primary/10 text-primary border-primary/20">
+                      Featured
+                    </Badge>
+                    <CardTitle className="text-2xl sm:text-3xl mb-3 font-bold">
+                      {displayFeatured.title}
+                    </CardTitle>
+                    <CardDescription className="text-base mb-4 leading-relaxed">
+                      {displayFeatured.excerpt}
+                    </CardDescription>
+                    <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-6">
+                      <div className="flex items-center space-x-2">
+                        <User className="h-4 w-4" />
+                        <span>{displayFeatured.author}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="h-4 w-4" />
+                        <span>{new Date(displayFeatured.published_at || displayFeatured.date || displayFeatured.created_at).toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Clock className="h-4 w-4" />
+                        <span>{displayFeatured.read_time || displayFeatured.readTime || '5 min read'}</span>
+                      </div>
+                    </div>
+                    <Button className="w-full sm:w-auto">
+                      Read More
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+          </Card>
+        </motion.div>
+      </Section>
 
       {/* Search and Filter */}
-      <section className="py-8 border-b bg-muted/50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-4 items-center">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <Section 
+        className="relative overflow-hidden"
+        style={{
+          background: 'linear-gradient(180deg, hsl(220 100% 98%) 0%, hsl(0 0% 100%) 50%, hsl(220 100% 96%) 100%)'
+        }}
+      >
+        <div className="max-w-4xl mx-auto">
+          <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
-                placeholder="Search stories..."
+                type="text"
+                placeholder="Search articles..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
               />
             </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="All Categories" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map(category => (
-                  <SelectItem key={category} value={category}>
-                    {category === 'all' ? 'All Categories' : category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Post */}
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <div className="flex items-center space-x-2 mb-4">
-              <TrendingUp className="h-5 w-5 text-accent" />
-              <span className="text-sm font-medium text-accent">Featured Story</span>
+            <div className="flex gap-2 flex-wrap">
+              {categories.map((category) => (
+                <Button
+                  key={category}
+                  variant={selectedCategory === category || (category === 'All' && !selectedCategory) ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setSelectedCategory(category === 'All' ? null : category)}
+                  className="text-sm"
+                >
+                  {category}
+                </Button>
+              ))}
             </div>
           </div>
-          
-          <Card className="overflow-hidden">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-              <div className="aspect-video lg:aspect-square">
-                <ImageWithFallback
-                  src={featuredPost.image}
-                  alt={featuredPost.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-8 flex flex-col justify-center">
-                <div className="space-y-4">
-                  <Badge variant="secondary">{featuredPost.category}</Badge>
-                  <h2 className="text-3xl font-bold">{featuredPost.title}</h2>
-                  <p className="text-lg text-muted-foreground">{featuredPost.excerpt}</p>
-                  
-                  <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                    <div className="flex items-center space-x-2">
-                      <Avatar className="h-6 w-6">
-                        <AvatarFallback className="text-xs">{featuredPost.authorAvatar}</AvatarFallback>
-                      </Avatar>
-                      <span>{featuredPost.author}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Calendar className="h-4 w-4" />
-                      <span>{formatDate(featuredPost.date)}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Clock className="h-4 w-4" />
-                      <span>{featuredPost.readTime}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-6 text-sm text-muted-foreground">
-                    <div className="flex items-center space-x-1">
-                      <Heart className="h-4 w-4" />
-                      <span>{featuredPost.likes}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <MessageCircle className="h-4 w-4" />
-                      <span>{featuredPost.comments}</span>
-                    </div>
-                  </div>
-                  
-                  <Button>
-                    <BookOpen className="mr-2 h-4 w-4" />
-                    Read Full Story
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </section>
 
-      {/* Blog Posts Grid */}
-      <section className="py-16 bg-muted/50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredPosts.map((post) => (
-              <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="aspect-video relative">
-                  <ImageWithFallback
-                    src={post.image}
-                    alt={post.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <Badge variant="secondary">{post.category}</Badge>
+          {/* Blog Posts Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredPosts.map((post, index) => (
+              <motion.div
+                key={post.id}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '-50px' }}
+                variants={{
+                  hidden: { opacity: 0, y: 30 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: safeTransition({ delay: index * 0.1, duration: 0.5 })
+                  }
+                }}
+              >
+                <Card className="h-full hover:shadow-lg transition-all duration-300 border-primary/10 hover:border-primary/30 overflow-hidden group cursor-pointer">
+                    <div className="relative h-48 overflow-hidden">
+                    <img 
+                      src={post.image_url || post.image || '/conference.jpg'} 
+                      alt={post.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent" />
+                    <Badge className="absolute top-3 right-3 bg-primary text-white">
+                      {post.category}
+                    </Badge>
                   </div>
-                </div>
-                
-                <CardHeader>
-                  <CardTitle className="line-clamp-2">{post.title}</CardTitle>
-                  <CardDescription className="line-clamp-3">{post.excerpt}</CardDescription>
-                </CardHeader>
-                
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-bold line-clamp-2 mb-2">
+                      {post.title}
+                    </CardTitle>
+                    <CardDescription className="text-sm line-clamp-2">
+                      {post.excerpt}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground mb-4">
                       <div className="flex items-center space-x-2">
-                        <Avatar className="h-6 w-6">
-                          <AvatarFallback className="text-xs">{post.authorAvatar}</AvatarFallback>
-                        </Avatar>
+                        <User className="h-3 w-3" />
                         <span>{post.author}</span>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        <Calendar className="h-4 w-4" />
-                        <span>{formatDate(post.date)}</span>
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="h-3 w-3" />
+                        <span>{new Date(post.published_at || post.date || post.created_at).toLocaleDateString()}</span>
                       </div>
                     </div>
-                    
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                      <div className="flex items-center space-x-4 text-xs text-muted-foreground">
                         <div className="flex items-center space-x-1">
-                          <Clock className="h-4 w-4" />
-                          <span>{post.readTime}</span>
+                          <Heart className="h-3 w-3" />
+                          <span>{post.likes || 0}</span>
                         </div>
                         <div className="flex items-center space-x-1">
-                          <Heart className="h-4 w-4" />
-                          <span>{post.likes}</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <MessageCircle className="h-4 w-4" />
-                          <span>{post.comments}</span>
+                          <MessageCircle className="h-3 w-3" />
+                          <span>{post.comments || 0}</span>
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm">
-                        <Share2 className="h-4 w-4" />
+                      <Button variant="ghost" size="sm" className="text-xs">
+                        Read
+                        <ArrowRight className="ml-1 h-3 w-3" />
                       </Button>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
-          
+
           {filteredPosts.length === 0 && (
             <div className="text-center py-12">
-              <div className="mx-auto max-w-md">
-                <BookOpen className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">No stories found</h3>
-                <p className="text-muted-foreground">
-                  Try adjusting your search terms or browse all categories.
-                </p>
-              </div>
+              <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No articles found matching your search.</p>
             </div>
           )}
         </div>
-      </section>
-
-      {/* Newsletter Signup */}
-      <section className="py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Card className="bg-gradient-to-r from-primary to-secondary text-white">
-            <CardContent className="p-8 text-center">
-              <h3 className="text-2xl font-bold mb-4">Stay Updated</h3>
-              <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-                Get the latest impact stories, mentorship insights, and platform updates delivered to your inbox.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                />
-                <Button variant="secondary">Subscribe</Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+      </Section>
     </div>
   );
 }

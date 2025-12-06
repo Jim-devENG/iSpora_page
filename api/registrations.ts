@@ -1,13 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { connectToDatabase } from './_lib/mongodb.js';
-import { Registration } from './models/Registration.js';
+import { getSupabaseClient, transformRegistration } from './_lib/supabase.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-
+  let supabase;
   try {
-    await connectToDatabase();
+    supabase = getSupabaseClient();
   } catch (err: any) {
-    console.error('Database connection failed:', err);
+    console.error('Supabase connection failed:', err);
     return res.status(500).json({ 
       error: 'Database connection failed', 
       details: err?.message,
@@ -37,20 +36,53 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
       
       // Normalize group value
-      if (body.group !== 'local' && body.group !== 'diaspora') {
-        body.group = 'diaspora';
+      const groupType = (body.group === 'local' || body.group === 'diaspora') ? body.group : 'diaspora';
+      
+      // Prepare data for Supabase
+      const registrationData = {
+        name: body.name,
+        email: body.email,
+        whatsapp: body.whatsapp,
+        country_of_origin: body.countryOfOrigin,
+        country_of_residence: body.countryOfResidence,
+        group_type: groupType,
+        ip_address: body.ipAddress || null,
+        location: body.location || null,
+        status: body.status || 'pending',
+        user_agent: body.userAgent || null,
+      };
+
+      console.log('Normalized registration data:', JSON.stringify(registrationData, null, 2));
+      
+      const { data, error } = await supabase
+        .from('registrations')
+        .insert(registrationData)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase insert error:', error);
+        throw error;
       }
-      console.log('Normalized registration data:', JSON.stringify(body, null, 2));
-      const doc = await Registration.create(body);
-      console.log('Registration created successfully:', doc._id);
-      return res.status(201).json(doc.toObject());
+
+      console.log('Registration created successfully:', data.id);
+      return res.status(201).json(transformRegistration(data));
     }
 
     if (req.method === 'GET') {
       console.log('Fetching registrations...');
-      const docs = await Registration.find().sort({ createdAt: -1 }).lean();
-      console.log(`Found ${docs.length} registrations`);
-      return res.status(200).json(docs);
+      const { data, error } = await supabase
+        .from('registrations')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Supabase query error:', error);
+        throw error;
+      }
+
+      console.log(`Found ${data?.length || 0} registrations`);
+      return res.status(200).json(data?.map(transformRegistration) || []);
     }
 
     return res.status(405).json({ error: 'Method Not Allowed' });

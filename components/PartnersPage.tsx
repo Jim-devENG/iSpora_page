@@ -1,381 +1,497 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Textarea } from './ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Checkbox } from './ui/checkbox';
 import { Badge } from './ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { motion } from 'motion/react';
+import { Section } from './layout/Section';
+import { PageHeader } from './layout/PageHeader';
+import { safeAnimate, safeTransition } from './utils/animationUtils';
+import { FloatingShapes, AnimatedBlob } from './animations/FloatingElements';
+import { AnimatedDots, AnimatedGrid } from './animations/AnimatedBackground';
 import { 
   Building, 
   Users, 
   Globe, 
   Target,
   CheckCircle,
-  BarChart3,
-  Zap,
-  Shield,
-  Settings,
-  Headphones,
   ArrowRight,
-  Award,
-  BookOpen,
-  Rocket
+  Send,
+  Loader2
 } from 'lucide-react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
 
 interface PartnersPageProps {
   onPageChange: (page: string) => void;
 }
 
 export function PartnersPage({ onPageChange }: PartnersPageProps) {
-  const partnerTypes = [
-    {
-      title: 'NGOs & Nonprofits',
-      description: 'Scale your youth development programs with diaspora expertise',
-      icon: <Building className="h-8 w-8" />,
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop',
-      benefits: ['Expand program reach', 'Access skilled mentors', 'Track impact metrics', 'Reduce operational costs']
-    },
-    {
-      title: 'Universities & Schools',
-      description: 'Connect students with industry professionals for career guidance',
-      icon: <BookOpen className="h-8 w-8" />,
-      image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=250&fit=crop',
-      benefits: ['Industry connections', 'Career counseling', 'Internship opportunities', 'Alumni engagement']
-    },
-    {
-      title: 'Government Agencies',
-      description: 'Leverage diaspora talent for national development initiatives',
-      icon: <Globe className="h-8 w-8" />,
-      image: 'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?w=400&h=250&fit=crop',
-      benefits: ['Policy implementation', 'Capacity building', 'Knowledge transfer', 'Economic development']
-    },
-    {
-      title: 'Corporate Partners',
-      description: 'Integrate impact initiatives into your CSR programs',
-      icon: <Target className="h-8 w-8" />,
-      image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop',
-      benefits: ['CSR alignment', 'Employee engagement', 'Brand building', 'Talent pipeline']
-    }
+  const [formData, setFormData] = useState({
+    // Contact Information
+    fullName: '',
+    email: '',
+    phone: '',
+    country: '',
+    linkedin: '',
+    // Organization Information
+    orgName: '',
+    orgType: '',
+    role: '',
+    orgWebsite: '',
+    orgSocialMedia: '',
+    // Partnership Focus
+    partnershipFocus: [] as string[],
+    otherFocus: '',
+    // About Your Work
+    aboutWork: '',
+    // Partnership Intent
+    whyPartner: '',
+    howContribute: '',
+    whatExpect: '',
+    // Additional Notes
+    additionalNotes: ''
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const partnershipFocusOptions = [
+    'Mentorship & Talent Development',
+    'Project Collaboration',
+    'Funding / Investment',
+    'Diaspora Engagement Initiatives',
+    'National Development Programs',
+    'Research & Policy Support',
+    'Technology & Innovation',
+    'Capacity Building & Training',
+    'Youth Empowerment',
+    'Events, Seminars & Speaking Engagements',
+    'Volunteering'
   ];
 
-  const features = [
-    {
-      icon: <Settings className="h-6 w-6" />,
-      title: 'White-Label Integration',
-      description: 'Customize the platform with your branding and integrate with existing systems'
-    },
-    {
-      icon: <Users className="h-6 w-6" />,
-      title: 'Bulk User Management',
-      description: 'Efficiently manage large numbers of participants and mentors'
-    },
-    {
-      icon: <BarChart3 className="h-6 w-6" />,
-      title: 'Advanced Analytics',
-      description: 'Comprehensive reporting and impact measurement tools'
-    },
-    {
-      icon: <Headphones className="h-6 w-6" />,
-      title: 'Dedicated Support',
-      description: 'Priority technical support and account management'
-    },
-    {
-      icon: <Shield className="h-6 w-6" />,
-      title: 'Enterprise Security',
-      description: 'SOC 2 compliant with advanced security features'
-    },
-    {
-      icon: <Zap className="h-6 w-6" />,
-      title: 'API Access',
-      description: 'Full API access for custom integrations and data export'
-    }
+  const orgTypes = [
+    'NGO',
+    'Social Enterprise',
+    'Government Agency',
+    'Academic Institution',
+    'Diaspora Group',
+    'Corporate Organization',
+    'Foundation',
+    'Youth-Led Initiative',
+    'Other'
   ];
 
-  const successStories = [
-    {
-      organization: 'African Youth Foundation',
-      type: 'NGO',
-      impact: '500+ youth trained across 8 countries',
-      duration: '18 months',
-      logo: 'AYF',
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=200&fit=crop',
-      quote: 'iSpora helped us scale our mentorship program 10x while maintaining quality and personal connections.',
-      results: ['500+ youth trained', '95% completion rate', '78% job placement', '8 countries reached']
-    },
-    {
-      organization: 'University of Cape Town',
-      type: 'University',
-      impact: 'Enhanced career services for 1,200+ students',
-      duration: '12 months',
-      logo: 'UCT',
-      image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=200&fit=crop',
-      quote: 'Our students now have direct access to industry professionals who understand their career aspirations.',
-      results: ['1,200+ students served', '300+ mentors engaged', '85% satisfaction rate', '60% internship rate']
-    },
-    {
-      organization: 'Kenya Ministry of Education',
-      type: 'Government',
-      impact: 'National digital skills initiative',
-      duration: '24 months',
-      logo: 'MOE',
-      image: 'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?w=400&h=200&fit=crop',
-      quote: 'This partnership enabled us to deliver world-class tech education to rural communities.',
-      results: ['2,000+ youth reached', '15 counties covered', '50+ projects launched', '90% skills improvement']
-    }
-  ];
+  const handleInputChange = (field: string, value: string | string[]) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
-  const integrationProcess = [
-    {
-      step: '01',
-      title: 'Discovery Call',
-      description: 'We understand your needs and objectives',
-      duration: '1 week'
-    },
-    {
-      step: '02',
-      title: 'Custom Setup',
-      description: 'Platform configuration and branding',
-      duration: '2-3 weeks'
-    },
-    {
-      step: '03',
-      title: 'Team Training',
-      description: 'Train your team on platform features',
-      duration: '1 week'
-    },
-    {
-      step: '04',
-      title: 'Launch & Support',
-      description: 'Go live with ongoing support',
-      duration: 'Ongoing'
+  const handleCheckboxChange = (option: string, checked: boolean) => {
+    setFormData(prev => {
+      const current = prev.partnershipFocus;
+      if (checked) {
+        return { ...prev, partnershipFocus: [...current, option] };
+      } else {
+        return { ...prev, partnershipFocus: current.filter(item => item !== option) };
+      }
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      // Get IP address and user agent
+      const ipResponse = await fetch('https://api.ipify.org?format=json');
+      const ipData = await ipResponse.json();
+      const ipAddress = ipData.ip;
+      const userAgent = navigator.userAgent;
+
+      const response = await fetch('/api/partners', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          ipAddress,
+          userAgent,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit partnership interest');
+      }
+
+      setSubmitStatus('success');
+      // Reset form
+      setFormData({
+        fullName: '',
+        email: '',
+        phone: '',
+        country: '',
+        linkedin: '',
+        orgName: '',
+        orgType: '',
+        role: '',
+        orgWebsite: '',
+        orgSocialMedia: '',
+        partnershipFocus: [],
+        otherFocus: '',
+        aboutWork: '',
+        whyPartner: '',
+        howContribute: '',
+        whatExpect: '',
+        additionalNotes: ''
+      });
+    } catch (error) {
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
     }
-  ];
+  };
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <Badge className="mb-4 bg-accent/10 text-accent-foreground border-accent/20">
-                For Organizations
-              </Badge>
-              <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-                Scale Your Impact
-                <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent"> Together</span>
-              </h1>
-              <p className="mt-6 text-lg leading-8 text-muted-foreground">
-                Partner with iSpora to integrate diaspora expertise into your youth development programs. Whether you're an NGO, university, or government agency, we help you create lasting impact at scale.
-              </p>
-              <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                <Button size="lg" onClick={() => onPageChange('contact')} className="text-lg px-8 py-3">
-                  <Rocket className="mr-2 h-5 w-5" />
-                  Schedule a Demo
-                </Button>
-                <Button size="lg" variant="outline" onClick={() => onPageChange('contact')} className="text-lg px-8 py-3">
-                  <Users className="mr-2 h-5 w-5" />
-                  Contact Team
-                </Button>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="aspect-square rounded-2xl overflow-hidden">
-                <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=500&fit=crop"
-                  alt="Organization team collaborating"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-          </div>
+      {/* Page Header */}
+      <Section 
+        className="relative overflow-hidden pt-24 pb-12 sm:pt-32"
+        style={{
+          background: 'linear-gradient(135deg, hsl(220 67% 94%) 0%, hsl(220 100% 92%) 50%, hsl(220 100% 95%) 100%)'
+        }}
+      >
+        <AnimatedBlob className="top-0 left-0 bg-primary/15" delay={0} size="w-96 h-96" />
+        <AnimatedBlob className="bottom-0 right-0 bg-secondary/15" delay={2} size="w-80 h-80" />
+        <AnimatedDots />
+        
+        <div className="relative z-10">
+          <PageHeader
+            title="Partnership & Collaborations"
+            description="At iSpora, we are building a coalition of Diaspora innovators, global institutions, NGOs, and impact-driven organizations—both local and international—dedicated to reshaping the future of the Global South. Together, we can accelerate meaningful and lasting change."
+          />
         </div>
-      </section>
+      </Section>
 
-      {/* Partner Types */}
-      <section className="py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Who We Partner With</h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Organizations across sectors leveraging diaspora talent for youth development
+      {/* Partnership Context */}
+      <Section 
+        className="relative"
+        style={{
+          background: 'linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 100% 94%) 50%, hsl(220 67% 92%) 100%)'
+        }}
+      >
+        <motion.div
+          className="max-w-4xl mx-auto space-y-6"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-50px' }}
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: safeTransition({ duration: 0.6 })
+            }
+          }}
+        >
+          <div className="space-y-4 text-lg text-muted-foreground leading-relaxed">
+            <p>
+              As a platform rooted in collaboration, iSpora's mission directly aligns with <strong className="text-foreground">SDG 17: Partnerships for the Goals</strong>.
+            </p>
+            <p>
+              We believe that bringing diverse impact-driven efforts into a single, interconnected ecosystem will significantly enhance effectiveness, foster strong and productive collaborations, drive transformation across nations, and inspire greater participation from both Diasporans and home-based change-makers.
+            </p>
+            <p>
+              If you are an impact-driven founder, Diaspora leader, CEO, investor, builder, or stakeholder connected to the Global South—and you share our vision for transformation—we would be delighted to explore collaboration with you.
+            </p>
+            <p className="font-semibold text-foreground">
+              Kindly fill out the form below, and a member of our team will reach out to you promptly.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {partnerTypes.map((partner, index) => (
-              <Card key={index} className="overflow-hidden">
-                <div className="aspect-video relative">
-                  <ImageWithFallback
-                    src={partner.image}
-                    alt={partner.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                    <div className="h-16 w-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
-                      {partner.icon}
+        </motion.div>
+      </Section>
+
+      {/* Partnership Interest Form */}
+      <Section 
+        className="relative"
+        style={{
+          background: 'linear-gradient(90deg, hsl(220 100% 94%) 0%, hsl(220 67% 90%) 50%, hsl(220 100% 93%) 100%)'
+        }}
+      >
+        <div className="max-w-4xl mx-auto">
+          <Card className="shadow-xl border-primary/10">
+            <CardHeader>
+              <CardTitle className="text-2xl sm:text-3xl">Partnership Interest Form</CardTitle>
+              <CardDescription>
+                Please fill out all required fields. Our representative will communicate with you promptly.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-8">
+                {/* 1. Contact Information */}
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold mb-4">1. Contact Information</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="fullName">Full Name *</Label>
+                      <Input
+                        id="fullName"
+                        value={formData.fullName}
+                        onChange={(e) => handleInputChange('fullName', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email Address *</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone Number (optional)</Label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="country">Country / Region *</Label>
+                      <Input
+                        id="country"
+                        value={formData.country}
+                        onChange={(e) => handleInputChange('country', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="linkedin">LinkedIn Profile</Label>
+                      <Input
+                        id="linkedin"
+                        type="url"
+                        value={formData.linkedin}
+                        onChange={(e) => handleInputChange('linkedin', e.target.value)}
+                        placeholder="https://linkedin.com/in/yourprofile"
+                      />
                     </div>
                   </div>
                 </div>
-                <CardHeader>
-                  <CardTitle className="text-lg">{partner.title}</CardTitle>
-                  <CardDescription>{partner.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <p className="font-medium text-sm">Key Benefits:</p>
-                    <ul className="space-y-1">
-                      {partner.benefits.map((benefit, benefitIndex) => (
-                        <li key={benefitIndex} className="flex items-center text-sm">
-                          <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                          {benefit}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Features */}
-      <section className="py-24 sm:py-32 bg-muted/50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Enterprise Features</h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Everything you need to integrate and scale your youth development programs
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="text-center">
-                <CardHeader>
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary text-white">
-                    {feature.icon}
+                {/* 2. Organization Information */}
+                <div className="space-y-4 border-t pt-6">
+                  <h3 className="text-xl font-semibold mb-4">2. Organization Information</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="orgName">Organization Name *</Label>
+                      <Input
+                        id="orgName"
+                        value={formData.orgName}
+                        onChange={(e) => handleInputChange('orgName', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="orgType">Organization Type *</Label>
+                      <Select
+                        value={formData.orgType}
+                        onValueChange={(value) => handleInputChange('orgType', value)}
+                        required
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select organization type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {orgTypes.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="role">Your Role / Position *</Label>
+                      <Input
+                        id="role"
+                        value={formData.role}
+                        onChange={(e) => handleInputChange('role', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="orgWebsite">Organization Website</Label>
+                      <Input
+                        id="orgWebsite"
+                        type="url"
+                        value={formData.orgWebsite}
+                        onChange={(e) => handleInputChange('orgWebsite', e.target.value)}
+                        placeholder="https://example.com"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="orgSocialMedia">Organization Social Media Pages</Label>
+                      <Input
+                        id="orgSocialMedia"
+                        value={formData.orgSocialMedia}
+                        onChange={(e) => handleInputChange('orgSocialMedia', e.target.value)}
+                        placeholder="Twitter, Facebook, Instagram handles"
+                      />
+                    </div>
                   </div>
-                  <CardTitle className="text-lg">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">{feature.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Success Stories */}
-      <section className="py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Success Stories</h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              See how organizations are creating impact through our platform
-            </p>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {successStories.map((story, index) => (
-              <Card key={index} className="overflow-hidden">
-                <div className="aspect-video relative">
-                  <ImageWithFallback
-                    src={story.image}
-                    alt={story.organization}
-                    className="w-full h-full object-cover"
-                  />
                 </div>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarFallback>{story.logo}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <CardTitle className="text-lg">{story.organization}</CardTitle>
-                        <CardDescription>{story.type}</CardDescription>
+
+                {/* 3. Partnership Focus */}
+                <div className="space-y-4 border-t pt-6">
+                  <h3 className="text-xl font-semibold mb-4">3. Partnership Focus</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Which areas are you most interested in? (Select one or multiple)
+                  </p>
+                  <div className="grid md:grid-cols-2 gap-3">
+                    {partnershipFocusOptions.map((option) => (
+                      <div key={option} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={option}
+                          checked={formData.partnershipFocus.includes(option)}
+                          onCheckedChange={(checked) => handleCheckboxChange(option, checked as boolean)}
+                        />
+                        <Label htmlFor={option} className="text-sm font-normal cursor-pointer">
+                          {option}
+                        </Label>
                       </div>
-                    </div>
-                    <Badge variant="secondary">{story.duration}</Badge>
+                    ))}
                   </div>
-                </CardHeader>
-                <CardContent>
+                  <div className="space-y-2 mt-4">
+                    <Label htmlFor="otherFocus">Other (please specify)</Label>
+                    <Input
+                      id="otherFocus"
+                      value={formData.otherFocus}
+                      onChange={(e) => handleInputChange('otherFocus', e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* 4. About Your Work */}
+                <div className="space-y-4 border-t pt-6">
+                  <h3 className="text-xl font-semibold mb-4">4. About Your Work</h3>
+                  <div className="space-y-2">
+                    <Label htmlFor="aboutWork">
+                      Briefly describe your organization or initiative *
+                    </Label>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      What do you do? Who do you serve? What impact have you created so far?
+                    </p>
+                    <Textarea
+                      id="aboutWork"
+                      value={formData.aboutWork}
+                      onChange={(e) => handleInputChange('aboutWork', e.target.value)}
+                      rows={5}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* 5. Partnership Intent */}
+                <div className="space-y-4 border-t pt-6">
+                  <h3 className="text-xl font-semibold mb-4">5. Partnership Intent</h3>
                   <div className="space-y-4">
-                    <p className="font-medium text-primary">{story.impact}</p>
-                    <blockquote className="text-sm italic border-l-4 border-primary pl-4 text-muted-foreground">
-                      "{story.quote}"
-                    </blockquote>
-                    <div className="grid grid-cols-2 gap-2">
-                      {story.results.map((result, resultIndex) => (
-                        <div key={resultIndex} className="text-sm">
-                          <CheckCircle className="h-4 w-4 text-green-500 inline mr-1" />
-                          {result}
-                        </div>
-                      ))}
+                    <div className="space-y-2">
+                      <Label htmlFor="whyPartner">Why do you want to partner with iSpora? *</Label>
+                      <Textarea
+                        id="whyPartner"
+                        value={formData.whyPartner}
+                        onChange={(e) => handleInputChange('whyPartner', e.target.value)}
+                        rows={3}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="howContribute">
+                        How would you like to contribute to the iSpora ecosystem? *
+                      </Label>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        (Expertise, funding, network access, opportunities, mentoring, training, tech support, institutional support, etc.)
+                      </p>
+                      <Textarea
+                        id="howContribute"
+                        value={formData.howContribute}
+                        onChange={(e) => handleInputChange('howContribute', e.target.value)}
+                        rows={3}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="whatExpect">
+                        What do you expect from iSpora in this partnership? *
+                      </Label>
+                      <Textarea
+                        id="whatExpect"
+                        value={formData.whatExpect}
+                        onChange={(e) => handleInputChange('whatExpect', e.target.value)}
+                        rows={3}
+                        required
+                      />
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+                </div>
 
-      {/* Integration Process */}
-      <section className="py-24 sm:py-32 bg-muted/50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">How We Work Together</h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              A structured approach to ensure successful integration and maximum impact
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {integrationProcess.map((step, index) => (
-              <div key={index} className="relative">
-                <Card className="text-center h-full">
-                  <CardHeader>
-                    <div className="absolute -top-4 -left-4 h-12 w-12 rounded-full bg-accent flex items-center justify-center text-accent-foreground font-bold text-lg">
-                      {step.step}
-                    </div>
-                    <CardTitle className="mt-4">{step.title}</CardTitle>
-                    <Badge variant="outline" className="mt-2">{step.duration}</Badge>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">{step.description}</p>
-                  </CardContent>
-                </Card>
-                {index < integrationProcess.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2">
-                    <ArrowRight className="h-6 w-6 text-muted-foreground" />
+                {/* 6. Additional Notes */}
+                <div className="space-y-4 border-t pt-6">
+                  <h3 className="text-xl font-semibold mb-4">6. Additional Notes</h3>
+                  <div className="space-y-2">
+                    <Label htmlFor="additionalNotes">Anything else you'd like us to know? (Optional)</Label>
+                    <Textarea
+                      id="additionalNotes"
+                      value={formData.additionalNotes}
+                      onChange={(e) => handleInputChange('additionalNotes', e.target.value)}
+                      rows={3}
+                    />
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+                </div>
 
-      {/* CTA Section */}
-      <section className="py-24 sm:py-32 bg-gradient-to-r from-primary to-secondary">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Ready to Transform Your Programs?
-          </h2>
-          <p className="mt-6 text-lg text-white/90 max-w-2xl mx-auto">
-            Join leading organizations who are already scaling their impact through strategic partnerships with diaspora talent.
-          </p>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" variant="secondary" onClick={() => onPageChange('contact')}>
-              <Rocket className="mr-2 h-5 w-5" />
-              Schedule a Demo
-            </Button>
-            <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary" onClick={() => onPageChange('contact')}>
-              <Users className="mr-2 h-5 w-5" />
-              Contact Our Team
-            </Button>
-          </div>
+                {/* Submit Button */}
+                <div className="border-t pt-6">
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full h-12 text-base font-medium"
+                    disabled={isSubmitting || submitStatus === 'success'}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Submitting...
+                      </>
+                    ) : submitStatus === 'success' ? (
+                      <>
+                        <CheckCircle className="mr-2 h-4 w-4" />
+                        Submitted Successfully
+                      </>
+                    ) : (
+                      <>
+                        <Send className="mr-2 h-4 w-4" />
+                        Submit Partnership Interest
+                      </>
+                    )}
+                  </Button>
+                  {submitStatus === 'success' && (
+                    <p className="mt-4 text-sm text-green-600 text-center">
+                      Our representative will communicate with you promptly.
+                    </p>
+                  )}
+                </div>
+              </form>
+            </CardContent>
+          </Card>
         </div>
-      </section>
+      </Section>
     </div>
   );
 }
