@@ -41,7 +41,7 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch('/api/blog-posts?published=true');
+        const response = await fetch('/api/blog?published=true');
         if (response.ok) {
           const data = await response.json();
           setPosts(data);

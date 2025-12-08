@@ -369,7 +369,7 @@ export function AdminDashboard() {
   const fetchBlogPosts = async () => {
     setBlogLoading(true);
     try {
-      const response = await fetch('/api/blog-posts?published=all');
+      const response = await fetch('/api/blog?published=all');
       if (response.ok) {
         const data = await response.json();
         setBlogPosts(data);
@@ -383,7 +383,7 @@ export function AdminDashboard() {
 
   const handleCreateBlogPost = async () => {
     try {
-      const response = await fetch('/api/blog-posts', {
+      const response = await fetch('/api/blog', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -420,7 +420,7 @@ export function AdminDashboard() {
     if (!editingBlogPost) return;
     
     try {
-      const response = await fetch(`/api/blog-posts/${editingBlogPost.id}`, {
+      const response = await fetch(`/api/blog/${editingBlogPost.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -462,7 +462,7 @@ export function AdminDashboard() {
       confirmText: 'Delete',
       onConfirm: async () => {
         try {
-          const response = await fetch(`/api/blog-posts/${id}`, { method: 'DELETE' });
+          const response = await fetch(`/api/blog/${id}`, { method: 'DELETE' });
           if (!response.ok) throw new Error('Failed to delete blog post');
           
           setNotification({
