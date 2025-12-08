@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient } from './_lib/supabase.js';
 
+// Blog Posts API Route
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   let supabase;
   try {
