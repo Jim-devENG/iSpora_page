@@ -54,7 +54,7 @@ export function ImageUpload({
       // Upload to API
       let response: Response;
       try {
-        response = await fetch('/api/upload/upload', {
+        response = await fetch('/api/upload-image', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ export function ImageUpload({
             const text = await response.text();
             console.error('Non-JSON error response:', text.substring(0, 500));
             if (response.status === 404) {
-              errorMessage = `API endpoint not found (404). Please ensure /api/upload/upload is deployed correctly.`;
+              errorMessage = `API endpoint not found (404). Please ensure /api/upload-image is deployed correctly.`;
             } else {
               errorMessage = `Server error (${response.status}): ${response.statusText}`;
             }
