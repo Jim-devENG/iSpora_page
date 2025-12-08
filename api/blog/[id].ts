@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getSupabaseClient } from '../../_lib/supabase.js';
+import { getSupabaseClient } from '../_lib/supabase.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Handle CORS
@@ -72,7 +72,7 @@ async function handleUpdate(req: VercelRequest, res: VercelResponse, id: string,
   // Check if post exists
   const { data: existing } = await supabase
     .from('blog_posts')
-    .select('id')
+    .select('id, published_at')
     .eq('id', id)
     .single();
 
