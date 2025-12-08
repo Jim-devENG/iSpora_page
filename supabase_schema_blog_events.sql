@@ -1,6 +1,11 @@
 -- Supabase Schema for Blog Posts and Events
 -- Run this in your Supabase SQL Editor
--- This creates the blog_posts and events tables with the new schema
+-- 
+-- IMPORTANT: If you have existing tables with the OLD schema, run:
+--   1. supabase_migration_blog_events.sql (migrates existing data)
+--   2. Then this file (creates new schema if tables don't exist)
+--
+-- If starting fresh, just run this file.
 
 -- ============================================
 -- BLOG POSTS TABLE
@@ -8,7 +13,7 @@
 CREATE TABLE IF NOT EXISTS blog_posts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
-  slug TEXT NOT NULL UNIQUE,
+  slug TEXT NOT NULL,
   content TEXT NOT NULL,
   excerpt TEXT,
   tags TEXT[] DEFAULT '{}',
@@ -17,7 +22,8 @@ CREATE TABLE IF NOT EXISTS blog_posts (
   author_name TEXT,
   published_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT blog_posts_slug_unique UNIQUE (slug)
 );
 
 -- Indexes for blog_posts

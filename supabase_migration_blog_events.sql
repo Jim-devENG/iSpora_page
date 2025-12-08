@@ -1,0 +1,269 @@
+-- Migration Script: Old Schema → New Schema
+-- This migrates existing blog_posts and events tables to the new schema
+-- Run this AFTER the old schema exists and BEFORE running the new schema
+
+-- ============================================
+-- MIGRATE BLOG_POSTS TABLE
+-- ============================================
+
+-- Step 1: Add new columns (if they don't exist)
+DO $$ 
+BEGIN
+  -- Add slug column
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'slug') THEN
+    ALTER TABLE blog_posts ADD COLUMN slug TEXT;
+    -- Generate slugs from titles for existing posts
+    UPDATE blog_posts 
+    SET slug = LOWER(REGEXP_REPLACE(title, '[^a-zA-Z0-9]+', '-', 'g'))
+    WHERE slug IS NULL;
+    -- Make slug NOT NULL and UNIQUE after populating
+    ALTER TABLE blog_posts ALTER COLUMN slug SET NOT NULL;
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_blog_posts_slug_unique ON blog_posts(slug);
+  END IF;
+
+  -- Add tags column
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'tags') THEN
+    ALTER TABLE blog_posts ADD COLUMN tags TEXT[] DEFAULT '{}';
+    -- Migrate category to tags array
+    UPDATE blog_posts 
+    SET tags = ARRAY[category] 
+    WHERE category IS NOT NULL AND tags = '{}';
+  END IF;
+
+  -- Add status column
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'status') THEN
+    ALTER TABLE blog_posts ADD COLUMN status TEXT DEFAULT 'draft';
+    -- Migrate published boolean to status
+    UPDATE blog_posts 
+    SET status = CASE 
+      WHEN published = true THEN 'published'
+      ELSE 'draft'
+    END;
+    -- Add constraint
+    ALTER TABLE blog_posts ADD CONSTRAINT blog_posts_status_check 
+      CHECK (status IN ('draft', 'published', 'archived'));
+    ALTER TABLE blog_posts ALTER COLUMN status SET NOT NULL;
+  END IF;
+
+  -- Add cover_image_url column (rename from image_url)
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'cover_image_url') THEN
+    ALTER TABLE blog_posts ADD COLUMN cover_image_url TEXT;
+    -- Migrate image_url to cover_image_url
+    UPDATE blog_posts 
+    SET cover_image_url = image_url 
+    WHERE image_url IS NOT NULL;
+  END IF;
+
+  -- Add author_name column (rename from author)
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'author_name') THEN
+    ALTER TABLE blog_posts ADD COLUMN author_name TEXT;
+    -- Migrate author to author_name
+    UPDATE blog_posts 
+    SET author_name = author 
+    WHERE author IS NOT NULL;
+  END IF;
+
+  -- Ensure content is NOT NULL (add default if needed)
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'content' AND is_nullable = 'YES') THEN
+    UPDATE blog_posts SET content = '' WHERE content IS NULL;
+    ALTER TABLE blog_posts ALTER COLUMN content SET NOT NULL;
+    ALTER TABLE blog_posts ALTER COLUMN content SET DEFAULT '';
+  END IF;
+END $$;
+
+-- Step 2: Drop old columns (after migration)
+DO $$
+BEGIN
+  -- Drop old columns that are no longer needed
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'author') THEN
+    ALTER TABLE blog_posts DROP COLUMN IF EXISTS author;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'author_avatar') THEN
+    ALTER TABLE blog_posts DROP COLUMN IF EXISTS author_avatar;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'category') THEN
+    ALTER TABLE blog_posts DROP COLUMN IF EXISTS category;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'image_url') THEN
+    ALTER TABLE blog_posts DROP COLUMN IF EXISTS image_url;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'read_time') THEN
+    ALTER TABLE blog_posts DROP COLUMN IF EXISTS read_time;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'featured') THEN
+    ALTER TABLE blog_posts DROP COLUMN IF EXISTS featured;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'published') THEN
+    ALTER TABLE blog_posts DROP COLUMN IF EXISTS published;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'likes') THEN
+    ALTER TABLE blog_posts DROP COLUMN IF EXISTS likes;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'comments') THEN
+    ALTER TABLE blog_posts DROP COLUMN IF EXISTS comments;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'views') THEN
+    ALTER TABLE blog_posts DROP COLUMN IF EXISTS views;
+  END IF;
+END $$;
+
+-- Step 3: Update indexes
+DROP INDEX IF EXISTS idx_blog_posts_category;
+DROP INDEX IF EXISTS idx_blog_posts_published;
+DROP INDEX IF EXISTS idx_blog_posts_featured;
+
+CREATE INDEX IF NOT EXISTS idx_blog_posts_slug ON blog_posts(slug);
+CREATE INDEX IF NOT EXISTS idx_blog_posts_status ON blog_posts(status);
+CREATE INDEX IF NOT EXISTS idx_blog_posts_published_at ON blog_posts(published_at DESC NULLS LAST);
+CREATE INDEX IF NOT EXISTS idx_blog_posts_created_at ON blog_posts(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_blog_posts_tags ON blog_posts USING GIN(tags);
+
+-- ============================================
+-- MIGRATE EVENTS TABLE
+-- ============================================
+
+-- Step 1: Add new columns (if they don't exist)
+DO $$ 
+BEGIN
+  -- Add start_at column
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'events' AND column_name = 'start_at') THEN
+    ALTER TABLE events ADD COLUMN start_at TIMESTAMPTZ;
+    -- Migrate event_date + event_time to start_at
+    UPDATE events 
+    SET start_at = (event_date::text || ' ' || COALESCE(event_time, '00:00:00'))::timestamptz
+    WHERE event_date IS NOT NULL;
+    -- Make start_at NOT NULL after migration
+    ALTER TABLE events ALTER COLUMN start_at SET NOT NULL;
+  END IF;
+
+  -- Add end_at column
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'events' AND column_name = 'end_at') THEN
+    ALTER TABLE events ADD COLUMN end_at TIMESTAMPTZ;
+    -- You can set end_at based on start_at + duration if needed
+    -- For now, leave it NULL
+  END IF;
+
+  -- Update status column values
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'events' AND column_name = 'status') THEN
+    -- Migrate old status values to new ones
+    UPDATE events 
+    SET status = CASE 
+      WHEN status = 'upcoming' THEN 'published'
+      WHEN status = 'past' THEN 'archived'
+      WHEN status = 'cancelled' THEN 'archived'
+      ELSE 'draft'
+    END
+    WHERE status IN ('upcoming', 'past', 'cancelled');
+    
+    -- Update constraint
+    ALTER TABLE events DROP CONSTRAINT IF EXISTS events_status_check;
+    ALTER TABLE events ADD CONSTRAINT events_status_check 
+      CHECK (status IN ('draft', 'published', 'archived'));
+  ELSE
+    -- Add status column if it doesn't exist
+    ALTER TABLE events ADD COLUMN status TEXT DEFAULT 'draft';
+    ALTER TABLE events ADD CONSTRAINT events_status_check 
+      CHECK (status IN ('draft', 'published', 'archived'));
+    ALTER TABLE events ALTER COLUMN status SET NOT NULL;
+  END IF;
+
+  -- Add cover_image_url column (rename from image_url)
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'events' AND column_name = 'cover_image_url') THEN
+    ALTER TABLE events ADD COLUMN cover_image_url TEXT;
+    -- Migrate image_url to cover_image_url
+    UPDATE events 
+    SET cover_image_url = image_url 
+    WHERE image_url IS NOT NULL;
+  END IF;
+END $$;
+
+-- Step 2: Drop old columns (after migration)
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'events' AND column_name = 'event_date') THEN
+    ALTER TABLE events DROP COLUMN IF EXISTS event_date;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'events' AND column_name = 'event_time') THEN
+    ALTER TABLE events DROP COLUMN IF EXISTS event_time;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'events' AND column_name = 'event_type') THEN
+    ALTER TABLE events DROP COLUMN IF EXISTS event_type;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'events' AND column_name = 'speaker') THEN
+    ALTER TABLE events DROP COLUMN IF EXISTS speaker;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'events' AND column_name = 'speaker_role') THEN
+    ALTER TABLE events DROP COLUMN IF EXISTS speaker_role;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'events' AND column_name = 'image_url') THEN
+    ALTER TABLE events DROP COLUMN IF EXISTS image_url;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'events' AND column_name = 'recording_link') THEN
+    ALTER TABLE events DROP COLUMN IF EXISTS recording_link;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'events' AND column_name = 'attendees') THEN
+    ALTER TABLE events DROP COLUMN IF EXISTS attendees;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'events' AND column_name = 'views') THEN
+    ALTER TABLE events DROP COLUMN IF EXISTS views;
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'events' AND column_name = 'max_attendees') THEN
+    ALTER TABLE events DROP COLUMN IF EXISTS max_attendees;
+  END IF;
+END $$;
+
+-- Step 3: Update indexes
+DROP INDEX IF EXISTS idx_events_date;
+DROP INDEX IF EXISTS idx_events_type;
+
+CREATE INDEX IF NOT EXISTS idx_events_status ON events(status);
+CREATE INDEX IF NOT EXISTS idx_events_start_at ON events(start_at ASC);
+CREATE INDEX IF NOT EXISTS idx_events_created_at ON events(created_at DESC);
+
+-- ============================================
+-- UPDATE RLS POLICIES
+-- ============================================
+
+-- Update blog_posts RLS policy
+DROP POLICY IF EXISTS "Allow public read published posts" ON blog_posts;
+CREATE POLICY "Allow public read published posts" ON blog_posts
+  FOR SELECT
+  USING (status = 'published');
+
+-- Update events RLS policy
+DROP POLICY IF EXISTS "Allow public read events" ON events;
+CREATE POLICY "Allow public read published events" ON events
+  FOR SELECT
+  USING (status = 'published');
+
+-- Add service role policies if they don't exist
+DROP POLICY IF EXISTS "Allow service role full access" ON blog_posts;
+CREATE POLICY "Allow service role full access" ON blog_posts
+  FOR ALL
+  USING (true)
+  WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow service role full access" ON events;
+CREATE POLICY "Allow service role full access" ON events
+  FOR ALL
+  USING (true)
+  WITH CHECK (true);
+
