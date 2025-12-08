@@ -120,6 +120,13 @@ BEGIN
   END IF;
 END $$;
 
+-- Step 1.5: Update RLS policies BEFORE dropping columns they depend on
+-- This must happen before dropping the 'published' column
+DROP POLICY IF EXISTS "Allow public read published posts" ON blog_posts;
+CREATE POLICY "Allow public read published posts" ON blog_posts
+  FOR SELECT
+  USING (status = 'published');
+
 -- Step 2: Drop old columns (after migration)
 DO $$
 BEGIN
@@ -320,20 +327,10 @@ BEGIN
 END $$;
 
 -- ============================================
--- UPDATE RLS POLICIES
+-- UPDATE RLS POLICIES (service role only)
 -- ============================================
 
--- Update blog_posts RLS policy
-DROP POLICY IF EXISTS "Allow public read published posts" ON blog_posts;
-CREATE POLICY "Allow public read published posts" ON blog_posts
-  FOR SELECT
-  USING (status = 'published');
-
--- Update events RLS policy
-DROP POLICY IF EXISTS "Allow public read events" ON events;
-CREATE POLICY "Allow public read published events" ON events
-  FOR SELECT
-  USING (status = 'published');
+-- Note: Public read policies were already updated in Step 1.5 before dropping columns
 
 -- Add service role policies if they don't exist
 DROP POLICY IF EXISTS "Allow service role full access" ON blog_posts;
