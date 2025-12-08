@@ -2,34 +2,25 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient } from './_lib/supabase.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  try {
-    // Handle CORS preflight
-    if (req.method === 'OPTIONS') {
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS,GET');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-      return res.status(204).end();
-    }
+  // Set CORS headers immediately - BEFORE any other logic
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS,GET');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Content-Type', 'application/json');
 
-    // Set CORS headers for all requests
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Content-Type', 'application/json');
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
 
-    // Allow GET for health check
-    if (req.method === 'GET') {
-      return res.status(200).json({
-        status: 'ok',
-        message: 'Image upload API is available',
-        methods: ['POST', 'OPTIONS', 'GET'],
-        endpoint: '/api/upload-image',
-        timestamp: new Date().toISOString()
-      });
-    }
-  } catch (error: any) {
-    console.error('Upload image handler error:', error);
-    return res.status(500).json({ 
-      error: 'Handler error', 
-      details: error?.message 
+  // Allow GET for health check
+  if (req.method === 'GET') {
+    return res.status(200).json({
+      status: 'ok',
+      message: 'Image upload API is available',
+      methods: ['POST', 'OPTIONS', 'GET'],
+      endpoint: '/api/upload-image',
+      timestamp: new Date().toISOString()
     });
   }
 

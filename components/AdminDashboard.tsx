@@ -543,7 +543,9 @@ export function AdminDashboard() {
 
   const handleCreateEvent = async () => {
     try {
-      const response = await fetch('/api/events', {
+      // API URL: /api/events (POST)
+      // Use fetchJson utility to safely fetch and validate JSON response
+      await fetchJson('/api/events', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -554,8 +556,6 @@ export function AdminDashboard() {
           maxAttendees: eventFormData.maxAttendees ? parseInt(eventFormData.maxAttendees) : null
         })
       });
-
-      if (!response.ok) throw new Error('Failed to create event');
       
       setNotification({
         isOpen: true,
