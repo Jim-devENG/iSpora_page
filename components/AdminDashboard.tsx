@@ -369,7 +369,7 @@ export function AdminDashboard() {
   const fetchBlogPosts = async () => {
     setBlogLoading(true);
     try {
-      const response = await fetch('/api/blog?published=all');
+      const response = await fetch('/api/blog/blog?published=all');
       if (response.ok) {
         const data = await response.json();
         setBlogPosts(data);
@@ -383,7 +383,7 @@ export function AdminDashboard() {
 
   const handleCreateBlogPost = async () => {
     try {
-      const response = await fetch('/api/blog', {
+      const response = await fetch('/api/blog/blog', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
