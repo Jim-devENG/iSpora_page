@@ -1,31 +1,33 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient } from '../_lib/supabase.js';
+import type { BlogPost, BlogPostResponse, ApiError } from '../_types/content.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Handle CORS
+  // Set CORS headers immediately
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, DELETE, PATCH, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,DELETE,PATCH,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    return res.status(204).end();
   }
 
   const { id } = req.query;
 
   if (!id || typeof id !== 'string') {
-    return res.status(400).json({ error: 'Blog post ID is required' });
+    return res.status(400).json({ error: 'Blog post ID is required' } as ApiError);
   }
 
   let supabase;
   try {
     supabase = getSupabaseClient();
   } catch (err: any) {
-    console.error('Supabase connection failed:', err);
+    console.error('[BLOG_POSTS_ID] Supabase connection failed:', err);
     return res.status(500).json({ 
       error: 'Database connection failed', 
       details: err?.message 
-    });
+    } as ApiError);
   }
 
   try {
@@ -38,18 +40,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       case 'DELETE':
         return await handleDelete(req, res, id, supabase);
       default:
-        return res.status(405).json({ error: 'Method not allowed' });
+        return res.status(405).json({ error: 'Method not allowed' } as ApiError);
     }
   } catch (error: any) {
-    console.error('API error:', error);
+    console.error(`[BLOG_POSTS_ID] ${req.method} error:`, error);
     return res.status(500).json({ 
       error: 'Internal server error', 
       details: error?.message 
-    });
+    } as ApiError);
   }
 }
 
-async function handleGet(req: VercelRequest, res: VercelResponse, id: string, supabase: ReturnType<typeof getSupabaseClient>) {
+async function handleGet(
+  req: VercelRequest, 
+  res: VercelResponse, 
+  id: string, 
+  supabase: ReturnType<typeof getSupabaseClient>
+) {
+  console.log(`[BLOG_POSTS_GET_ID] Fetching post: ${id}`);
+
   const { data, error } = await supabase
     .from('blog_posts')
     .select('*')
@@ -58,15 +67,28 @@ async function handleGet(req: VercelRequest, res: VercelResponse, id: string, su
 
   if (error) {
     if (error.code === 'PGRST116') {
-      return res.status(404).json({ error: 'Blog post not found' });
+      console.log(`[BLOG_POSTS_GET_ID] Post not found: ${id}`);
+      return res.status(404).json({ error: 'Blog post not found' } as ApiError);
     }
+    console.error(`[BLOG_POSTS_GET_ID] Query error:`, error);
     throw error;
   }
 
-  return res.status(200).json(data);
+  const response: BlogPostResponse = {
+    post: data as BlogPost
+  };
+
+  return res.status(200).json(response);
 }
 
-async function handleUpdate(req: VercelRequest, res: VercelResponse, id: string, supabase: ReturnType<typeof getSupabaseClient>) {
+async function handleUpdate(
+  req: VercelRequest, 
+  res: VercelResponse, 
+  id: string, 
+  supabase: ReturnType<typeof getSupabaseClient>
+) {
+  console.log(`[BLOG_POSTS_PATCH_ID] Updating post: ${id}`);
+  
   const body = req.body || {};
   
   // Check if post exists
@@ -77,33 +99,40 @@ async function handleUpdate(req: VercelRequest, res: VercelResponse, id: string,
     .single();
 
   if (!existing) {
-    return res.status(404).json({ error: 'Blog post not found' });
+    console.log(`[BLOG_POSTS_PATCH_ID] Post not found: ${id}`);
+    return res.status(404).json({ error: 'Blog post not found' } as ApiError);
   }
 
   // Build update object
-  const updateData: any = {};
+  const updateData: Partial<BlogPost> = {};
   
   if (body.title !== undefined) updateData.title = body.title;
-  if (body.excerpt !== undefined) updateData.excerpt = body.excerpt;
+  if (body.slug !== undefined) updateData.slug = body.slug;
   if (body.content !== undefined) updateData.content = body.content;
-  if (body.author !== undefined) updateData.author = body.author;
-  if (body.authorAvatar !== undefined || body.author_avatar !== undefined) {
-    updateData.author_avatar = body.authorAvatar || body.author_avatar;
+  if (body.excerpt !== undefined) updateData.excerpt = body.excerpt;
+  if (body.tags !== undefined) {
+    updateData.tags = Array.isArray(body.tags) ? body.tags : (body.tags ? [body.tags] : []);
   }
-  if (body.category !== undefined) updateData.category = body.category;
-  if (body.imageUrl !== undefined || body.image_url !== undefined) {
-    updateData.image_url = body.imageUrl || body.image_url;
-  }
-  if (body.readTime !== undefined || body.read_time !== undefined) {
-    updateData.read_time = body.readTime || body.read_time;
-  }
-  if (body.featured !== undefined) updateData.featured = body.featured;
-  if (body.published !== undefined) {
-    updateData.published = body.published;
-    if (body.published && !existing.published_at) {
+  if (body.status !== undefined) {
+    updateData.status = body.status;
+    // If status is being set to 'published' and published_at is not set, set it now
+    if (body.status === 'published' && !existing.published_at && !body.published_at && !body.publishedAt) {
       updateData.published_at = new Date().toISOString();
     }
   }
+  if (body.cover_image_url !== undefined || body.coverImageUrl !== undefined || body.image_url !== undefined || body.imageUrl !== undefined) {
+    updateData.cover_image_url = body.cover_image_url || body.coverImageUrl || body.image_url || body.imageUrl || null;
+  }
+  if (body.author_name !== undefined || body.authorName !== undefined || body.author !== undefined) {
+    updateData.author_name = body.author_name || body.authorName || body.author || null;
+  }
+  if (body.published_at !== undefined || body.publishedAt !== undefined) {
+    updateData.published_at = body.published_at || body.publishedAt || null;
+  }
+
+  // updated_at is set automatically by trigger
+
+  console.log(`[BLOG_POSTS_PATCH_ID] Updating with data:`, { ...updateData, content: updateData.content ? '[truncated]' : undefined });
 
   const { data, error } = await supabase
     .from('blog_posts')
@@ -112,12 +141,37 @@ async function handleUpdate(req: VercelRequest, res: VercelResponse, id: string,
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    console.error(`[BLOG_POSTS_PATCH_ID] Update error:`, error);
+    
+    // Handle unique constraint violation (duplicate slug)
+    if (error.code === '23505') {
+      return res.status(400).json({ 
+        error: 'A blog post with this slug already exists',
+        details: error.message
+      } as ApiError);
+    }
+    
+    throw error;
+  }
 
-  return res.status(200).json(data);
+  console.log(`[BLOG_POSTS_PATCH_ID] Post updated successfully: ${id}`);
+
+  const response: BlogPostResponse = {
+    post: data as BlogPost
+  };
+
+  return res.status(200).json(response);
 }
 
-async function handleDelete(req: VercelRequest, res: VercelResponse, id: string, supabase: ReturnType<typeof getSupabaseClient>) {
+async function handleDelete(
+  req: VercelRequest, 
+  res: VercelResponse, 
+  id: string, 
+  supabase: ReturnType<typeof getSupabaseClient>
+) {
+  console.log(`[BLOG_POSTS_DELETE_ID] Deleting post: ${id}`);
+  
   // Check if post exists
   const { data: existing } = await supabase
     .from('blog_posts')
@@ -126,7 +180,8 @@ async function handleDelete(req: VercelRequest, res: VercelResponse, id: string,
     .single();
 
   if (!existing) {
-    return res.status(404).json({ error: 'Blog post not found' });
+    console.log(`[BLOG_POSTS_DELETE_ID] Post not found: ${id}`);
+    return res.status(404).json({ error: 'Blog post not found' } as ApiError);
   }
 
   const { error } = await supabase
@@ -134,10 +189,12 @@ async function handleDelete(req: VercelRequest, res: VercelResponse, id: string,
     .delete()
     .eq('id', id);
 
-  if (error) throw error;
+  if (error) {
+    console.error(`[BLOG_POSTS_DELETE_ID] Delete error:`, error);
+    throw error;
+  }
 
-  return res.status(200).json({ 
-    message: 'Blog post deleted successfully',
-    deletedId: id 
-  });
+  console.log(`[BLOG_POSTS_DELETE_ID] Post deleted successfully: ${id}`);
+  
+  return res.status(204).end();
 }

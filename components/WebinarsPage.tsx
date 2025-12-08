@@ -33,14 +33,15 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
   const [loading, setLoading] = useState(true);
 
   // Fetch events from API
-  // API URL: /api/events
-  // This endpoint should return JSON array of events
+  // API URL: /api/events?upcoming=true (for upcoming) or /api/events?status=all (for all)
+  // Response shape: { events: Event[] }
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        // Use fetchJson utility to safely fetch and validate JSON response
-        const data = await fetchJson<any[]>('/api/events');
-        setEvents(Array.isArray(data) ? data : []);
+        // Fetch all events (we'll filter by status client-side for now)
+        const response = await fetchJson<{ events: any[] }>('/api/events?status=all');
+        const allEvents = Array.isArray(response.events) ? response.events : [];
+        setEvents(allEvents);
       } catch (error: any) {
         // Log error but don't crash - show empty state instead
         console.error('Error fetching events:', error.message || error);
@@ -53,9 +54,16 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
     fetchEvents();
   }, []);
 
-  // Filter events by status
-  const upcomingEvents = events.filter((e: any) => e.status === 'upcoming');
-  const pastEvents = events.filter((e: any) => e.status === 'past');
+  // Filter events by status and date
+  const now = new Date().toISOString();
+  const upcomingEvents = events.filter((e: any) => {
+    if (e.status !== 'published') return false;
+    return e.start_at && new Date(e.start_at) >= new Date(now);
+  });
+  const pastEvents = events.filter((e: any) => {
+    if (e.status !== 'published') return false;
+    return e.start_at && new Date(e.start_at) < new Date(now);
+  });
   
   const displayEvents = activeTab === 'upcoming' ? upcomingEvents : pastEvents;
 
@@ -152,7 +160,7 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
                   {/* Image */}
                   <div className="relative h-48 overflow-hidden">
                     <img 
-                      src={event.image_url || event.image || '/conference.jpg'} 
+                      src={event.cover_image_url || event.image_url || event.image || '/conference.jpg'} 
                       alt={event.title}
                       className="w-full h-full object-cover"
                     />
@@ -162,14 +170,16 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
                         ? "bg-gradient-to-br from-primary/60 via-primary/40 to-primary/50"
                         : "bg-gradient-to-br from-primary/20 via-transparent to-secondary/20"
                     )} />
-                    <Badge className={cn(
-                      "absolute top-3 right-3",
-                      activeTab === 'upcoming' && index === 0
-                        ? "bg-white/20 text-white border-white/30"
-                        : "bg-primary text-white"
-                    )}>
-                      {event.event_type || event.type}
-                    </Badge>
+                    {event.location && (
+                      <Badge className={cn(
+                        "absolute top-3 right-3",
+                        activeTab === 'upcoming' && index === 0
+                          ? "bg-white/20 text-white border-white/30"
+                          : "bg-primary text-white"
+                      )}>
+                        {event.location}
+                      </Badge>
+                    )}
                   </div>
 
                   <CardHeader>
@@ -178,10 +188,13 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
                       activeTab === 'upcoming' && index === 0 ? "text-white/80" : "text-muted-foreground"
                     )}>
                       <Calendar className="h-3 w-3" />
-                      <span>{new Date(event.event_date || event.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-                      <span>•</span>
-                      <Clock className="h-3 w-3" />
-                      <span>{event.event_time || event.time}</span>
+                      <span>{new Date(event.start_at || event.event_date || event.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                      {event.end_at && (
+                        <>
+                          <span>•</span>
+                          <span>Ends: {new Date(event.end_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                        </>
+                      )}
                     </div>
                     <CardTitle className={cn(
                       "text-xl font-bold mb-2",
@@ -193,75 +206,48 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
                       "text-sm leading-relaxed",
                       activeTab === 'upcoming' && index === 0 && "text-white/90"
                     )}>
-                      {event.description}
+                      {event.description || 'No description available'}
                     </CardDescription>
                   </CardHeader>
 
                   <CardContent>
-                    <div className={cn(
-                      "mb-4 pb-4 border-b",
-                      activeTab === 'upcoming' && index === 0 ? "border-white/20" : "border-border"
-                    )}>
+                    {event.location && (
                       <div className={cn(
-                        "text-sm font-medium mb-1",
-                        activeTab === 'upcoming' && index === 0 ? "text-white" : "text-foreground"
+                        "mb-4 pb-4 border-b",
+                        activeTab === 'upcoming' && index === 0 ? "border-white/20" : "border-border"
                       )}>
-                        {event.speaker}
+                        <div className={cn(
+                          "text-sm font-medium",
+                          activeTab === 'upcoming' && index === 0 ? "text-white" : "text-foreground"
+                        )}>
+                          📍 {event.location}
+                        </div>
                       </div>
-                      <div className={cn(
-                        "text-xs",
-                        activeTab === 'upcoming' && index === 0 ? "text-white/70" : "text-muted-foreground"
-                      )}>
-                        {event.speaker_role || event.speakerRole}
-                      </div>
-                    </div>
+                    )}
 
                     {activeTab === 'upcoming' ? (
                       <div className="space-y-3">
-                        <div className={cn(
-                          "flex items-center space-x-2 text-sm",
-                          index === 0 ? "text-white/80" : "text-muted-foreground"
-                        )}>
-                          <Users className="h-4 w-4" />
-                          <span>{event.attendees || 0} registered</span>
-                        </div>
-                        <Button 
-                          className={cn(
-                            "w-full",
-                            index === 0 && "bg-white text-primary hover:bg-white/90"
-                          )}
-                          onClick={() => window.open(event.registration_link || event.registrationLink || '#', '_blank')}
-                        >
-                          Register Now
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
+                        {event.registration_link && (
+                          <Button 
+                            className={cn(
+                              "w-full",
+                              index === 0 && "bg-white text-primary hover:bg-white/90"
+                            )}
+                            onClick={() => window.open(event.registration_link || '#', '_blank')}
+                          >
+                            Register Now
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        )}
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        <div className={cn(
-                          "flex items-center justify-between text-sm",
+                        <p className={cn(
+                          "text-sm",
                           index === 0 ? "text-white/80" : "text-muted-foreground"
                         )}>
-                          <div className="flex items-center space-x-2">
-                            <Users className="h-4 w-4" />
-                            <span>{event.attendees || 0} attended</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <PlayCircle className="h-4 w-4" />
-                            <span>{event.views || 0} views</span>
-                          </div>
-                        </div>
-                        <Button 
-                          variant={index === 0 ? "secondary" : "outline"}
-                          className={cn(
-                            "w-full",
-                            index === 0 && "bg-white text-primary hover:bg-white/90"
-                          )}
-                          onClick={() => window.open(event.recording_link || event.recordingLink || '#', '_blank')}
-                        >
-                          Watch Recording
-                          <ExternalLink className="ml-2 h-4 w-4" />
-                        </Button>
+                          This event has ended.
+                        </p>
                       </div>
                     )}
                   </CardContent>

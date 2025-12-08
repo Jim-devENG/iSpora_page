@@ -370,10 +370,10 @@ export function AdminDashboard() {
   const fetchBlogPosts = async () => {
     setBlogLoading(true);
     try {
-      // API URL: /api/blog-posts?published=all
-      // Use fetchJson utility to safely fetch and validate JSON response
-      const data = await fetchJson<any[]>('/api/blog-posts?published=all');
-      setBlogPosts(Array.isArray(data) ? data : []);
+      // API URL: /api/blog-posts?status=all
+      // Response shape: { posts: BlogPost[] }
+      const response = await fetchJson<{ posts: any[] }>('/api/blog-posts?status=all');
+      setBlogPosts(Array.isArray(response.posts) ? response.posts : []);
     } catch (error: any) {
       // Log error but don't crash - show empty state instead
       console.error('Error fetching blog posts:', error.message || error);
@@ -423,14 +423,20 @@ export function AdminDashboard() {
     
     try {
       // API URL: /api/blog-posts/[id] (PATCH)
-      // Use fetchJson utility to safely fetch and validate JSON response
-      await fetchJson(`/api/blog-posts/${editingBlogPost.id}`, {
+      // Request body: { title?, slug?, content?, excerpt?, tags?, status?, cover_image_url?, author_name?, published_at? }
+      // Response shape: { post: BlogPost }
+      await fetchJson<{ post: any }>(`/api/blog-posts/${editingBlogPost.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...blogFormData,
-          imageUrl: blogFormData.imageUrl || null,
-          readTime: blogFormData.readTime || null
+          title: blogFormData.title,
+          slug: blogFormData.slug || blogFormData.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+          content: blogFormData.content || '',
+          excerpt: blogFormData.excerpt || null,
+          tags: blogFormData.tags ? (Array.isArray(blogFormData.tags) ? blogFormData.tags : [blogFormData.tags]) : [],
+          status: blogFormData.published ? 'published' : 'draft',
+          cover_image_url: blogFormData.imageUrl || null,
+          author_name: blogFormData.author || null,
         })
       });
       
@@ -544,16 +550,20 @@ export function AdminDashboard() {
   const handleCreateEvent = async () => {
     try {
       // API URL: /api/events (POST)
-      // Use fetchJson utility to safely fetch and validate JSON response
-      await fetchJson('/api/events', {
+      // Request body: { title, start_at, description?, end_at?, location?, registration_link?, status?, cover_image_url? }
+      // Response shape: { event: Event }
+      await fetchJson<{ event: any }>('/api/events', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...eventFormData,
-          imageUrl: eventFormData.imageUrl || null,
-          registrationLink: eventFormData.registrationLink || null,
-          recordingLink: eventFormData.recordingLink || null,
-          maxAttendees: eventFormData.maxAttendees ? parseInt(eventFormData.maxAttendees) : null
+          title: eventFormData.title,
+          description: eventFormData.description || null,
+          start_at: eventFormData.eventDate ? new Date(`${eventFormData.eventDate}T${eventFormData.eventTime || '00:00:00'}`).toISOString() : new Date().toISOString(),
+          end_at: eventFormData.endDate ? new Date(`${eventFormData.endDate}T${eventFormData.endTime || '23:59:59'}`).toISOString() : null,
+          location: eventFormData.location || null,
+          registration_link: eventFormData.registrationLink || null,
+          status: eventFormData.published ? 'published' : 'draft',
+          cover_image_url: eventFormData.imageUrl || null,
         })
       });
       
@@ -583,16 +593,20 @@ export function AdminDashboard() {
     
     try {
       // API URL: /api/events/[id] (PATCH)
-      // Use fetchJson utility to safely fetch and validate JSON response
-      await fetchJson(`/api/events/${editingEvent.id}`, {
+      // Request body: { title?, description?, start_at?, end_at?, location?, registration_link?, status?, cover_image_url? }
+      // Response shape: { event: Event }
+      await fetchJson<{ event: any }>(`/api/events/${editingEvent.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...eventFormData,
-          imageUrl: eventFormData.imageUrl || null,
-          registrationLink: eventFormData.registrationLink || null,
-          recordingLink: eventFormData.recordingLink || null,
-          maxAttendees: eventFormData.maxAttendees ? parseInt(eventFormData.maxAttendees) : null
+          title: eventFormData.title,
+          description: eventFormData.description || null,
+          start_at: eventFormData.eventDate ? new Date(`${eventFormData.eventDate}T${eventFormData.eventTime || '00:00:00'}`).toISOString() : undefined,
+          end_at: eventFormData.endDate ? new Date(`${eventFormData.endDate}T${eventFormData.endTime || '23:59:59'}`).toISOString() : null,
+          location: eventFormData.location || null,
+          registration_link: eventFormData.registrationLink || null,
+          status: eventFormData.published ? 'published' : 'draft',
+          cover_image_url: eventFormData.imageUrl || null,
         })
       });
       

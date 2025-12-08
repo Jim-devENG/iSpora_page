@@ -39,17 +39,17 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
   const categories = ['All', 'Updates', 'Success Stories', 'Diaspora Voices', 'Youth Impact', 'Partnerships'];
 
   // Fetch blog posts from API
-  // API URL: /api/blog-posts?published=true
-  // This endpoint should return JSON array of blog posts
+  // API URL: /api/blog-posts?status=published
+  // Response shape: { posts: BlogPost[] }
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         // Use fetchJson utility to safely fetch and validate JSON response
-        const data = await fetchJson<any[]>('/api/blog-posts?published=true');
-        setPosts(Array.isArray(data) ? data : []);
-        // Find featured post
-        const featured = Array.isArray(data) ? data.find((p: any) => p.featured) : null;
-        setFeaturedPost(featured || (Array.isArray(data) && data[0]) || null);
+        const response = await fetchJson<{ posts: any[] }>('/api/blog-posts?status=published');
+        const posts = Array.isArray(response.posts) ? response.posts : [];
+        setPosts(posts);
+        // Find featured post (if we add featured field later) or use first post
+        setFeaturedPost(posts[0] || null);
       } catch (error: any) {
         // Log error but don't crash - show empty state instead
         console.error('Error fetching blog posts:', error.message || error);
@@ -119,7 +119,7 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
                 <div className="grid md:grid-cols-2 gap-0">
                   <div className="relative h-64 md:h-full min-h-[300px]">
                     <img 
-                      src={displayFeatured.image_url || displayFeatured.image || '/conference.jpg'} 
+                      src={displayFeatured.cover_image_url || displayFeatured.image_url || displayFeatured.image || '/conference.jpg'} 
                       alt={displayFeatured.title}
                       className="w-full h-full object-cover"
                     />
@@ -133,20 +133,18 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
                       {displayFeatured.title}
                     </CardTitle>
                     <CardDescription className="text-base mb-4 leading-relaxed">
-                      {displayFeatured.excerpt}
+                      {displayFeatured.excerpt || 'No excerpt available'}
                     </CardDescription>
                     <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-6">
-                      <div className="flex items-center space-x-2">
-                        <User className="h-4 w-4" />
-                        <span>{displayFeatured.author}</span>
-                      </div>
+                      {displayFeatured.author_name && (
+                        <div className="flex items-center space-x-2">
+                          <User className="h-4 w-4" />
+                          <span>{displayFeatured.author_name}</span>
+                        </div>
+                      )}
                       <div className="flex items-center space-x-2">
                         <Calendar className="h-4 w-4" />
-                        <span>{new Date(displayFeatured.published_at || displayFeatured.date || displayFeatured.created_at).toLocaleDateString()}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Clock className="h-4 w-4" />
-                        <span>{displayFeatured.read_time || displayFeatured.readTime || '5 min read'}</span>
+                        <span>{new Date(displayFeatured.published_at || displayFeatured.created_at).toLocaleDateString()}</span>
                       </div>
                     </div>
                     <Button className="w-full sm:w-auto">
@@ -225,32 +223,36 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
                 <Card className="h-full hover:shadow-lg transition-all duration-300 border-primary/10 hover:border-primary/30 overflow-hidden group cursor-pointer">
                     <div className="relative h-48 overflow-hidden">
                     <img 
-                      src={post.image_url || post.image || '/conference.jpg'} 
+                      src={post.cover_image_url || post.image_url || post.image || '/conference.jpg'} 
                       alt={post.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent" />
-                    <Badge className="absolute top-3 right-3 bg-primary text-white">
-                      {post.category}
-                    </Badge>
+                    {post.tags && post.tags.length > 0 && (
+                      <Badge className="absolute top-3 right-3 bg-primary text-white">
+                        {post.tags[0]}
+                      </Badge>
+                    )}
                   </div>
                   <CardHeader>
                     <CardTitle className="text-lg font-bold line-clamp-2 mb-2">
                       {post.title}
                     </CardTitle>
                     <CardDescription className="text-sm line-clamp-2">
-                      {post.excerpt}
+                      {post.excerpt || 'No excerpt available'}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between text-xs text-muted-foreground mb-4">
-                      <div className="flex items-center space-x-2">
-                        <User className="h-3 w-3" />
-                        <span>{post.author}</span>
-                      </div>
+                      {post.author_name && (
+                        <div className="flex items-center space-x-2">
+                          <User className="h-3 w-3" />
+                          <span>{post.author_name}</span>
+                        </div>
+                      )}
                       <div className="flex items-center space-x-2">
                         <Calendar className="h-3 w-3" />
-                        <span>{new Date(post.published_at || post.date || post.created_at).toLocaleDateString()}</span>
+                        <span>{new Date(post.published_at || post.created_at).toLocaleDateString()}</span>
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
