@@ -13,14 +13,26 @@ import { getSupabaseClient } from './_lib/supabase.js';
  * Body: { file: File, type: 'blog' | 'event' }
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Set CORS headers
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    return res.status(204).end();
+  }
+
+  // Set CORS headers for all requests
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Content-Type', 'application/json');
 
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end();
+  // Allow GET for health check
+  if (req.method === 'GET') {
+    return res.status(200).json({
+      status: 'ok',
+      message: 'Image upload API is available',
+      methods: ['POST', 'OPTIONS'],
+      endpoint: '/api/upload-image'
+    });
   }
 
   if (req.method === 'POST') {
