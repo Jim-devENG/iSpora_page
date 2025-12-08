@@ -2,16 +2,17 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient } from './_lib/supabase.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Set CORS headers immediately - BEFORE any other logic
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS,GET');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Content-Type', 'application/json');
-
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS,GET');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     return res.status(204).end();
   }
+
+  // Set CORS headers for all responses
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Content-Type', 'application/json');
 
   // Allow GET for health check
   if (req.method === 'GET') {

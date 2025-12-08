@@ -534,10 +534,10 @@ export function AdminDashboard() {
   const fetchEvents = async () => {
     setEventsLoading(true);
     try {
-      // API URL: /api/events
-      // Use fetchJson utility to safely fetch and validate JSON response
-      const data = await fetchJson<any[]>('/api/events');
-      setEvents(Array.isArray(data) ? data : []);
+      // API URL: /api/events?status=all
+      // Response shape: { events: Event[] }
+      const response = await fetchJson<{ events: any[] }>('/api/events?status=all');
+      setEvents(Array.isArray(response.events) ? response.events : []);
     } catch (error: any) {
       // Log error but don't crash - show empty state instead
       console.error('Error fetching events:', error.message || error);
