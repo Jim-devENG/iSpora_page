@@ -27,11 +27,27 @@ CREATE TABLE IF NOT EXISTS blog_posts (
 );
 
 -- Indexes for blog_posts
-CREATE INDEX IF NOT EXISTS idx_blog_posts_slug ON blog_posts(slug);
-CREATE INDEX IF NOT EXISTS idx_blog_posts_status ON blog_posts(status);
-CREATE INDEX IF NOT EXISTS idx_blog_posts_published_at ON blog_posts(published_at DESC NULLS LAST);
-CREATE INDEX IF NOT EXISTS idx_blog_posts_created_at ON blog_posts(created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_blog_posts_tags ON blog_posts USING GIN(tags);
+-- Only create indexes if columns exist (safe for existing tables)
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'slug') THEN
+    CREATE INDEX IF NOT EXISTS idx_blog_posts_slug ON blog_posts(slug);
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'status') THEN
+    CREATE INDEX IF NOT EXISTS idx_blog_posts_status ON blog_posts(status);
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'published_at') THEN
+    CREATE INDEX IF NOT EXISTS idx_blog_posts_published_at ON blog_posts(published_at DESC NULLS LAST);
+  END IF;
+  
+  CREATE INDEX IF NOT EXISTS idx_blog_posts_created_at ON blog_posts(created_at DESC);
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'blog_posts' AND column_name = 'tags') THEN
+    CREATE INDEX IF NOT EXISTS idx_blog_posts_tags ON blog_posts USING GIN(tags);
+  END IF;
+END $$;
 
 -- Trigger function for updated_at (if not exists)
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -83,9 +99,19 @@ CREATE TABLE IF NOT EXISTS events (
 );
 
 -- Indexes for events
-CREATE INDEX IF NOT EXISTS idx_events_status ON events(status);
-CREATE INDEX IF NOT EXISTS idx_events_start_at ON events(start_at ASC);
-CREATE INDEX IF NOT EXISTS idx_events_created_at ON events(created_at DESC);
+-- Only create indexes if columns exist (safe for existing tables)
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'events' AND column_name = 'status') THEN
+    CREATE INDEX IF NOT EXISTS idx_events_status ON events(status);
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'events' AND column_name = 'start_at') THEN
+    CREATE INDEX IF NOT EXISTS idx_events_start_at ON events(start_at ASC);
+  END IF;
+  
+  CREATE INDEX IF NOT EXISTS idx_events_created_at ON events(created_at DESC);
+END $$;
 
 -- Trigger for events updated_at
 DROP TRIGGER IF EXISTS update_events_updated_at ON events;
