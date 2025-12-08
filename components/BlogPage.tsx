@@ -19,7 +19,8 @@ import {
   BookOpen,
   TrendingUp,
   Heart,
-  MessageCircle
+  MessageCircle,
+  Loader2
 } from 'lucide-react';
 import { cn } from './ui/utils';
 
@@ -50,7 +51,6 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
         }
       } catch (error) {
         console.error('Error fetching blog posts:', error);
-        // Fallback to empty array
         setPosts([]);
       } finally {
         setLoading(false);
@@ -60,77 +60,8 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
     fetchPosts();
   }, []);
 
-  // Fallback data if API fails
-  const fallbackPosts = [
-    {
-      id: 2,
-      title: 'The Power of One-on-One Mentorship: A Mentor\'s Perspective',
-      excerpt: 'Dr. James Osei shares insights from mentoring young agricultural entrepreneurs across Ghana.',
-      author: 'Dr. James Osei',
-      authorAvatar: 'JO',
-      date: '2024-01-12',
-      readTime: '6 min read',
-      category: 'Mentorship',
-      likes: 89,
-      comments: 18,
-      image: '/Mentorship.jpg'
-    },
-    {
-      id: 3,
-      title: 'From Mentee to Mentor: Fatima\'s Journey',
-      excerpt: 'How a young woman from Lagos became a tech leader and is now mentoring the next generation.',
-      author: 'Fatima Mohammed',
-      authorAvatar: 'FM',
-      date: '2024-01-10',
-      readTime: '5 min read',
-      category: 'Youth Impact',
-      likes: 156,
-      comments: 42,
-      image: '/Career.jpg'
-    },
-    {
-      id: 4,
-      title: 'Building Bridges: The Diaspora Connection',
-      excerpt: 'Exploring how African diaspora professionals are creating lasting impact back home.',
-      author: 'Kwame Asante',
-      authorAvatar: 'KA',
-      date: '2024-01-08',
-      readTime: '7 min read',
-      category: 'Diaspora Voices',
-      likes: 201,
-      comments: 67,
-      image: '/Collaboration.jpg'
-    },
-    {
-      id: 5,
-      title: 'New Feature: AI-Powered Mentor Matching',
-      excerpt: 'Introducing smart matching technology that connects mentors and mentees based on compatibility.',
-      author: 'Product Team',
-      authorAvatar: 'PT',
-      date: '2024-01-05',
-      readTime: '4 min read',
-      category: 'Updates',
-      likes: 92,
-      comments: 15,
-      image: '/academy.jpg'
-    },
-    {
-      id: 6,
-      title: 'Success Story: Clean Water Initiative in Rural Kenya',
-      excerpt: 'How a diaspora engineer partnered with local youth to bring clean water to 5,000 people.',
-      author: 'Sarah Kariuki',
-      authorAvatar: 'SK',
-      date: '2024-01-03',
-      readTime: '8 min read',
-      category: 'Success Stories',
-      likes: 234,
-      comments: 89,
-      image: '/communinty.jpg'
-    }
-  ];
-
-  const displayPosts = posts.length > 0 ? posts : fallbackPosts;
-  const displayFeatured = featuredPost || (fallbackPosts.find(p => p.featured) || fallbackPosts[0]);
+  const displayPosts = posts;
+  const displayFeatured = featuredPost;
 
   const filteredPosts = displayPosts.filter((post: any) => {
     const matchesSearch = post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -261,8 +192,19 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
           </div>
 
           {/* Blog Posts Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredPosts.map((post, index) => (
+          {loading ? (
+            <div className="text-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+              <p className="text-muted-foreground">Loading blog posts...</p>
+            </div>
+          ) : filteredPosts.length === 0 ? (
+            <div className="text-center py-12">
+              <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No blog posts available yet.</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredPosts.map((post, index) => (
               <motion.div
                 key={post.id}
                 initial="hidden"
@@ -327,13 +269,7 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
                   </CardContent>
                 </Card>
               </motion.div>
-            ))}
-          </div>
-
-          {filteredPosts.length === 0 && (
-            <div className="text-center py-12">
-              <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">No articles found matching your search.</p>
+              ))}
             </div>
           )}
         </div>

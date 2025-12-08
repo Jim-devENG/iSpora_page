@@ -50,101 +50,11 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
     fetchEvents();
   }, []);
 
-  // Fallback data
-  const fallbackUpcomingEvents = [
-    {
-      id: 1,
-      title: 'Diaspora Engagement Strategies for Development',
-      description: 'Learn how diaspora professionals can effectively contribute to development initiatives in the Global South.',
-      date: '2024-02-15',
-      time: '2:00 PM GMT',
-      type: 'Webinar',
-      speaker: 'Dr. Ama Mensah',
-      speakerRole: 'Development Expert',
-      image: '/conference.jpg',
-      registrationLink: '#',
-      attendees: 150
-    },
-    {
-      id: 2,
-      title: 'Youth Leadership in Tech Innovation',
-      description: 'Exploring how young leaders are driving tech innovation across Africa and the role of mentorship.',
-      date: '2024-02-22',
-      time: '3:00 PM GMT',
-      type: 'Workshop',
-      speaker: 'Tech Leaders Panel',
-      speakerRole: 'Industry Experts',
-      image: '/Career.jpg',
-      registrationLink: '#',
-      attendees: 89
-    },
-    {
-      id: 3,
-      title: 'Building Sustainable Partnerships',
-      description: 'How to create lasting partnerships between diaspora organizations and local communities.',
-      date: '2024-03-01',
-      time: '1:00 PM GMT',
-      type: 'Panel Discussion',
-      speaker: 'Partnership Specialists',
-      speakerRole: 'NGO Leaders',
-      image: '/Collaboration.jpg',
-      registrationLink: '#',
-      attendees: 203
-    }
-  ];
-
-  const fallbackPastEvents = [
-    {
-      id: 4,
-      title: 'Introduction to iSpora Platform',
-      description: 'An overview of the iSpora platform features and how to get started.',
-      date: '2024-01-10',
-      time: '2:00 PM GMT',
-      type: 'Webinar',
-      speaker: 'iSpora Team',
-      speakerRole: 'Platform Team',
-      image: '/academy.jpg',
-      recordingLink: '#',
-      attendees: 312,
-      views: 1250
-    },
-    {
-      id: 5,
-      title: 'Mentorship Best Practices',
-      description: 'Effective mentorship strategies for diaspora professionals working with youth.',
-      date: '2024-01-05',
-      time: '3:00 PM GMT',
-      type: 'Workshop',
-      speaker: 'Dr. James Osei',
-      speakerRole: 'Senior Mentor',
-      image: '/Mentorship.jpg',
-      recordingLink: '#',
-      attendees: 187,
-      views: 890
-    },
-    {
-      id: 6,
-      title: 'Community Building in the Digital Age',
-      description: 'How to build and sustain vibrant online communities for social impact.',
-      date: '2023-12-20',
-      time: '2:30 PM GMT',
-      type: 'Panel Discussion',
-      speaker: 'Community Leaders',
-      speakerRole: 'Network Builders',
-      image: '/communinty.jpg',
-      recordingLink: '#',
-      attendees: 245,
-      views: 1567
-    }
-  ];
-
-  // Use API data if available, otherwise use fallback
+  // Filter events by status
   const upcomingEvents = events.filter((e: any) => e.status === 'upcoming');
   const pastEvents = events.filter((e: any) => e.status === 'past');
   
-  const displayEvents = events.length > 0 
-    ? (activeTab === 'upcoming' ? upcomingEvents : pastEvents)
-    : (activeTab === 'upcoming' ? fallbackUpcomingEvents : fallbackPastEvents);
+  const displayEvents = activeTab === 'upcoming' ? upcomingEvents : pastEvents;
 
   return (
     <div className="min-h-screen">

@@ -219,3 +219,4 @@ images/
 - File size is limited to 5MB
 - Only image files are accepted (validated by MIME type)
 
+

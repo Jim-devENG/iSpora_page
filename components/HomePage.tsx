@@ -45,11 +45,11 @@ export function HomePage({ onPageChange }: HomePageProps) {
         <AnimatedGrid />
         <AnimatedBlob className="top-0 right-0 bg-primary/20" delay={0} size="w-96 h-96" />
         <AnimatedBlob className="bottom-0 left-0 bg-secondary/20" delay={2} size="w-80 h-80" />
-        <FloatingShapes />
+          <FloatingShapes />
         
         <div className="relative z-10 grid lg:grid-cols-2 gap-12 items-center">
           {/* Left: Content */}
-          <motion.div
+          <motion.div 
             initial="hidden"
             animate="visible"
             variants={{
@@ -64,7 +64,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
               hidden: { opacity: 0, y: 20 },
               visible: { opacity: 1, y: 0, transition: safeTransition({ duration: 0.6 }) }
             }}>
-              <motion.div
+              <motion.div 
                 whileHover={safeAnimate({ scale: 1.05 })}
                 transition={safeTransition({ type: "spring", stiffness: 400 })}
               >
@@ -72,15 +72,15 @@ export function HomePage({ onPageChange }: HomePageProps) {
                   <motion.div
                     animate={safeAnimate({ rotate: [0, 360] })}
                     transition={safeTransition({ duration: 3, repeat: 999999, ease: "linear" })}
-                  >
+              >
                     <Sparkles className="h-3 w-3 mr-2" />
                   </motion.div>
                   Global Impact Engine
                 </Badge>
               </motion.div>
             </motion.div>
-
-            <motion.h1
+            
+            <motion.h1 
               className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6"
               variants={{
                 hidden: { opacity: 0, y: 20 },
@@ -99,7 +99,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
             >
               For the Global South — and for the people and organizations everywhere committed to building its future.
             </motion.p>
-
+            
             <motion.div
               variants={{
                 hidden: { opacity: 0, y: 20 },
@@ -123,8 +123,8 @@ export function HomePage({ onPageChange }: HomePageProps) {
                 align="left"
               />
             </motion.div>
-          </motion.div>
-
+            </motion.div>
+            
           {/* Right: Hero Image */}
           <motion.div
             className="relative"
@@ -157,7 +157,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
             
             {/* Stats below image */}
             <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <motion.div 
+            <motion.div 
                 className="text-center p-4 rounded-lg bg-primary/5 border border-primary/10"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -166,7 +166,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
                 <div className="text-xl sm:text-2xl font-bold text-primary mb-1">Growing</div>
                 <div className="text-xs sm:text-sm text-muted-foreground">Community</div>
               </motion.div>
-              <motion.div 
+                <motion.div
                 className="text-center p-4 rounded-lg bg-primary/5 border border-primary/10"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -175,16 +175,16 @@ export function HomePage({ onPageChange }: HomePageProps) {
                 <div className="text-xl sm:text-2xl font-bold text-primary mb-1">Active</div>
                 <div className="text-xs sm:text-sm text-muted-foreground">Network</div>
               </motion.div>
-              <motion.div 
+                  <motion.div
                 className="text-center p-4 rounded-lg bg-primary/5 border border-primary/10"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={safeTransition({ delay: 0.7 })}
-              >
+                  >
                 <div className="text-xl sm:text-2xl font-bold text-primary mb-1">Impact</div>
                 <div className="text-xs sm:text-sm text-muted-foreground">Driven</div>
-              </motion.div>
-              <motion.div 
+                </motion.div>
+                <motion.div
                 className="text-center p-4 rounded-lg bg-primary/5 border border-primary/10"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -196,7 +196,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
             </div>
             
             {/* Decorative elements */}
-            <motion.div
+                <motion.div
               className="absolute -top-4 -right-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl"
               animate={safeAnimate({
                 scale: [1, 1.2, 1],
@@ -208,7 +208,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
                 ease: "easeInOut"
               })}
             />
-            <motion.div
+                  <motion.div
               className="absolute -bottom-4 -left-4 w-32 h-32 bg-secondary/10 rounded-full blur-2xl"
               animate={safeAnimate({
                 scale: [1, 1.3, 1],
@@ -224,7 +224,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
           </motion.div>
         </div>
       </Section>
-
+        
       {/* The iSpora Spiral */}
       <Section 
         className="relative overflow-hidden"
@@ -267,7 +267,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
             description="Our spiraling empowerment model creates a self-reinforcing cycle of impact"
           />
         
-        <motion.div
+        <motion.div 
           className="grid md:grid-cols-3 gap-6"
           initial="hidden"
           whileInView="visible"
@@ -303,7 +303,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
           />
         </motion.div>
 
-          <motion.div
+          <motion.div 
             className="mt-12 text-center"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -339,10 +339,10 @@ export function HomePage({ onPageChange }: HomePageProps) {
           <PageHeader
             title="What is iSpora?"
             align="left"
-          />
-        
+                  />
+                  
         <div className="max-w-4xl">
-          <motion.div
+                    <motion.div 
             className="space-y-6 text-lg text-muted-foreground leading-relaxed"
             initial="hidden"
             whileInView="visible"
@@ -385,7 +385,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
           />
 
         <div className="grid md:grid-cols-3 gap-8">
-          <motion.div
+          <motion.div 
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-50px' }}
@@ -402,7 +402,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
               <CardHeader>
                 <motion.div 
                   className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/15 text-primary"
-                  whileHover={safeAnimate({ scale: 1.1, rotate: 5 })}
+                    whileHover={safeAnimate({ scale: 1.1, rotate: 5 })}
                   transition={safeTransition({ type: "spring", stiffness: 400 })}
                 >
                   <Users className="h-7 w-7" />
@@ -427,8 +427,8 @@ export function HomePage({ onPageChange }: HomePageProps) {
               </CardContent>
             </Card>
           </motion.div>
-
-          <motion.div
+          
+          <motion.div 
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-50px' }}
@@ -467,14 +467,14 @@ export function HomePage({ onPageChange }: HomePageProps) {
                     className="w-full bg-white text-primary hover:bg-white/90"
                   >
                     Learn More
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </CardContent>
               </div>
             </Card>
           </motion.div>
-
-          <motion.div
+          
+          <motion.div 
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-50px' }}
@@ -536,10 +536,10 @@ export function HomePage({ onPageChange }: HomePageProps) {
             description="Imagine a unified space where transformation accelerates"
           />
 
-        <motion.div
+          <motion.div
           className="max-w-4xl mx-auto space-y-6"
-          initial="hidden"
-          whileInView="visible"
+            initial="hidden"
+            whileInView="visible"
           viewport={{ once: true, margin: '-50px' }}
           variants={{
             hidden: { opacity: 0 },
@@ -557,7 +557,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
             'Diaspora knowledge, experience, and expertise are channeled into development in a meaningful, measurable way.',
             'Impactful diasporans, leaders, and organizations are spotlighted, supported and celebrated.'
           ].map((item, index) => (
-            <motion.div
+            <motion.div 
               key={index}
               className="flex items-start space-x-4 p-4 rounded-lg bg-card border hover:border-primary/20 transition-colors"
               variants={{
@@ -568,7 +568,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
                   transition: safeTransition({ duration: 0.4 })
                 }
               }}
-            >
+              >
               <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
               <p className="text-muted-foreground leading-relaxed">{item}</p>
             </motion.div>
@@ -590,8 +590,8 @@ export function HomePage({ onPageChange }: HomePageProps) {
             <p className="text-muted-foreground">
               iSpora is building that ecosystem — a movement, a global network, and a digital platform powering unified action for Global South transformation.
             </p>
+            </motion.div>
           </motion.div>
-        </motion.div>
         </div>
       </Section>
 

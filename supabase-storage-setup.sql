@@ -27,3 +27,4 @@ WITH CHECK (
 -- The API uses service role key, so this should work
 -- If you want to restrict, remove this policy and ensure API uses authenticated requests
 
+

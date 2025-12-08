@@ -31,8 +31,12 @@ import {
   Plus,
   Edit,
   Save,
-  Building
+  Building,
+  X
 } from 'lucide-react';
+import { ImageUpload } from './ui/ImageUpload';
+import { Textarea } from './ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { registrationService } from './services/registrationService';
 import { NotificationModal } from './ui/notification-modal';
 
@@ -86,6 +90,44 @@ export function AdminDashboard() {
   const [recentActivityPage, setRecentActivityPage] = useState(1);
   const registrationsPerPage = 10;
   const recentActivityPerPage = 5;
+  
+  // Blog posts state
+  const [blogPosts, setBlogPosts] = useState<any[]>([]);
+  const [blogLoading, setBlogLoading] = useState(false);
+  const [showBlogForm, setShowBlogForm] = useState(false);
+  const [editingBlogPost, setEditingBlogPost] = useState<any>(null);
+  const [blogFormData, setBlogFormData] = useState({
+    title: '',
+    excerpt: '',
+    content: '',
+    author: '',
+    authorAvatar: '',
+    category: '',
+    imageUrl: '',
+    readTime: '',
+    featured: false,
+    published: false
+  });
+  
+  // Events state
+  const [events, setEvents] = useState<any[]>([]);
+  const [eventsLoading, setEventsLoading] = useState(false);
+  const [showEventForm, setShowEventForm] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<any>(null);
+  const [eventFormData, setEventFormData] = useState({
+    title: '',
+    description: '',
+    eventDate: '',
+    eventTime: '',
+    eventType: '',
+    speaker: '',
+    speakerRole: '',
+    imageUrl: '',
+    registrationLink: '',
+    recordingLink: '',
+    maxAttendees: '',
+    status: 'upcoming'
+  });
   
   // Notification modal state
   const [notification, setNotification] = useState<{
@@ -150,6 +192,20 @@ export function AdminDashboard() {
       if (unsubscribe) unsubscribe();
     };
   }, []);
+
+  // Fetch blog posts when blog tab is active
+  useEffect(() => {
+    if (activeTab === 'blog') {
+      fetchBlogPosts();
+    }
+  }, [activeTab]);
+
+  // Fetch events when events tab is active
+  useEffect(() => {
+    if (activeTab === 'events') {
+      fetchEvents();
+    }
+  }, [activeTab]);
 
   // Reset to first page when filters change
   useEffect(() => {
@@ -307,6 +363,326 @@ export function AdminDashboard() {
       default:
         return <Badge className="bg-gray-100 text-gray-800">Unknown</Badge>;
     }
+  };
+
+  // Blog Posts CRUD functions
+  const fetchBlogPosts = async () => {
+    setBlogLoading(true);
+    try {
+      const response = await fetch('/api/blog-posts?published=all');
+      if (response.ok) {
+        const data = await response.json();
+        setBlogPosts(data);
+      }
+    } catch (error) {
+      console.error('Error fetching blog posts:', error);
+    } finally {
+      setBlogLoading(false);
+    }
+  };
+
+  const handleCreateBlogPost = async () => {
+    try {
+      const response = await fetch('/api/blog-posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...blogFormData,
+          imageUrl: blogFormData.imageUrl || null,
+          readTime: blogFormData.readTime || null
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to create blog post');
+      
+      setNotification({
+        isOpen: true,
+        type: 'success',
+        title: 'Success',
+        message: 'Blog post created successfully',
+        confirmText: 'OK'
+      });
+      
+      resetBlogForm();
+      fetchBlogPosts();
+    } catch (error: any) {
+      setNotification({
+        isOpen: true,
+        type: 'error',
+        title: 'Error',
+        message: error.message || 'Failed to create blog post',
+        confirmText: 'OK'
+      });
+    }
+  };
+
+  const handleUpdateBlogPost = async () => {
+    if (!editingBlogPost) return;
+    
+    try {
+      const response = await fetch(`/api/blog-posts/${editingBlogPost.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...blogFormData,
+          imageUrl: blogFormData.imageUrl || null,
+          readTime: blogFormData.readTime || null
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to update blog post');
+      
+      setNotification({
+        isOpen: true,
+        type: 'success',
+        title: 'Success',
+        message: 'Blog post updated successfully',
+        confirmText: 'OK'
+      });
+      
+      resetBlogForm();
+      fetchBlogPosts();
+    } catch (error: any) {
+      setNotification({
+        isOpen: true,
+        type: 'error',
+        title: 'Error',
+        message: error.message || 'Failed to update blog post',
+        confirmText: 'OK'
+      });
+    }
+  };
+
+  const handleDeleteBlogPost = async (id: string) => {
+    setNotification({
+      isOpen: true,
+      type: 'error',
+      title: 'Delete Blog Post',
+      message: 'Are you sure you want to delete this blog post? This action cannot be undone.',
+      confirmText: 'Delete',
+      onConfirm: async () => {
+        try {
+          const response = await fetch(`/api/blog-posts/${id}`, { method: 'DELETE' });
+          if (!response.ok) throw new Error('Failed to delete blog post');
+          
+          setNotification({
+            isOpen: true,
+            type: 'success',
+            title: 'Success',
+            message: 'Blog post deleted successfully',
+            confirmText: 'OK'
+          });
+          
+          fetchBlogPosts();
+        } catch (error: any) {
+          setNotification({
+            isOpen: true,
+            type: 'error',
+            title: 'Error',
+            message: error.message || 'Failed to delete blog post',
+            confirmText: 'OK'
+          });
+        }
+      }
+    });
+  };
+
+  const resetBlogForm = () => {
+    setBlogFormData({
+      title: '',
+      excerpt: '',
+      content: '',
+      author: '',
+      authorAvatar: '',
+      category: '',
+      imageUrl: '',
+      readTime: '',
+      featured: false,
+      published: false
+    });
+    setEditingBlogPost(null);
+    setShowBlogForm(false);
+  };
+
+  const handleEditBlogPost = (post: any) => {
+    setEditingBlogPost(post);
+    setBlogFormData({
+      title: post.title || '',
+      excerpt: post.excerpt || '',
+      content: post.content || '',
+      author: post.author || '',
+      authorAvatar: post.author_avatar || '',
+      category: post.category || '',
+      imageUrl: post.image_url || '',
+      readTime: post.read_time || '',
+      featured: post.featured || false,
+      published: post.published || false
+    });
+    setShowBlogForm(true);
+  };
+
+  // Events CRUD functions
+  const fetchEvents = async () => {
+    setEventsLoading(true);
+    try {
+      const response = await fetch('/api/events');
+      if (response.ok) {
+        const data = await response.json();
+        setEvents(data);
+      }
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    } finally {
+      setEventsLoading(false);
+    }
+  };
+
+  const handleCreateEvent = async () => {
+    try {
+      const response = await fetch('/api/events', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...eventFormData,
+          imageUrl: eventFormData.imageUrl || null,
+          registrationLink: eventFormData.registrationLink || null,
+          recordingLink: eventFormData.recordingLink || null,
+          maxAttendees: eventFormData.maxAttendees ? parseInt(eventFormData.maxAttendees) : null
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to create event');
+      
+      setNotification({
+        isOpen: true,
+        type: 'success',
+        title: 'Success',
+        message: 'Event created successfully',
+        confirmText: 'OK'
+      });
+      
+      resetEventForm();
+      fetchEvents();
+    } catch (error: any) {
+      setNotification({
+        isOpen: true,
+        type: 'error',
+        title: 'Error',
+        message: error.message || 'Failed to create event',
+        confirmText: 'OK'
+      });
+    }
+  };
+
+  const handleUpdateEvent = async () => {
+    if (!editingEvent) return;
+    
+    try {
+      const response = await fetch(`/api/events/${editingEvent.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...eventFormData,
+          imageUrl: eventFormData.imageUrl || null,
+          registrationLink: eventFormData.registrationLink || null,
+          recordingLink: eventFormData.recordingLink || null,
+          maxAttendees: eventFormData.maxAttendees ? parseInt(eventFormData.maxAttendees) : null
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to update event');
+      
+      setNotification({
+        isOpen: true,
+        type: 'success',
+        title: 'Success',
+        message: 'Event updated successfully',
+        confirmText: 'OK'
+      });
+      
+      resetEventForm();
+      fetchEvents();
+    } catch (error: any) {
+      setNotification({
+        isOpen: true,
+        type: 'error',
+        title: 'Error',
+        message: error.message || 'Failed to update event',
+        confirmText: 'OK'
+      });
+    }
+  };
+
+  const handleDeleteEvent = async (id: string) => {
+    setNotification({
+      isOpen: true,
+      type: 'error',
+      title: 'Delete Event',
+      message: 'Are you sure you want to delete this event? This action cannot be undone.',
+      confirmText: 'Delete',
+      onConfirm: async () => {
+        try {
+          const response = await fetch(`/api/events/${id}`, { method: 'DELETE' });
+          if (!response.ok) throw new Error('Failed to delete event');
+          
+          setNotification({
+            isOpen: true,
+            type: 'success',
+            title: 'Success',
+            message: 'Event deleted successfully',
+            confirmText: 'OK'
+          });
+          
+          fetchEvents();
+        } catch (error: any) {
+          setNotification({
+            isOpen: true,
+            type: 'error',
+            title: 'Error',
+            message: error.message || 'Failed to delete event',
+            confirmText: 'OK'
+          });
+        }
+      }
+    });
+  };
+
+  const resetEventForm = () => {
+    setEventFormData({
+      title: '',
+      description: '',
+      eventDate: '',
+      eventTime: '',
+      eventType: '',
+      speaker: '',
+      speakerRole: '',
+      imageUrl: '',
+      registrationLink: '',
+      recordingLink: '',
+      maxAttendees: '',
+      status: 'upcoming'
+    });
+    setEditingEvent(null);
+    setShowEventForm(false);
+  };
+
+  const handleEditEvent = (event: any) => {
+    setEditingEvent(event);
+    setEventFormData({
+      title: event.title || '',
+      description: event.description || '',
+      eventDate: event.event_date ? event.event_date.split('T')[0] : '',
+      eventTime: event.event_time || '',
+      eventType: event.event_type || '',
+      speaker: event.speaker || '',
+      speakerRole: event.speaker_role || '',
+      imageUrl: event.image_url || '',
+      registrationLink: event.registration_link || '',
+      recordingLink: event.recording_link || '',
+      maxAttendees: event.max_attendees?.toString() || '',
+      status: event.status || 'upcoming'
+    });
+    setShowEventForm(true);
   };
 
   if (loading) {
@@ -856,28 +1232,199 @@ export function AdminDashboard() {
                     <CardTitle>Blog Posts Management</CardTitle>
                     <CardDescription>Create, edit, and manage blog posts</CardDescription>
                   </div>
-                  <Button onClick={() => window.open('/api/blog-posts', '_blank')}>
+                  <Button onClick={() => setShowBlogForm(true)}>
                     <Plus className="h-4 w-4 mr-2" />
                     New Post
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-sm text-muted-foreground mb-4">
-                  <p>API Endpoint: <code className="bg-muted px-2 py-1 rounded">/api/blog-posts</code></p>
-                  <p className="mt-2">Use the API to create, update, and manage blog posts. Full admin interface coming soon.</p>
-                </div>
-                <div className="border-t pt-4">
-                  <h4 className="font-semibold mb-2">API Methods:</h4>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
-                    <li>• <code>GET /api/blog-posts</code> - List all posts</li>
-                    <li>• <code>GET /api/blog-posts?featured=true</code> - Get featured posts</li>
-                    <li>• <code>GET /api/blog-posts?category=Updates</code> - Filter by category</li>
-                    <li>• <code>POST /api/blog-posts</code> - Create new post</li>
-                  </ul>
-                </div>
+                {blogLoading ? (
+                  <div className="text-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2 text-primary" />
+                    <p className="text-muted-foreground">Loading blog posts...</p>
+                  </div>
+                ) : blogPosts.length === 0 ? (
+                  <div className="text-center py-8">
+                    <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground">No blog posts yet. Create your first post!</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {blogPosts.map((post) => (
+                      <div key={post.id} className="flex items-start gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                        {post.image_url && (
+                          <img src={post.image_url} alt={post.title} className="w-24 h-24 object-cover rounded" />
+                        )}
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h4 className="font-semibold">{post.title}</h4>
+                              <p className="text-sm text-muted-foreground mt-1">{post.excerpt}</p>
+                              <div className="flex items-center gap-2 mt-2">
+                                <Badge variant="secondary">{post.category}</Badge>
+                                {post.featured && <Badge className="bg-primary">Featured</Badge>}
+                                {post.published ? (
+                                  <Badge className="bg-green-100 text-green-800">Published</Badge>
+                                ) : (
+                                  <Badge className="bg-yellow-100 text-yellow-800">Draft</Badge>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button variant="ghost" size="sm" onClick={() => handleEditBlogPost(post)}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="sm" onClick={() => handleDeleteBlogPost(post.id)}>
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
+
+            {/* Blog Post Form Modal */}
+            {showBlogForm && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={safeAnimate({ opacity: 1 })}
+                className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+                onClick={() => resetBlogForm()}
+              >
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={safeAnimate({ scale: 1, opacity: 1 })}
+                  onClick={(e) => e.stopPropagation()}
+                  className="bg-background rounded-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-semibold">{editingBlogPost ? 'Edit Blog Post' : 'New Blog Post'}</h2>
+                    <Button variant="ghost" size="sm" onClick={() => resetBlogForm()}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <Label>Title *</Label>
+                      <Input
+                        value={blogFormData.title}
+                        onChange={(e) => setBlogFormData({ ...blogFormData, title: e.target.value })}
+                        placeholder="Enter blog post title"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label>Excerpt *</Label>
+                      <Textarea
+                        value={blogFormData.excerpt}
+                        onChange={(e) => setBlogFormData({ ...blogFormData, excerpt: e.target.value })}
+                        placeholder="Enter a brief excerpt"
+                        rows={3}
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label>Content</Label>
+                      <Textarea
+                        value={blogFormData.content}
+                        onChange={(e) => setBlogFormData({ ...blogFormData, content: e.target.value })}
+                        placeholder="Enter full blog post content"
+                        rows={8}
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Author *</Label>
+                        <Input
+                          value={blogFormData.author}
+                          onChange={(e) => setBlogFormData({ ...blogFormData, author: e.target.value })}
+                          placeholder="Author name"
+                        />
+                      </div>
+                      <div>
+                        <Label>Category *</Label>
+                        <Select value={blogFormData.category} onValueChange={(value) => setBlogFormData({ ...blogFormData, category: value })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Updates">Updates</SelectItem>
+                            <SelectItem value="Success Stories">Success Stories</SelectItem>
+                            <SelectItem value="Diaspora Voices">Diaspora Voices</SelectItem>
+                            <SelectItem value="Youth Impact">Youth Impact</SelectItem>
+                            <SelectItem value="Partnerships">Partnerships</SelectItem>
+                            <SelectItem value="Mentorship">Mentorship</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Read Time</Label>
+                        <Input
+                          value={blogFormData.readTime}
+                          onChange={(e) => setBlogFormData({ ...blogFormData, readTime: e.target.value })}
+                          placeholder="e.g., 5 min read"
+                        />
+                      </div>
+                      <div>
+                        <Label>Author Avatar</Label>
+                        <Input
+                          value={blogFormData.authorAvatar}
+                          onChange={(e) => setBlogFormData({ ...blogFormData, authorAvatar: e.target.value })}
+                          placeholder="Initials or avatar URL"
+                        />
+                      </div>
+                    </div>
+                    
+                    <ImageUpload
+                      value={blogFormData.imageUrl}
+                      onChange={(url) => setBlogFormData({ ...blogFormData, imageUrl: url || '' })}
+                      type="blog"
+                      label="Blog Post Image"
+                    />
+                    
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="featured"
+                          checked={blogFormData.featured}
+                          onChange={(e) => setBlogFormData({ ...blogFormData, featured: e.target.checked })}
+                          className="rounded"
+                        />
+                        <Label htmlFor="featured">Featured</Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="published"
+                          checked={blogFormData.published}
+                          onChange={(e) => setBlogFormData({ ...blogFormData, published: e.target.checked })}
+                          className="rounded"
+                        />
+                        <Label htmlFor="published">Published</Label>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2 justify-end">
+                      <Button variant="outline" onClick={() => resetBlogForm()}>Cancel</Button>
+                      <Button onClick={editingBlogPost ? handleUpdateBlogPost : handleCreateBlogPost}>
+                        {editingBlogPost ? 'Update' : 'Create'} Post
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
           </motion.div>
         )}
 
@@ -895,28 +1442,222 @@ export function AdminDashboard() {
                     <CardTitle>Events Management</CardTitle>
                     <CardDescription>Create, edit, and manage webinars and programs</CardDescription>
                   </div>
-                  <Button onClick={() => window.open('/api/events', '_blank')}>
+                  <Button onClick={() => setShowEventForm(true)}>
                     <Plus className="h-4 w-4 mr-2" />
                     New Event
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-sm text-muted-foreground mb-4">
-                  <p>API Endpoint: <code className="bg-muted px-2 py-1 rounded">/api/events</code></p>
-                  <p className="mt-2">Use the API to create, update, and manage events. Full admin interface coming soon.</p>
-                </div>
-                <div className="border-t pt-4">
-                  <h4 className="font-semibold mb-2">API Methods:</h4>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
-                    <li>• <code>GET /api/events</code> - List all events</li>
-                    <li>• <code>GET /api/events?status=upcoming</code> - Get upcoming events</li>
-                    <li>• <code>GET /api/events?status=past</code> - Get past events</li>
-                    <li>• <code>POST /api/events</code> - Create new event</li>
-                  </ul>
-                </div>
+                {eventsLoading ? (
+                  <div className="text-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2 text-primary" />
+                    <p className="text-muted-foreground">Loading events...</p>
+                  </div>
+                ) : events.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground">No events yet. Create your first event!</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {events.map((event) => (
+                      <div key={event.id} className="flex items-start gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                        {event.image_url && (
+                          <img src={event.image_url} alt={event.title} className="w-24 h-24 object-cover rounded" />
+                        )}
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h4 className="font-semibold">{event.title}</h4>
+                              <p className="text-sm text-muted-foreground mt-1">{event.description}</p>
+                              <div className="flex items-center gap-2 mt-2">
+                                <Badge variant="secondary">{event.event_type}</Badge>
+                                {event.status === 'upcoming' ? (
+                                  <Badge className="bg-blue-100 text-blue-800">Upcoming</Badge>
+                                ) : (
+                                  <Badge className="bg-gray-100 text-gray-800">Past</Badge>
+                                )}
+                                <span className="text-xs text-muted-foreground">
+                                  {new Date(event.event_date).toLocaleDateString()} at {event.event_time}
+                                </span>
+                              </div>
+                              <p className="text-sm text-muted-foreground mt-1">
+                                Speaker: {event.speaker} {event.speaker_role && `- ${event.speaker_role}`}
+                              </p>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button variant="ghost" size="sm" onClick={() => handleEditEvent(event)}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="sm" onClick={() => handleDeleteEvent(event.id)}>
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
+
+            {/* Event Form Modal */}
+            {showEventForm && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={safeAnimate({ opacity: 1 })}
+                className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+                onClick={() => resetEventForm()}
+              >
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={safeAnimate({ scale: 1, opacity: 1 })}
+                  onClick={(e) => e.stopPropagation()}
+                  className="bg-background rounded-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-semibold">{editingEvent ? 'Edit Event' : 'New Event'}</h2>
+                    <Button variant="ghost" size="sm" onClick={() => resetEventForm()}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <Label>Title *</Label>
+                      <Input
+                        value={eventFormData.title}
+                        onChange={(e) => setEventFormData({ ...eventFormData, title: e.target.value })}
+                        placeholder="Enter event title"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label>Description *</Label>
+                      <Textarea
+                        value={eventFormData.description}
+                        onChange={(e) => setEventFormData({ ...eventFormData, description: e.target.value })}
+                        placeholder="Enter event description"
+                        rows={4}
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Event Date *</Label>
+                        <Input
+                          type="date"
+                          value={eventFormData.eventDate}
+                          onChange={(e) => setEventFormData({ ...eventFormData, eventDate: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <Label>Event Time *</Label>
+                        <Input
+                          value={eventFormData.eventTime}
+                          onChange={(e) => setEventFormData({ ...eventFormData, eventTime: e.target.value })}
+                          placeholder="e.g., 2:00 PM GMT"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Event Type *</Label>
+                        <Select value={eventFormData.eventType} onValueChange={(value) => setEventFormData({ ...eventFormData, eventType: value })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Webinar">Webinar</SelectItem>
+                            <SelectItem value="Workshop">Workshop</SelectItem>
+                            <SelectItem value="Panel Discussion">Panel Discussion</SelectItem>
+                            <SelectItem value="Conference">Conference</SelectItem>
+                            <SelectItem value="Training">Training</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Status</Label>
+                        <Select value={eventFormData.status} onValueChange={(value) => setEventFormData({ ...eventFormData, status: value })}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="upcoming">Upcoming</SelectItem>
+                            <SelectItem value="past">Past</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Speaker *</Label>
+                        <Input
+                          value={eventFormData.speaker}
+                          onChange={(e) => setEventFormData({ ...eventFormData, speaker: e.target.value })}
+                          placeholder="Speaker name"
+                        />
+                      </div>
+                      <div>
+                        <Label>Speaker Role</Label>
+                        <Input
+                          value={eventFormData.speakerRole}
+                          onChange={(e) => setEventFormData({ ...eventFormData, speakerRole: e.target.value })}
+                          placeholder="Speaker role/title"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Registration Link</Label>
+                        <Input
+                          value={eventFormData.registrationLink}
+                          onChange={(e) => setEventFormData({ ...eventFormData, registrationLink: e.target.value })}
+                          placeholder="https://..."
+                        />
+                      </div>
+                      <div>
+                        <Label>Recording Link</Label>
+                        <Input
+                          value={eventFormData.recordingLink}
+                          onChange={(e) => setEventFormData({ ...eventFormData, recordingLink: e.target.value })}
+                          placeholder="https://..."
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label>Max Attendees</Label>
+                      <Input
+                        type="number"
+                        value={eventFormData.maxAttendees}
+                        onChange={(e) => setEventFormData({ ...eventFormData, maxAttendees: e.target.value })}
+                        placeholder="Optional"
+                      />
+                    </div>
+                    
+                    <ImageUpload
+                      value={eventFormData.imageUrl}
+                      onChange={(url) => setEventFormData({ ...eventFormData, imageUrl: url || '' })}
+                      type="event"
+                      label="Event Image"
+                    />
+                    
+                    <div className="flex gap-2 justify-end">
+                      <Button variant="outline" onClick={() => resetEventForm()}>Cancel</Button>
+                      <Button onClick={editingEvent ? handleUpdateEvent : handleCreateEvent}>
+                        {editingEvent ? 'Update' : 'Create'} Event
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
           </motion.div>
         )}
 
