@@ -8,6 +8,14 @@
     {
       "source": "/admin",
       "destination": "/index.html"
+    },
+    {
+      "source": "/api/blog-posts",
+      "destination": "/api/blog-posts"
+    },
+    {
+      "source": "/api/upload-image",
+      "destination": "/api/upload-image"
     }
   ],
   "redirects": [],
