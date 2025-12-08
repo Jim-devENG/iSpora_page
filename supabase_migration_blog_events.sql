@@ -264,6 +264,13 @@ BEGIN
   END IF;
 END $$;
 
+-- Step 1.5: Update events RLS policy BEFORE dropping columns
+-- This must happen before dropping any columns that policies might depend on
+DROP POLICY IF EXISTS "Allow public read events" ON events;
+CREATE POLICY "Allow public read published events" ON events
+  FOR SELECT
+  USING (status = 'published');
+
 -- Step 2: Drop old columns (after migration)
 DO $$
 BEGIN
