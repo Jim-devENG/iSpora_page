@@ -234,6 +234,26 @@ export function ImageUpload({
           </div>
         </div>
 
+        {/* Manual URL Input (Fallback) */}
+        <div className="space-y-1">
+          <Label htmlFor="image-url-manual" className="text-xs text-muted-foreground">
+            Or enter image URL manually:
+          </Label>
+          <Input
+            id="image-url-manual"
+            type="url"
+            placeholder="https://example.com/image.jpg"
+            value={value || ''}
+            onChange={(e) => {
+              const url = e.target.value.trim() || null;
+              setPreview(url);
+              onChange(url);
+              setError(null);
+            }}
+            className="text-sm"
+          />
+        </div>
+
         {/* Error Message */}
         {error && (
           <p className="text-sm text-destructive">{error}</p>
