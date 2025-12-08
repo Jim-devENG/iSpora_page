@@ -1,18 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient } from './_lib/supabase.js';
 
-/**
- * Image Upload API
- * 
- * Handles file uploads for blog posts and events.
- * Uploads images to Supabase Storage and returns the public URL.
- * 
- * Usage:
- * POST /api/upload-image
- * Body: { image: "data:image/png;base64,...", type: "blog" | "event" }
- * 
- * Route: /api/upload-image
- */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
