@@ -10,6 +10,8 @@ import { getSupabaseClient } from './_lib/supabase.js';
  * Usage:
  * POST /api/upload-image
  * Body: { image: "data:image/png;base64,...", type: "blog" | "event" }
+ * 
+ * Route: /api/upload-image
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Handle CORS preflight
