@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { safeAnimate, safeTransition } from './utils/animationUtils';
+import { fetchJson } from '../src/utils/fetchJson';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -369,13 +370,14 @@ export function AdminDashboard() {
   const fetchBlogPosts = async () => {
     setBlogLoading(true);
     try {
-      const response = await fetch('/api/blog-posts?published=all');
-      if (response.ok) {
-        const data = await response.json();
-        setBlogPosts(data);
-      }
-    } catch (error) {
-      console.error('Error fetching blog posts:', error);
+      // API URL: /api/blog-posts?published=all
+      // Use fetchJson utility to safely fetch and validate JSON response
+      const data = await fetchJson<any[]>('/api/blog-posts?published=all');
+      setBlogPosts(Array.isArray(data) ? data : []);
+    } catch (error: any) {
+      // Log error but don't crash - show empty state instead
+      console.error('Error fetching blog posts:', error.message || error);
+      setBlogPosts([]);
     } finally {
       setBlogLoading(false);
     }
@@ -383,7 +385,9 @@ export function AdminDashboard() {
 
   const handleCreateBlogPost = async () => {
     try {
-      const response = await fetch('/api/blog-posts', {
+      // API URL: /api/blog-posts (POST)
+      // Use fetchJson utility to safely fetch and validate JSON response
+      await fetchJson('/api/blog-posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -392,8 +396,6 @@ export function AdminDashboard() {
           readTime: blogFormData.readTime || null
         })
       });
-
-      if (!response.ok) throw new Error('Failed to create blog post');
       
       setNotification({
         isOpen: true,
@@ -420,7 +422,9 @@ export function AdminDashboard() {
     if (!editingBlogPost) return;
     
     try {
-      const response = await fetch(`/api/blog-posts/${editingBlogPost.id}`, {
+      // API URL: /api/blog-posts/[id] (PATCH)
+      // Use fetchJson utility to safely fetch and validate JSON response
+      await fetchJson(`/api/blog-posts/${editingBlogPost.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -429,8 +433,6 @@ export function AdminDashboard() {
           readTime: blogFormData.readTime || null
         })
       });
-
-      if (!response.ok) throw new Error('Failed to update blog post');
       
       setNotification({
         isOpen: true,
@@ -462,8 +464,9 @@ export function AdminDashboard() {
       confirmText: 'Delete',
       onConfirm: async () => {
         try {
-          const response = await fetch(`/api/blog-posts/${id}`, { method: 'DELETE' });
-          if (!response.ok) throw new Error('Failed to delete blog post');
+          // API URL: /api/blog-posts/[id] (DELETE)
+          // Use fetchJson utility to safely fetch and validate JSON response
+          await fetchJson(`/api/blog-posts/${id}`, { method: 'DELETE' });
           
           setNotification({
             isOpen: true,
@@ -525,13 +528,14 @@ export function AdminDashboard() {
   const fetchEvents = async () => {
     setEventsLoading(true);
     try {
-      const response = await fetch('/api/events');
-      if (response.ok) {
-        const data = await response.json();
-        setEvents(data);
-      }
-    } catch (error) {
-      console.error('Error fetching events:', error);
+      // API URL: /api/events
+      // Use fetchJson utility to safely fetch and validate JSON response
+      const data = await fetchJson<any[]>('/api/events');
+      setEvents(Array.isArray(data) ? data : []);
+    } catch (error: any) {
+      // Log error but don't crash - show empty state instead
+      console.error('Error fetching events:', error.message || error);
+      setEvents([]);
     } finally {
       setEventsLoading(false);
     }
@@ -578,7 +582,9 @@ export function AdminDashboard() {
     if (!editingEvent) return;
     
     try {
-      const response = await fetch(`/api/events/${editingEvent.id}`, {
+      // API URL: /api/events/[id] (PATCH)
+      // Use fetchJson utility to safely fetch and validate JSON response
+      await fetchJson(`/api/events/${editingEvent.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -589,8 +595,6 @@ export function AdminDashboard() {
           maxAttendees: eventFormData.maxAttendees ? parseInt(eventFormData.maxAttendees) : null
         })
       });
-
-      if (!response.ok) throw new Error('Failed to update event');
       
       setNotification({
         isOpen: true,
@@ -622,8 +626,9 @@ export function AdminDashboard() {
       confirmText: 'Delete',
       onConfirm: async () => {
         try {
-          const response = await fetch(`/api/events/${id}`, { method: 'DELETE' });
-          if (!response.ok) throw new Error('Failed to delete event');
+          // API URL: /api/events/[id] (DELETE)
+          // Use fetchJson utility to safely fetch and validate JSON response
+          await fetchJson(`/api/events/${id}`, { method: 'DELETE' });
           
           setNotification({
             isOpen: true,

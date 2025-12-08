@@ -8,6 +8,7 @@ import { PageHeader } from './layout/PageHeader';
 import { safeAnimate, safeTransition } from './utils/animationUtils';
 import { FloatingShapes, AnimatedBlob } from './animations/FloatingElements';
 import { AnimatedDots } from './animations/AnimatedBackground';
+import { fetchJson } from '../src/utils/fetchJson';
 import { 
   Calendar, 
   Clock, 
@@ -17,7 +18,8 @@ import {
   ArrowRight,
   ExternalLink,
   CheckCircle,
-  PlayCircle
+  PlayCircle,
+  Loader2
 } from 'lucide-react';
 import { cn } from './ui/utils';
 
@@ -31,16 +33,17 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
   const [loading, setLoading] = useState(true);
 
   // Fetch events from API
+  // API URL: /api/events
+  // This endpoint should return JSON array of events
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch('/api/events');
-        if (response.ok) {
-          const data = await response.json();
-          setEvents(data);
-        }
-      } catch (error) {
-        console.error('Error fetching events:', error);
+        // Use fetchJson utility to safely fetch and validate JSON response
+        const data = await fetchJson<any[]>('/api/events');
+        setEvents(Array.isArray(data) ? data : []);
+      } catch (error: any) {
+        // Log error but don't crash - show empty state instead
+        console.error('Error fetching events:', error.message || error);
         setEvents([]);
       } finally {
         setLoading(false);
@@ -115,7 +118,13 @@ export function WebinarsPage({ onPageChange }: WebinarsPageProps) {
           {/* Events Grid */}
           {loading ? (
             <div className="text-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
               <p className="text-muted-foreground">Loading events...</p>
+            </div>
+          ) : displayEvents.length === 0 ? (
+            <div className="text-center py-12">
+              <Video className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No events available yet.</p>
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">

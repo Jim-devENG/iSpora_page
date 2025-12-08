@@ -9,6 +9,7 @@ import { PageHeader } from './layout/PageHeader';
 import { safeAnimate, safeTransition } from './utils/animationUtils';
 import { FloatingShapes, AnimatedBlob } from './animations/FloatingElements';
 import { AnimatedDots } from './animations/AnimatedBackground';
+import { fetchJson } from '../src/utils/fetchJson';
 import { 
   Calendar, 
   User, 
@@ -38,20 +39,22 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
   const categories = ['All', 'Updates', 'Success Stories', 'Diaspora Voices', 'Youth Impact', 'Partnerships'];
 
   // Fetch blog posts from API
+  // API URL: /api/blog-posts?published=true
+  // This endpoint should return JSON array of blog posts
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch('/api/blog-posts?published=true');
-        if (response.ok) {
-          const data = await response.json();
-          setPosts(data);
-          // Find featured post
-          const featured = data.find((p: any) => p.featured);
-          setFeaturedPost(featured || data[0] || null);
-        }
-      } catch (error) {
-        console.error('Error fetching blog posts:', error);
+        // Use fetchJson utility to safely fetch and validate JSON response
+        const data = await fetchJson<any[]>('/api/blog-posts?published=true');
+        setPosts(Array.isArray(data) ? data : []);
+        // Find featured post
+        const featured = Array.isArray(data) ? data.find((p: any) => p.featured) : null;
+        setFeaturedPost(featured || (Array.isArray(data) && data[0]) || null);
+      } catch (error: any) {
+        // Log error but don't crash - show empty state instead
+        console.error('Error fetching blog posts:', error.message || error);
         setPosts([]);
+        setFeaturedPost(null);
       } finally {
         setLoading(false);
       }

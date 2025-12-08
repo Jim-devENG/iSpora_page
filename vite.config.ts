@@ -20,8 +20,14 @@ export default defineConfig({
   build: {
     // Standard build configuration
     minify: 'terser',
-    sourcemap: false,
+    sourcemap: false, // Disable sourcemaps to prevent CSP violations
     chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        // Remove sourcemap references from built files
+        sourcemap: false,
+      }
+    }
   },
   define: {
     // Remove development-only code
