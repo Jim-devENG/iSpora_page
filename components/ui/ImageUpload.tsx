@@ -52,43 +52,65 @@ export function ImageUpload({
       const base64 = await fileToBase64(file);
       
       // Upload to API
-      const response = await fetch('/api/upload-image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          image: base64,
-          type: type,
-          fileName: file.name
-        }),
-      });
+      let response: Response;
+      try {
+        response = await fetch('/api/upload-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            image: base64,
+            type: type,
+            fileName: file.name
+          }),
+        });
+      } catch (fetchError: any) {
+        // Network error (CORS, network failure, etc.)
+        console.error('Fetch error:', fetchError);
+        throw new Error(`Network error: ${fetchError.message || 'Failed to connect to API. Please check your connection and try again.'}`);
+      }
 
       // Check if response is JSON
-      const contentType = response.headers.get('content-type');
-      const isJson = contentType && contentType.includes('application/json');
+      const contentType = response.headers.get('content-type') || '';
+      const isJson = contentType.includes('application/json');
 
       if (!response.ok) {
-        let errorMessage = 'Failed to upload image';
+        let errorMessage = `Upload failed (${response.status} ${response.statusText})`;
+        
         if (isJson) {
           try {
             const errorData = await response.json();
-            errorMessage = errorData.error || errorData.message || errorMessage;
+            errorMessage = errorData.error || errorData.details || errorData.message || errorMessage;
+            // Include details if available
+            if (errorData.details && errorData.details !== errorData.error) {
+              errorMessage += `: ${errorData.details}`;
+            }
           } catch (e) {
             // If JSON parsing fails, use status text
             errorMessage = `Upload failed: ${response.status} ${response.statusText}`;
           }
         } else {
-          // If response is HTML (like a 404 page), provide a helpful error
-          errorMessage = `API endpoint not found. Please check that /api/upload-image is configured correctly.`;
+          // If response is HTML (like a 404 page), try to get text
+          try {
+            const text = await response.text();
+            console.error('Non-JSON error response:', text.substring(0, 500));
+            if (response.status === 404) {
+              errorMessage = `API endpoint not found (404). Please ensure /api/upload-image is deployed correctly.`;
+            } else {
+              errorMessage = `Server error (${response.status}): ${response.statusText}`;
+            }
+          } catch (textError) {
+            errorMessage = `Server error (${response.status}): ${response.statusText}`;
+          }
         }
         throw new Error(errorMessage);
       }
 
       if (!isJson) {
         const text = await response.text();
-        console.error('Non-JSON response:', text.substring(0, 200));
-        throw new Error('Server returned invalid response format. Please check that the API endpoint is configured correctly.');
+        console.error('Non-JSON success response:', text.substring(0, 200));
+        throw new Error('Server returned invalid response format. Expected JSON but got: ' + contentType);
       }
 
       let data;
@@ -100,7 +122,8 @@ export function ImageUpload({
       }
       
       if (!data.imageUrl) {
-        throw new Error('Server response missing imageUrl');
+        console.error('Response data:', data);
+        throw new Error('Server response missing imageUrl. Response: ' + JSON.stringify(data));
       }
       
       // Set preview and call onChange
@@ -108,14 +131,8 @@ export function ImageUpload({
       onChange(data.imageUrl);
     } catch (err: any) {
       console.error('Upload error:', err);
-      let errorMessage = err.message || 'Failed to upload image. Please try again.';
-      
-      // Provide helpful error message for local development
-      if (errorMessage.includes('API endpoint not found') || errorMessage.includes('Failed to fetch')) {
-        errorMessage = 'API endpoint not available. If testing locally, please use Vercel CLI (vercel dev) or deploy to Vercel.';
-      }
-      
-      setError(errorMessage);
+      // Show the actual error message
+      setError(err.message || 'Failed to upload image. Please try again.');
     } finally {
       setUploading(false);
       // Reset file input

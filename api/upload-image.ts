@@ -25,9 +25,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'POST') {
     try {
+      console.log('Image upload request received');
+      console.log('Content-Type:', req.headers['content-type']);
+      console.log('Body type:', typeof req.body);
+      console.log('Body keys:', req.body ? Object.keys(req.body) : 'no body');
+      
       let supabase;
       try {
         supabase = getSupabaseClient();
+        console.log('Supabase client initialized');
       } catch (err: any) {
         console.error('Supabase connection failed:', err);
         return res.status(500).json({ 
@@ -51,12 +57,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       // Handle JSON with base64 image
-      const { image, type, fileName } = req.body;
+      const { image, type, fileName } = req.body || {};
+      
+      console.log('Parsed body - image present:', !!image, 'type:', type, 'fileName:', fileName);
 
       if (!image) {
+        console.error('No image provided in request body');
         return res.status(400).json({ 
           error: 'Image is required',
-          message: 'Provide an image as base64 string: { image: "data:image/png;base64,..." }'
+          message: 'Provide an image as base64 string: { image: "data:image/png;base64,..." }',
+          received: { hasBody: !!req.body, bodyKeys: req.body ? Object.keys(req.body) : [] }
         });
       }
 
@@ -97,6 +107,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const filePath = `${folder}/${timestamp}-${randomStr}.${fileExtension}`;
 
       // Upload to Supabase Storage
+      console.log('Uploading to Supabase Storage:', filePath, 'Size:', imageBuffer.length);
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('images')
         .upload(filePath, imageBuffer, {
@@ -107,10 +118,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (uploadError) {
         console.error('Supabase storage upload error:', uploadError);
         return res.status(500).json({ 
-          error: 'Failed to upload image',
-          details: uploadError.message
+          error: 'Failed to upload image to Supabase Storage',
+          details: uploadError.message,
+          code: uploadError.statusCode || uploadError.error || 'unknown'
         });
       }
+      
+      console.log('Upload successful:', uploadData);
 
       // Get public URL
       const { data: urlData } = supabase.storage
