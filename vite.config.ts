@@ -1,12 +1,15 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  root: './frontend', // Frontend source is now in frontend/
+  publicDir: './frontend/public', // Public assets
   plugins: [react()],
   resolve: {
     alias: {
-      "@": "./",
+      "@": path.resolve(__dirname, "./frontend"),
     },
   },
   server: {
@@ -18,6 +21,8 @@ export default defineConfig({
     strictPort: true,
   },
   build: {
+    outDir: '../dist', // Build output goes to root dist/ (for Vercel)
+    emptyOutDir: true,
     // Standard build configuration
     minify: 'terser',
     sourcemap: false, // Disable sourcemaps to prevent CSP violations

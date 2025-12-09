@@ -27,9 +27,9 @@
     /* Path mapping */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./frontend/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": ["frontend/**/*.ts", "frontend/**/*.tsx", "api/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
