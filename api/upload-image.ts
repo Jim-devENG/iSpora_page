@@ -1,3 +1,17 @@
+/**
+ * API Route Pattern for this project:
+ * - API routes live in api/*.ts (root level api/ directory)
+ * - Handler style: export default async function handler(req: VercelRequest, res: VercelResponse)
+ * - This is Vercel Serverless Functions pattern
+ * - Configured in vercel.json: "api/**/*.ts" with maxDuration: 30
+ * 
+ * This route implements /api/upload-image
+ * - POST: Currently returns 501 (Not Implemented) stub
+ * - TODO: Implement full Supabase Storage upload functionality
+ * - Expected successful response: { success: true, imageUrl: string, ... }
+ * - Frontend caller: components/ui/ImageUpload.tsx
+ */
+
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient } from './_lib/supabase.js';
 
