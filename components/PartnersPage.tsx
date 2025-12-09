@@ -172,8 +172,8 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
           <PageHeader
             title="Partnership & Collaborations"
             description="At iSpora, we are building a coalition of Diaspora innovators, global institutions, NGOs, and impact-driven organizations—both local and international—dedicated to reshaping the future of the Global South. Together, we can accelerate meaningful and lasting change."
-          />
-        </div>
+                />
+              </div>
       </Section>
 
       {/* Partnership Context */}
@@ -223,19 +223,19 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
       >
         <div className="max-w-4xl mx-auto">
           <Card className="shadow-xl border-primary/10">
-            <CardHeader>
+                <CardHeader>
               <CardTitle className="text-2xl sm:text-3xl">Partnership Interest Form</CardTitle>
               <CardDescription>
                 Please fill out all required fields. Our representative will communicate with you promptly.
               </CardDescription>
-            </CardHeader>
-            <CardContent>
+                </CardHeader>
+                <CardContent>
               <form onSubmit={handleSubmit} className="space-y-8">
                 {/* 1. Contact Information */}
                 <div className="space-y-4">
                   <h3 className="text-xl font-semibold mb-4">1. Contact Information</h3>
                   <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
+                  <div className="space-y-2">
                       <Label htmlFor="fullName">Full Name *</Label>
                       <Input
                         id="fullName"
@@ -243,7 +243,7 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
                         onChange={(e) => handleInputChange('fullName', e.target.value)}
                         required
                       />
-                    </div>
+                  </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">Email Address *</Label>
                       <Input
@@ -253,7 +253,7 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         required
                       />
-                    </div>
+          </div>
                     <div className="space-y-2">
                       <Label htmlFor="phone">Phone Number (optional)</Label>
                       <Input
@@ -262,7 +262,7 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
                         value={formData.phone}
                         onChange={(e) => handleInputChange('phone', e.target.value)}
                       />
-                    </div>
+        </div>
                     <div className="space-y-2">
                       <Label htmlFor="country">Country / Region *</Label>
                       <Input
@@ -271,7 +271,7 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
                         onChange={(e) => handleInputChange('country', e.target.value)}
                         required
                       />
-                    </div>
+          </div>
                     <div className="space-y-2 md:col-span-2">
                       <Label htmlFor="linkedin">LinkedIn Profile</Label>
                       <Input
@@ -281,9 +281,9 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
                         onChange={(e) => handleInputChange('linkedin', e.target.value)}
                         placeholder="https://linkedin.com/in/yourprofile"
                       />
-                    </div>
                   </div>
-                </div>
+          </div>
+        </div>
 
                 {/* 2. Organization Information */}
                 <div className="space-y-4 border-t pt-6">
@@ -325,7 +325,7 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
                         onChange={(e) => handleInputChange('role', e.target.value)}
                         required
                       />
-                    </div>
+          </div>
                     <div className="space-y-2">
                       <Label htmlFor="orgWebsite">Organization Website</Label>
                       <Input
@@ -334,8 +334,8 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
                         value={formData.orgWebsite}
                         onChange={(e) => handleInputChange('orgWebsite', e.target.value)}
                         placeholder="https://example.com"
-                      />
-                    </div>
+                  />
+                </div>
                     <div className="space-y-2">
                       <Label htmlFor="orgSocialMedia">Organization Social Media Pages</Label>
                       <Input
@@ -344,9 +344,9 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
                         onChange={(e) => handleInputChange('orgSocialMedia', e.target.value)}
                         placeholder="Twitter, Facebook, Instagram handles"
                       />
+                      </div>
                     </div>
                   </div>
-                </div>
 
                 {/* 3. Partnership Focus */}
                 <div className="space-y-4 border-t pt-6">
@@ -365,9 +365,9 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
                         <Label htmlFor={option} className="text-sm font-normal cursor-pointer">
                           {option}
                         </Label>
-                      </div>
-                    ))}
-                  </div>
+                        </div>
+                      ))}
+                    </div>
                   <div className="space-y-2 mt-4">
                     <Label htmlFor="otherFocus">Other (please specify)</Label>
                     <Input
@@ -376,7 +376,7 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
                       onChange={(e) => handleInputChange('otherFocus', e.target.value)}
                     />
                   </div>
-                </div>
+                  </div>
 
                 {/* 4. About Your Work */}
                 <div className="space-y-4 border-t pt-6">
@@ -395,8 +395,8 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
                       rows={5}
                       required
                     />
-                  </div>
-                </div>
+          </div>
+        </div>
 
                 {/* 5. Partnership Intent */}
                 <div className="space-y-4 border-t pt-6">
@@ -426,7 +426,7 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
                         rows={3}
                         required
                       />
-                    </div>
+          </div>
                     <div className="space-y-2">
                       <Label htmlFor="whatExpect">
                         What do you expect from iSpora in this partnership? *
@@ -440,7 +440,7 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
                       />
                     </div>
                   </div>
-                </div>
+              </div>
 
                 {/* 6. Additional Notes */}
                 <div className="space-y-4 border-t pt-6">
@@ -453,8 +453,8 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
                       onChange={(e) => handleInputChange('additionalNotes', e.target.value)}
                       rows={3}
                     />
-                  </div>
-                </div>
+          </div>
+        </div>
 
                 {/* Submit Button */}
                 <div className="border-t pt-6">
@@ -486,7 +486,7 @@ export function PartnersPage({ onPageChange }: PartnersPageProps) {
                       Our representative will communicate with you promptly.
                     </p>
                   )}
-                </div>
+          </div>
               </form>
             </CardContent>
           </Card>
