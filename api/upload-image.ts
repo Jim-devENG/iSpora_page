@@ -2,6 +2,18 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient } from './_lib/supabase.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Match working pattern: Supabase connection first
+  let supabase;
+  try {
+    supabase = getSupabaseClient();
+  } catch (err: any) {
+    console.error('[UPLOAD_IMAGE] Supabase connection failed:', err);
+    return res.status(500).json({ 
+      error: 'Database connection failed', 
+      details: err?.message
+    });
+  }
+
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -27,22 +39,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'POST') {
     try {
-      console.log('Image upload request received');
-      console.log('Content-Type:', req.headers['content-type']);
-      console.log('Body type:', typeof req.body);
-      console.log('Body keys:', req.body ? Object.keys(req.body) : 'no body');
-      
-      let supabase;
-      try {
-        supabase = getSupabaseClient();
-        console.log('Supabase client initialized');
-      } catch (err: any) {
-        console.error('Supabase connection failed:', err);
-        return res.status(500).json({ 
-          error: 'Database connection failed', 
-          details: err?.message
-        });
-      }
+      console.log('[UPLOAD_IMAGE] Image upload request received');
+      console.log('[UPLOAD_IMAGE] Content-Type:', req.headers['content-type']);
+      console.log('[UPLOAD_IMAGE] Body type:', typeof req.body);
+      console.log('[UPLOAD_IMAGE] Body keys:', req.body ? Object.keys(req.body) : 'no body');
 
       // Check if request has file (multipart/form-data)
       // Note: Vercel serverless functions handle multipart differently
@@ -109,7 +109,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const filePath = `${folder}/${timestamp}-${randomStr}.${fileExtension}`;
 
       // Upload to Supabase Storage
-      console.log('Uploading to Supabase Storage:', filePath, 'Size:', imageBuffer.length);
+      console.log('[UPLOAD_IMAGE] Uploading to Supabase Storage:', filePath, 'Size:', imageBuffer.length);
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('images')
         .upload(filePath, imageBuffer, {
@@ -118,7 +118,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
 
       if (uploadError) {
-        console.error('Supabase storage upload error:', uploadError);
+        console.error('[UPLOAD_IMAGE] Supabase storage upload error:', uploadError);
         return res.status(500).json({ 
           error: 'Failed to upload image to Supabase Storage',
           details: uploadError.message,
@@ -126,7 +126,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
       }
       
-      console.log('Upload successful:', uploadData);
+      console.log('[UPLOAD_IMAGE] Upload successful:', uploadData);
 
       // Get public URL
       const { data: urlData } = supabase.storage
@@ -141,7 +141,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         message: 'Image uploaded successfully'
       });
     } catch (error: any) {
-      console.error('Image upload error:', error);
+      console.error('[UPLOAD_IMAGE] Image upload error:', error);
       return res.status(500).json({ 
         error: 'Internal Server Error', 
         details: error?.message

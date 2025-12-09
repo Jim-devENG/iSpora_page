@@ -3,22 +3,7 @@ import { getSupabaseClient } from '../_lib/supabase.js';
 import type { Event, EventResponse, ApiError } from '../_types/content.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Set CORS headers immediately
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,DELETE,PATCH,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Content-Type', 'application/json');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end();
-  }
-
-  const { id } = req.query;
-
-  if (!id || typeof id !== 'string') {
-    return res.status(400).json({ error: 'Event ID is required' } as ApiError);
-  }
-
+  // Match working pattern: Supabase connection first
   let supabase;
   try {
     supabase = getSupabaseClient();
@@ -28,6 +13,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       error: 'Database connection failed', 
       details: err?.message 
     } as ApiError);
+  }
+
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,DELETE,PATCH,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    return res.status(204).end();
+  }
+
+  // Set CORS headers for all responses
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Content-Type', 'application/json');
+
+  const { id } = req.query;
+
+  if (!id || typeof id !== 'string') {
+    return res.status(400).json({ error: 'Event ID is required' } as ApiError);
   }
 
   try {
