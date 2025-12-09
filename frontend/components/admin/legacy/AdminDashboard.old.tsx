@@ -71,7 +71,9 @@ interface DashboardStats {
   recentActivity: RegistrationData[];
 }
 
-export function AdminDashboard() {
+// OLD ADMIN DASHBOARD - DO NOT USE
+// This file is kept for reference only
+export function AdminDashboard_OLD_DO_NOT_USE() {
   const [activeTab, setActiveTab] = useState<'registrations' | 'blog' | 'events' | 'partners'>('registrations');
   const [registrations, setRegistrations] = useState<RegistrationData[]>([]);
   const [stats, setStats] = useState<DashboardStats>({
