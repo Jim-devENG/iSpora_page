@@ -210,6 +210,7 @@ export function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <h1 className="text-3xl font-bold text-slate-50">Admin Dashboard</h1>
           <p className="mt-1 text-sm text-slate-400">Manage registrations, content, and partners</p>
+          <p className="mt-1 text-xs text-slate-500">New Dashboard v2.0</p>
         </div>
       </div>
 
