@@ -27,7 +27,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
     ok: true,
     route: '/api/debug-alive',
     timestamp: new Date().toISOString(),
-    commitHint: 'debug-v2-clean-rebuild'
+    commitHint: 'deployment-62jW9CwSA-verified'
   });
 }
 
