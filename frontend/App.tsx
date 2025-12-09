@@ -24,7 +24,7 @@ import { PrivacyPolicyPage } from './components/PrivacyPolicyPage';
 import { TermsOfServicePage } from './components/TermsOfServicePage';
 import { PressKitPage } from './components/PressKitPage';
 import { CareersPage } from './components/CareersPage';
-import { AdminDashboard } from './components/AdminDashboard';
+import { AdminDashboard } from './components/admin/AdminDashboard';
 import { AdminAccess } from './components/AdminAccess';
 import { Footer } from './components/Footer';
 

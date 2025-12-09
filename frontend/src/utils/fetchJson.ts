@@ -23,7 +23,16 @@ export async function fetchJson<T = any>(
   url: string,
   options?: RequestInit
 ): Promise<T> {
-  const response = await fetch(url, options);
+  // Set Content-Type header for requests with body
+  const headers = new Headers(options?.headers);
+  if (options?.body && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
+
+  const response = await fetch(url, {
+    ...options,
+    headers,
+  });
 
   // Check if response is OK (status 200-299)
   if (!response.ok) {
