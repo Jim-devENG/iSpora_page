@@ -18,7 +18,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
     ok: true,
     route: '/api/debug-alive',
     timestamp: new Date().toISOString(),
-    commitHint: 'deployment-62jW9CwSA-verified'
+    commitHint: 'deployment-6eqytp1nh-typescript-fix'
   });
 }
 
