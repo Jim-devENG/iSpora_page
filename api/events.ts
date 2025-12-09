@@ -1,14 +1,7 @@
-/**
- * API Route Pattern for this project:
- * - API routes live in api/*.ts (root level api/ directory)
- * - Handler style: export default async function handler(req: VercelRequest, res: VercelResponse)
- * - This is Vercel Serverless Functions pattern
- * - Configured in vercel.json: "api/**/*.ts" with maxDuration: 30
- * 
- * This route implements /api/events
- * - GET: Returns { events: Event[] }
- * - POST: Accepts { title, start_at, ... } and returns { event: Event }
- */
+// API Route Pattern: api/*.ts files with export default async function handler
+// This route implements /api/events
+// GET: Returns { events: Event[] }
+// POST: Accepts { title, start_at, ... } and returns { event: Event }
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseClient } from './_lib/supabase.js';

@@ -1,15 +1,6 @@
-/**
- * API Route Pattern for this project:
- * - API routes live in api/*.ts (root level api/ directory)
- * - Handler style: export default async function handler(req: VercelRequest, res: VercelResponse)
- * - This is Vercel Serverless Functions pattern
- * - Configured in vercel.json: "api/**/*.ts" with maxDuration: 30
- * 
- * This debug endpoint helps verify that new deployments are actually being served.
- * After deployment, hit /api/debug-alive and confirm:
- * - JSON response (not HTML)
- * - commitHint matches the current deployment
- */
+// API Route Pattern: api/*.ts files with export default async function handler
+// Debug endpoint to verify deployments are being served
+// Returns JSON with commitHint to confirm new deployments
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
